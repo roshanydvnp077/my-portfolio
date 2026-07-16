@@ -5,6 +5,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roshan Kr Yadav</title>
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Roshan Portfolio" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png" />
 
   
   <meta name="description" content="Roshan Kr Yadav is a Full Stack Developer specializing in React, Node.js, Laravel, and secure high-performance web applications." />
@@ -1559,6 +1568,13 @@
 
 <body>
 
+  <div id="pwaSplash" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0f1e 0%,#0f1f3d 45%,#1a1040 100%);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .35s ease,visibility .35s ease;">
+    <div style="text-align:center;">
+      <div style="width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,#2563eb,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3rem;box-shadow:0 0 24px rgba(37,99,235,.45);margin:0 auto 12px;">RY</div>
+      <div style="font-weight:700;letter-spacing:.04em;">Loading Portfolio...</div>
+    </div>
+  </div>
+
   <!-- NAV -->
   <nav id="mainNav">
     <a href="#hero" class="nav-logo">
@@ -2186,6 +2202,8 @@
     </div>
   </footer>
 
+  <button id="installAppBtn" type="button" aria-label="Install App" hidden style="position:fixed;right:16px;bottom:16px;z-index:1001;border:none;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 10px 22px rgba(37,99,235,.35);cursor:pointer;">Install App</button>
+
   <script>
     // ── Transparent nav → solid on scroll ──
     const nav = document.getElementById('mainNav');
@@ -2269,6 +2287,7 @@
 
     typewrite();
   </script>
+  <script src="app.js" defer></script>
 </body>
 
 </html>
