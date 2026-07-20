@@ -396,6 +396,91 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
+    .pwa-widget {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: min(100%, 360px);
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 22px 55px rgba(15, 23, 42, 0.25);
+      border-radius: 24px;
+      padding: 18px 18px 16px;
+      color: #f8fafc;
+      display: grid;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(20px);
+      visibility: hidden;
+      transition: transform 0.26s ease, opacity 0.26s ease, visibility 0.26s ease;
+      z-index: 1100;
+    }
+
+    .pwa-widget.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+
+    .pwa-widget-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pwa-widget-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      font-size: 1.25rem;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+    }
+
+    .pwa-widget-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .pwa-widget-text {
+      color: rgba(226, 232, 240, 0.88);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .pwa-widget-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pwa-widget-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .pwa-widget-btn.primary {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    .pwa-widget-btn.secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
+    }
+
+    .pwa-widget-btn:hover {
+      transform: translateY(-1px);
+    }
+
     .pwa-modal-btn:hover {
       transform: translateY(-1px);
     }
@@ -2363,6 +2448,20 @@
   </footer>
 
   <button id="installAppBtn" type="button" aria-label="Install App" hidden style="position:fixed;right:16px;bottom:16px;z-index:1001;border:none;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 10px 22px rgba(37,99,235,.35);cursor:pointer;">Install App</button>
+
+  <div class="pwa-widget" id="pwaWidget" aria-live="polite">
+    <div class="pwa-widget-header">
+      <div class="pwa-widget-icon">⬇</div>
+      <div>
+        <div class="pwa-widget-title">Install Portfolio</div>
+        <div class="pwa-widget-text">Get quick access to the portfolio app with offline support.</div>
+      </div>
+    </div>
+    <div class="pwa-widget-actions">
+      <button id="pwaWidgetInstall" class="pwa-widget-btn primary" type="button">Download</button>
+      <button id="pwaWidgetDismiss" class="pwa-widget-btn secondary" type="button">Not now</button>
+    </div>
+  </div>
 
   <script>
     // ── Transparent nav → solid on scroll ──

@@ -1,12 +1,30 @@
 (() => {
   const installButton = document.getElementById("installAppBtn");
   const heroInstallButton = document.getElementById("heroInstallBtn");
+  const pwaWidget = document.getElementById("pwaWidget");
+  const pwaWidgetInstall = document.getElementById("pwaWidgetInstall");
+  const pwaWidgetDismiss = document.getElementById("pwaWidgetDismiss");
   const splash = document.getElementById("pwaSplash");
   const modalBackdrop = document.getElementById("pwaModalBackdrop");
   const modalClose = document.getElementById("pwaModalClose");
   const modalInstall = document.getElementById("pwaInstallAction");
   const modalDismiss = document.getElementById("pwaDismissAction");
   let deferredPrompt = null;
+
+  function openPwaWidget() {
+    if (!pwaWidget) return;
+    pwaWidget.classList.add("is-visible");
+  }
+
+  function closePwaWidget() {
+    if (!pwaWidget) return;
+    pwaWidget.classList.remove("is-visible");
+    try {
+      localStorage.setItem("pwaWidgetDismissed", "true");
+    } catch (error) {
+      console.warn("Could not save widget state:", error);
+    }
+  }
 
   function hideSplash() {
     if (!splash) return;
@@ -58,12 +76,17 @@
     setTimeout(() => {
       hideSplash();
       try {
-        const dismissed = localStorage.getItem("pwaModalDismissed") === "true";
-        if (!dismissed) {
+        const modalDismissed = localStorage.getItem("pwaModalDismissed") === "true";
+        const widgetDismissed = localStorage.getItem("pwaWidgetDismissed") === "true";
+        if (!modalDismissed) {
           openPwaModal();
+        }
+        if (!widgetDismissed) {
+          openPwaWidget();
         }
       } catch (error) {
         openPwaModal();
+        openPwaWidget();
       }
     }, 600);
   });
@@ -119,11 +142,20 @@
     });
   }
 
+  if (pwaWidgetInstall) {
+    pwaWidgetInstall.addEventListener("click", handleInstallClick);
+  }
+
+  if (pwaWidgetDismiss) {
+    pwaWidgetDismiss.addEventListener("click", closePwaWidget);
+  }
+
   window.addEventListener("appinstalled", () => {
     deferredPrompt = null;
     if (installButton) {
       installButton.hidden = true;
     }
     closePwaModal();
+    closePwaWidget();
   });
 })();
