@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -269,6 +269,146 @@
       border-radius: 50px;
       margin-top: 8px;
       padding: 13px;
+    }
+
+    /* ── PWA INSTALL MODAL ── */
+    .pwa-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 1200;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .pwa-modal-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .pwa-modal {
+      width: min(100%, 460px);
+      background: linear-gradient(145deg, rgba(255,255,255,0.97), rgba(248,250,252,0.96));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.26);
+      padding: 28px 24px 24px;
+      position: relative;
+      color: var(--dark);
+    }
+
+    .pwa-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border: none;
+      background: #e2e8f0;
+      color: var(--dark);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .pwa-modal-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.8rem;
+      background: var(--gradient);
+      color: #fff;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+    }
+
+    .pwa-modal h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .pwa-modal p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .pwa-modal-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 20px;
+      padding: 0;
+    }
+
+    .pwa-modal-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    .pwa-modal-list li::before {
+      content: '✓';
+      color: var(--accent2);
+      font-weight: 800;
+    }
+
+    .pwa-modal-note {
+      color: #334155;
+      font-size: 0.92rem;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    .pwa-modal-note.visible {
+      display: block;
+    }
+
+    .pwa-modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pwa-modal-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pwa-modal-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .pwa-modal-btn.primary {
+      background: var(--gradient2);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(249, 115, 22, 0.24);
+    }
+
+    .pwa-modal-btn.secondary {
+      background: #e2e8f0;
+      color: var(--text);
     }
 
     /* ── HERO ── */
@@ -1575,6 +1715,25 @@
     </div>
   </div>
 
+  <div class="pwa-modal-backdrop" id="pwaModalBackdrop" aria-hidden="true">
+    <div class="pwa-modal" role="dialog" aria-modal="true" aria-labelledby="pwaModalTitle">
+      <button class="pwa-modal-close" id="pwaModalClose" aria-label="Close install dialog">×</button>
+      <div class="pwa-modal-icon">⬇</div>
+      <h3 id="pwaModalTitle">Install Roshan Portfolio</h3>
+      <p>Use the full app experience with quick access from your home screen and faster launch.</p>
+      <p class="pwa-modal-note" id="pwaFallbackNote">Install support is available only when the site is served over HTTPS or localhost. Open this page from a web server to see the native install prompt.</p>
+      <ul class="pwa-modal-list">
+        <li>Open it like a native app</li>
+        <li>Browse faster with offline support</li>
+        <li>Keep your portfolio always within reach</li>
+      </ul>
+      <div class="pwa-modal-actions">
+        <button class="pwa-modal-btn primary" id="pwaInstallAction" type="button">Install App</button>
+        <button class="pwa-modal-btn secondary" id="pwaDismissAction" type="button">Maybe Later</button>
+      </div>
+    </div>
+  </div>
+
   <!-- NAV -->
   <nav id="mainNav">
     <a href="#hero" class="nav-logo">
@@ -1589,7 +1748,7 @@
       <li><a href="#journey">Journey</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="roshanydvnp077@gmail.com" class="nav-cta">Hire Me</a>
+    <a href="mailto:roshanydvnp077@gmail.com" class="nav-cta">Hire Me</a>
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
@@ -1621,8 +1780,8 @@
           can feel and systems that actually work.</p>
         <div class="hero-btns">
           <a href="mailto:roshanydvnp077@gmail.com" class="btn-primary">Hire Me</a>
-          <a href="cv.png" target="_blank"
-            class="btn-outline">Download CV</a>
+          <a href="cv.png" target="_blank" class="btn-outline">Download CV</a>
+          <button id="heroInstallBtn" class="btn-outline" type="button">Install App</button>
           <a href="https://wa.me/9779801545700" target="_blank" class="btn-whatsapp">💬 WhatsApp</a>
         </div>
         <div class="hero-socials">
@@ -2167,10 +2326,11 @@
           <div class="contact-btns">
             <a href="mailto:roshanydvnp077@gmail.com" class="contact-btn cb-email">📧 Send Email</a>
             <a href="tel:+9779801545700" class="contact-btn cb-phone">📞 +977 9801545700</a>
-            <a href="https://github.com/roshanydvnp077" target="_blank" class="contact-btn cb-github">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.46 five .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 .46 . four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four six four sixfoursixfour-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-six-four-sixFourSixFour-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four-Six-Four_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX_FOUR_SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.FOUR.SIX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.S IX.F OUR.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s ix.f our.s(ix).f Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F Our(SIx).F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) F.Our (SIx) FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur(FOur( FOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(fOuR(f OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(OUr(O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur O Ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur o ur	o	
+                        <a href="https://github.com/roshanydvnp077" target="_blank" class="contact-btn cb-github">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 4.8 3.09 8.87 7.38 10.3.54.1.74-.23.74-.52 0-.26-.01-1.01-.02-1.98-3.01.66-3.65-1.45-3.65-1.45-.49-1.25-1.2-1.58-1.2-1.58-.98-.67.07-.66.07-.66 1.08.08 1.64 1.11 1.64 1.11.96 1.64 2.52 1.17 3.14.9.1-.7.38-1.17.7-1.44-2.41-.28-4.94-1.21-4.94-5.38 0-1.19.43-2.17 1.11-2.94-.11-.28-.48-1.41.1-2.94 0 0 .91-.29 2.98 1.12.86-.24 1.78-.36 2.7-.36s1.84.12 2.7.36c2.07-1.41 2.98-1.12 2.98-1.12.58 1.53.21 2.66.1 2.94.69.77 1.11 1.75 1.11 2.94 0 4.18-2.53 5.1-4.95 5.38.39.33.73.98.73 1.97 0 1.42-.01 2.57-.01 2.92 0 .29.2.63.75.52A12 12 0 0 0 24 12C24 5.37 18.63 0 12 0z"/>
+              </svg>
+              GitHub Profile
             </a>
             <a href="https://www.linkedin.com/in/roshan-yadav-956658416/?skipRedirect=true" target="_blank" class="contact-btn cb-linkedin">
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
@@ -2291,3 +2451,5 @@
 </body>
 
 </html>
+
+
