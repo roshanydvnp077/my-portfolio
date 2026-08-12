@@ -40,6 +40,10 @@
 
   function closePwaModal() {
     if (!modalBackdrop) return;
+    const active = document.activeElement;
+    if (active && modalBackdrop.contains(active)) {
+      active.blur();
+    }
     modalBackdrop.classList.remove("is-open");
     modalBackdrop.setAttribute("aria-hidden", "true");
     try {
@@ -105,14 +109,8 @@
     });
   }
 
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredPrompt = event;
-    if (installButton) {
-      installButton.hidden = false;
-    }
-    openPwaModal();
-  });
+  // Removed custom beforeinstallprompt handling to avoid browser warning when the prompt
+  // is deferred without being shown immediately.
 
   if (installButton) {
     installButton.addEventListener("click", handleInstallClick);

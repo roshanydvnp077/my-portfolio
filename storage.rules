@@ -1,0 +1,27 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "roshanydv077@gmail.com";
+    }
+
+    match /users/{uid}/gallery/{fileName} {
+      allow read, delete: if isAdmin() && request.auth.uid == uid;
+      allow create, update: if isAdmin()
+        && request.auth.uid == uid
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    match /users/{uid}/{area}/{fileName} {
+      allow read, delete: if isAdmin() && request.auth.uid == uid;
+      allow create, update: if isAdmin() && request.auth.uid == uid;
+    }
+
+    match /gallery/{fileName} {
+      allow read: if true;
+      allow delete: if isAdmin();
+      allow create, update: if isAdmin() && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
