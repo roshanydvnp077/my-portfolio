@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roshan Kr Yadav</title>
+  <title>Roshan  Yadav</title>
   <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Roshan Portfolio" />
@@ -24,16 +24,16 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png" />
 
   
-  <meta name="description" content="Roshan Kr Yadav is a Full Stack Developer specializing in React, Node.js, Laravel, and secure high-performance web applications." />
-  <meta name="author" content="Roshan Kr Yadav" />
-  <meta name="keywords" content="Roshan kr Yadav, Roshan Kr Yadav, Full Stack Developer, Web Developer, App Developer, Software Developer, React Developer, Node.js Developer, Laravel Developer, Java, C++, UI/UX Design, Figma, React, Node.js, Laravel, JavaScript" />
+  <meta name="description" content="Roshan  Yadav is a Full Stack Developer specializing in React, Node.js, Laravel, and secure high-performance web applications." />
+  <meta name="author" content="Roshan  Yadav" />
+  <meta name="keywords" content="Roshan Yadav, Roshan  Yadav, Full Stack Developer, Web Developer, App Developer, Software Developer, React Developer, Node.js Developer, Laravel Developer, Java, C++, UI/UX Design, Figma, React, Node.js, Laravel, JavaScript" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Roshan Kr Yadav — Full Stack Developer" />
+  <meta property="og:title" content="Roshan  Yadav — Full Stack Developer" />
   <meta property="og:description" content="Crafting high-performance, secure, and creative digital solutions. Specializing in React, Node.js, and Laravel." />
   <meta property="og:image" content="roshan.png.jpg" />
   <meta property="og:image:alt" content="roshan.png.jpn" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Roshan Kr Yadav — Full Stack Developer" />
+  <meta name="twitter:title" content="Roshan  Yadav — Full Stack Developer" />
   <meta name="twitter:description" content="Crafting high-performance, secure, and creative digital solutions. Specializing in React, Node.js, and Laravel." />
   <meta name="twitter:image" content="roshan.png.jpg" />
   
@@ -83,6 +83,169 @@
       overflow-x: hidden;
     }
 
+    body.loader-active {
+      overflow: hidden;
+    }
+
+    .portfolio-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      width: 100vw;
+      height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 24px;
+      background: #030507;
+      color: #fff;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .portfolio-loader::before {
+      content: '';
+      position: absolute;
+      width: min(72vw, 390px);
+      height: min(72vw, 390px);
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.14);
+      filter: blur(72px);
+      animation: loaderAmbientGlow 3.8s ease-in-out infinite;
+    }
+
+    .portfolio-loader.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .portfolio-loader-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: loaderFadeIn 0.8s ease both;
+    }
+
+    .portfolio-loader-image-wrap {
+      position: relative;
+      display: grid;
+      width: clamp(170px, 30vw, 250px);
+      height: clamp(170px, 30vw, 250px);
+      place-items: center;
+      padding: 5px;
+      border: 1px solid rgba(96, 165, 250, 0.72);
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(147, 197, 253, 0.75), rgba(37, 99, 235, 0.18));
+      box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.08), 0 0 42px rgba(37, 99, 235, 0.34);
+      animation: loaderImagePulse 2.8s ease-in-out infinite;
+    }
+
+    .portfolio-loader-image-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -14px;
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      border-radius: 50%;
+      animation: loaderRingPulse 2.8s ease-in-out infinite;
+    }
+
+    .portfolio-loader-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: contain;
+      background: #0b1220;
+      display: block;
+    }
+
+    .portfolio-loader-title {
+      margin: 30px 0 5px;
+      color: #f8fafc;
+      font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+      font-weight: 800;
+      letter-spacing: 0.2em;
+    }
+
+    .portfolio-loader-subtitle {
+      margin: 0;
+      color: rgba(203, 213, 225, 0.7);
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
+    }
+
+    .portfolio-loader-progress {
+      position: relative;
+      width: 112px;
+      height: 3px;
+      overflow: hidden;
+      margin-top: 24px;
+      border-radius: 99px;
+      background: rgba(148, 163, 184, 0.2);
+    }
+
+    .portfolio-loader-progress::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 45%;
+      border-radius: inherit;
+      background: #60a5fa;
+      box-shadow: 0 0 12px rgba(96, 165, 250, 0.8);
+      animation: loaderProgress 1.35s ease-in-out infinite;
+    }
+
+    @keyframes loaderFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes loaderImagePulse {
+      0%, 100% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.08), 0 0 42px rgba(37, 99, 235, 0.3); }
+      50% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0.1), 0 0 65px rgba(96, 165, 250, 0.52); }
+    }
+
+    @keyframes loaderRingPulse {
+      0%, 100% { opacity: 0.35; transform: scale(0.98); }
+      50% { opacity: 0.8; transform: scale(1.04); }
+    }
+
+    @keyframes loaderAmbientGlow {
+      0%, 100% { opacity: 0.55; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    @keyframes loaderProgress {
+      from { transform: translateX(-120%); }
+      to { transform: translateX(280%); }
+    }
+
+    @media (max-width: 480px) {
+      .portfolio-loader {
+        padding: 20px;
+      }
+
+      .portfolio-loader-title {
+        letter-spacing: 0.14em;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .portfolio-loader-content,
+      .portfolio-loader-image-wrap,
+      .portfolio-loader-image-wrap::after,
+      .portfolio-loader::before,
+      .portfolio-loader-progress::after {
+        animation: none;
+      }
+    }
+
     section[id] {
       scroll-margin-top: 120px;
     }
@@ -95,13 +258,14 @@
       transform: translateX(-50%);
       width: min(calc(100% - 48px), 1100px);
       max-width: 1100px;
-      background: rgba(8, 13, 24, 0.75);
+      background: rgba(8, 13, 24, 0.9);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 18px;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
       z-index: 1000;
+      isolation: isolate;
       padding: 0 24px;
       height: 64px;
       display: flex;
@@ -144,6 +308,13 @@
       color: #fff;
       font-weight: 800;
       font-size: 1rem;
+    }
+
+    .nav-logo-image {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
     }
 
     .nav-links {
@@ -388,7 +559,7 @@
       inset: 0;
       background: transparent;
       z-index: 9998;
-      display: none;
+      display: inline-flex;
     }
 
     .dropdown-overlay.active {
@@ -437,7 +608,7 @@
     .mobile-menu {
       position: fixed;
       top: 70px;
-      right: -100%;
+      right: 0;
       width: 280px;
       max-width: 85vw;
       height: calc(100vh - 70px);
@@ -450,13 +621,20 @@
       flex-direction: column;
       gap: 8px;
       z-index: 1000;
-      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateX(110%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       overflow-y: auto;
     }
 
+    .mobile-menu-profile { display: flex; align-items: center; gap: 12px; padding: 2px 2px 20px; margin-bottom: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.18); }
+    .mobile-menu-avatar { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 42px; border: 1px solid rgba(96, 165, 250, 0.55); border-radius: 14px; color: #dbeafe; background: linear-gradient(145deg, rgba(37, 99, 235, 0.5), rgba(124, 58, 237, 0.45)); box-shadow: 0 0 22px rgba(59, 130, 246, 0.2); font-weight: 800; letter-spacing: 0.06em; }
+    .mobile-menu-profile strong { color: #f8fafc; font-size: 0.98rem; }
+    .mobile-menu-profile span { display: block; margin-top: 2px; color: rgba(191, 219, 254, 0.65); font-size: 0.74rem; }
+    .mobile-menu-divider { height: 1px; margin: 8px 0 4px; background: rgba(96, 165, 250, 0.2); }
+
     .mobile-menu.open,
     .mobile-menu.active {
-      right: 0;
+      transform: translateX(0);
     }
 
     .mobile-menu a {
@@ -517,6 +695,25 @@
       border-radius: 50px;
       margin-top: 8px;
       padding: 13px;
+    }
+
+    .mobile-menu-actions { display: grid; gap: 10px; margin-top: auto; padding-top: 18px; }
+    .mobile-menu .mobile-action { width: 100%; text-align: center; border-radius: 999px; }
+    .mobile-menu .mobile-action.secondary { color: #bfdbfe; background: rgba(30, 64, 175, 0.18); border: 1px solid rgba(96, 165, 250, 0.42); }
+    .mobile-menu .mobile-action.secondary:hover { background: rgba(37, 99, 235, 0.28); border-color: rgba(147, 197, 253, 0.7); }
+    .mobile-menu > .mob-link:not(.mobile-action):not(.vault-access-btn) { display: block; width: 100%; background: transparent; border: 1px solid transparent; color: rgba(255, 255, 255, 0.85); text-align: left; }
+    .mobile-menu > .mob-link:not(.mobile-action):not(.vault-access-btn):hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(168, 85, 247, 0.3); color: #fff; }
+    .mobile-menu.active, .mobile-menu.open { transform: translateX(0) !important; }
+    body.menu-open::before { content: ''; position: fixed; inset: 0; z-index: 999; background: rgba(2, 6, 23, 0.12); pointer-events: none; }
+    .mobile-menu { background: rgba(7, 12, 28, 0.97); border-left-color: rgba(129, 140, 248, 0.42); box-shadow: -14px 0 34px rgba(2, 6, 23, 0.3), 0 0 28px rgba(96, 165, 250, 0.12), 0 0 34px rgba(139, 92, 246, 0.1); }
+
+    @media (min-width: 769px) and (max-width: 1023px) {
+      nav { width: calc(100% - 32px); padding: 0 18px; }
+      .nav-links, nav > .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu { top: 72px; height: calc(100dvh - 72px); }
+      .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; }
+      .gallery-item:nth-child(n) { grid-column: span 1; grid-row: auto; min-height: 220px; }
     }
 
     /* ── PWA INSTALL MODAL ── */
@@ -849,6 +1046,7 @@
     .hero h1 span {
       background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #f43f5e 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -1412,6 +1610,7 @@
     .skills-title .gradient-text {
       background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -1728,6 +1927,7 @@
     .gradient-text-purple {
       background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #3b82f6 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -2927,6 +3127,7 @@
     .projects-hero-title .gradient-text-blue {
       background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -3313,6 +3514,1397 @@
       background: #0d1222;
     }
 
+    /* ── GALLERY ── */
+    .gallery-section {
+      padding: 88px 0 76px;
+      background: #090b1f;
+    }
+
+    .gallery-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .gallery-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 34px;
+    }
+
+    .gallery-kicker {
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .gallery-title {
+      color: #f8fafc;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .gallery-intro {
+      max-width: 430px;
+      color: rgba(203, 213, 225, 0.72);
+      font-size: 0.94rem;
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .gallery-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .gallery-lock-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: #111827;
+      color: #fff;
+      font: inherit;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+      transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .gallery-lock-btn:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.24);
+    }
+
+    .gallery-lock-btn.unlocked {
+      background: #047857;
+    }
+
+    .gallery-lock-btn.unlocked:hover {
+      background: #065f46;
+    }
+
+    .gallery-relock-btn[hidden] {
+      display: none;
+    }
+
+    .gallery-relock-btn {
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 11px 16px;
+      background: #fff;
+      color: #334155;
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .gallery-relock-btn:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .gallery-grid[hidden] {
+      display: none;
+    }
+
+    .gallery-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(7, 12, 27, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .gallery-modal-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .gallery-modal {
+      width: min(100%, 410px);
+      padding: 30px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(2, 6, 23, 0.38);
+      transform: translateY(14px) scale(0.98);
+      transition: transform 0.25s ease;
+    }
+
+    .gallery-modal-backdrop.is-open .gallery-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .gallery-modal-icon {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 1.35rem;
+    }
+
+    .gallery-modal h3 {
+      color: var(--dark);
+      font-size: 1.35rem;
+      margin: 0 0 8px;
+    }
+
+    .gallery-modal p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0 0 20px;
+    }
+
+    .gallery-modal-form {
+      display: flex;
+      gap: 10px;
+    }
+
+    .vault-access-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(37, 99, 235, 0.14);
+      color: #bfdbfe;
+      font: inherit;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .vault-access-btn:hover {
+      background: rgba(37, 99, 235, 0.28);
+      border-color: rgba(147, 197, 253, 0.65);
+      transform: translateY(-1px);
+    }
+
+    .gallery-pin-input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--dark);
+      font: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .gallery-pin-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .gallery-submit-btn,
+    .gallery-modal-close {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .gallery-submit-btn {
+      background: #2563eb;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .gallery-submit-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .gallery-error {
+      min-height: 20px;
+      color: #dc2626;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin: 10px 0 0;
+    }
+
+    .gallery-modal-close {
+      width: 100%;
+      margin-top: 12px;
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    .gallery-modal-close:hover {
+      background: #e2e8f0;
+    }
+
+    .supabase-status {
+      min-height: 20px;
+      margin-top: 12px;
+      color: #94a3b8;
+      font-size: 0.78rem;
+    }
+
+    .supabase-status.error,
+    .admin-error {
+      color: #fca5a5;
+    }
+
+    .supabase-status.success {
+      color: #86efac;
+    }
+
+    .gallery-item[data-supabase-id] {
+      display: block;
+    }
+
+    .gallery-item img {
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .admin-panel[hidden],
+    .admin-login-trigger[hidden] {
+      display: none;
+    }
+
+    .admin-panel {
+      padding: 76px 0;
+      background: #060913;
+      color: #f8fafc;
+    }
+
+    .admin-panel-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .admin-panel-header,
+    .admin-form-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .admin-panel-title {
+      margin: 0;
+      color: #f8fafc;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+    }
+
+    .admin-panel-copy {
+      max-width: 650px;
+      margin: 10px 0 28px;
+      color: rgba(203, 213, 225, 0.72);
+    }
+
+    .admin-logout-btn,
+    .admin-form-toggle,
+    .admin-cancel-btn {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .admin-tab {
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: rgba(139, 92, 246, 0.08);
+      color: #c4b5fd;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-tab.active {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .admin-form {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 20px;
+      background: rgba(15, 23, 42, 0.68);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .admin-form[hidden] {
+      display: none;
+    }
+
+    .admin-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .admin-form input,
+    .admin-form textarea,
+    .admin-form select {
+      width: 100%;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 11px;
+      padding: 11px 13px;
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.06);
+      font: inherit;
+      outline: none;
+    }
+
+    .admin-form textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .admin-form input:focus,
+    .admin-form textarea:focus,
+    .admin-form select:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+    }
+
+    .admin-form select option {
+      color: #0f172a;
+    }
+
+    .admin-submit-btn {
+      justify-self: start;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-record-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .admin-record {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    .admin-record h4 {
+      margin: 0;
+      color: #f8fafc;
+    }
+
+    .admin-record p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 0.82rem;
+    }
+
+    .admin-record-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    .admin-record-actions button {
+      flex: 1;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 9px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #dbeafe;
+      font: inherit;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 20px;
+    }
+
+    .admin-stat-card {
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    .admin-stat-label {
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .admin-stat-value {
+      display: block;
+      margin-top: 6px;
+      color: #f8fafc;
+      font-size: 1.7rem;
+      font-weight: 900;
+    }
+
+    .admin-messages[hidden] {
+      display: none;
+    }
+
+    .admin-messages-toolbar,
+    .admin-message-filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .admin-messages-toolbar {
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .admin-search {
+      flex: 1 1 280px;
+      min-width: 0;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 11px;
+      padding: 11px 13px;
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.06);
+      font: inherit;
+    }
+
+    .admin-message-filter,
+    .admin-message-action {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-message-filter.active {
+      border-color: #60a5fa;
+      color: #fff;
+      background: rgba(37, 99, 235, 0.28);
+    }
+
+    .admin-message-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-message-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 1.1fr) minmax(180px, 1.4fr) minmax(110px, auto) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 15px 16px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.55);
+      cursor: pointer;
+    }
+
+    .admin-message-row.is-unread {
+      border-color: rgba(96, 165, 250, 0.5);
+      background: rgba(30, 64, 175, 0.16);
+    }
+
+    .admin-message-sender,
+    .admin-message-subject {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .admin-message-sender strong,
+    .admin-message-subject strong {
+      display: block;
+      overflow: hidden;
+      color: #f8fafc;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .admin-message-sender span,
+    .admin-message-preview,
+    .admin-message-date {
+      display: block;
+      overflow: hidden;
+      margin-top: 3px;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .admin-message-status {
+      color: #93c5fd;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .admin-message-star {
+      border: 0;
+      background: transparent;
+      color: #fbbf24;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .admin-message-empty {
+      padding: 42px 20px;
+      border: 1px dashed rgba(148, 163, 184, 0.25);
+      border-radius: 16px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .admin-message-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2300;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(2, 6, 23, 0.8);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .admin-message-modal.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .admin-message-detail {
+      width: min(100%, 620px);
+      max-height: min(720px, 92vh);
+      overflow: auto;
+      padding: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 20px;
+      background: #0f172a;
+      box-shadow: 0 28px 80px rgba(2, 6, 23, 0.6);
+    }
+
+    .admin-message-detail-header,
+    .admin-message-detail-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .admin-message-detail h3 {
+      margin: 0;
+      color: #f8fafc;
+    }
+
+    .admin-message-close {
+      border: 0;
+      background: transparent;
+      color: #cbd5e1;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .admin-message-meta {
+      display: grid;
+      gap: 8px;
+      margin: 20px 0;
+      color: #cbd5e1;
+      font-size: 0.88rem;
+    }
+
+    .admin-message-body {
+      margin: 0 0 22px;
+      padding: 16px;
+      border-radius: 12px;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.06);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .contact-status {
+      min-height: 22px;
+      margin: 12px 0 0;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .contact-status.success { color: #86efac; }
+    .contact-status.error { color: #fca5a5; }
+
+    .admin-login-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .admin-login-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .admin-login-modal {
+      width: min(100%, 410px);
+      padding: 28px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 28px 80px rgba(2, 6, 23, 0.5);
+    }
+
+    .admin-login-modal h3 {
+      margin: 0 0 8px;
+      color: #f8fafc;
+    }
+
+    .admin-login-modal p {
+      margin: 0 0 18px;
+      color: #94a3b8;
+      font-size: 0.88rem;
+    }
+
+    .admin-login-form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-login-form input {
+      width: 100%;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 11px;
+      padding: 12px 14px;
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.07);
+      font: inherit;
+    }
+
+    .admin-login-form button {
+      border: 0;
+      border-radius: 11px;
+      padding: 12px;
+      background: #2563eb;
+      color: #fff;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-login-close {
+      width: 100%;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 11px;
+      padding: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-width: 760px) {
+      .admin-panel-header,
+      .admin-form-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .admin-form-grid,
+      .admin-record-list,
+      .admin-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-message-row {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+
+      .admin-message-subject,
+      .admin-message-date {
+        grid-column: 1 / -1;
+      }
+
+      .admin-submit-btn,
+      .admin-logout-btn,
+      .admin-form-toggle,
+      .admin-cancel-btn {
+        width: 100%;
+      }
+
+      .admin-login-modal {
+        padding: 24px;
+      }
+    }
+
+    .vault-access-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(37, 99, 235, 0.14);
+      color: #bfdbfe;
+      font: inherit;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .vault-access-btn:hover {
+      background: rgba(37, 99, 235, 0.28);
+      border-color: rgba(147, 197, 253, 0.65);
+      transform: translateY(-1px);
+    }
+
+    .mobile-menu .vault-access-btn {
+      justify-content: center;
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+    }
+
+    .mobile-menu #adminMobileLoginBtn { display: none !important; }
+
+    .documents-section[hidden] {
+      display: none;
+    }
+
+    .documents-section {
+      padding: 76px 0;
+      background: #080b18;
+      color: #f8fafc;
+    }
+
+    .documents-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .documents-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .documents-kicker {
+      color: #60a5fa;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+
+    .documents-title {
+      margin: 0;
+      color: #f8fafc;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .documents-lock-btn {
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .documents-lock-btn:hover {
+      border-color: rgba(96, 165, 250, 0.55);
+      color: #fff;
+    }
+
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .document-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.45));
+      box-shadow: 0 18px 45px rgba(2, 6, 23, 0.24), inset 0 1px rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      animation: documentCardReveal 0.5s ease both;
+    }
+
+    .document-card:nth-child(2) { animation-delay: 0.08s; }
+    .document-card:nth-child(3) { animation-delay: 0.16s; }
+
+    .document-card:hover {
+      border-color: rgba(96, 165, 250, 0.42);
+      transform: translateY(-4px);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .document-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.18);
+      color: #93c5fd;
+      font-size: 1.1rem;
+    }
+
+    .document-name {
+      margin: 0 0 6px;
+      color: #f8fafc;
+      font-size: 1.02rem;
+    }
+
+    .document-type {
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .document-action {
+      flex: 1;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #dbeafe;
+      background: rgba(255, 255, 255, 0.06);
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .document-action:hover {
+      border-color: rgba(96, 165, 250, 0.55);
+      background: rgba(37, 99, 235, 0.2);
+    }
+
+    .documents-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(2, 6, 23, 0.74);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .documents-modal-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .documents-modal {
+      width: min(100%, 410px);
+      padding: 30px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.97);
+      box-shadow: 0 28px 80px rgba(2, 6, 23, 0.5), inset 0 1px rgba(255, 255, 255, 0.08);
+      transform: translateY(14px) scale(0.98);
+      transition: transform 0.25s ease;
+    }
+
+    .documents-modal-backdrop.is-open .documents-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .documents-modal-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      background: rgba(37, 99, 235, 0.18);
+      color: #93c5fd;
+      font-size: 1.35rem;
+    }
+
+    .documents-modal h3 {
+      margin: 0 0 8px;
+      color: #f8fafc;
+      font-size: 1.35rem;
+    }
+
+    .documents-modal-copy {
+      margin: 0 0 20px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .documents-modal-form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .documents-pin-input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      outline: none;
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.07);
+      font: inherit;
+      font-size: 1rem;
+    }
+
+    .documents-pin-input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+    }
+
+    .documents-submit-btn,
+    .documents-modal-close {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .documents-submit-btn {
+      color: #fff;
+      background: #2563eb;
+      white-space: nowrap;
+    }
+
+    .documents-modal-close {
+      width: 100%;
+      margin-top: 12px;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .documents-error {
+      min-height: 20px;
+      margin: 10px 0 0;
+      color: #fca5a5;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    @keyframes documentCardReveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .documents-section[hidden] {
+      display: none;
+    }
+
+    .documents-section {
+      padding: 76px 0;
+      background: #080b18;
+      color: #f8fafc;
+    }
+
+    .documents-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .documents-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .documents-kicker {
+      color: #60a5fa;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+
+    .documents-title {
+      margin: 0;
+      color: #f8fafc;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .documents-lock-btn {
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .documents-lock-btn:hover {
+      border-color: rgba(96, 165, 250, 0.55);
+      color: #fff;
+    }
+
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .document-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.45));
+      box-shadow: 0 18px 45px rgba(2, 6, 23, 0.24), inset 0 1px rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      animation: documentCardReveal 0.5s ease both;
+    }
+
+    .document-card:nth-child(2) { animation-delay: 0.08s; }
+    .document-card:nth-child(3) { animation-delay: 0.16s; }
+
+    .document-card:hover {
+      border-color: rgba(96, 165, 250, 0.42);
+      transform: translateY(-4px);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .document-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.18);
+      color: #93c5fd;
+      font-size: 1.1rem;
+    }
+
+    .document-name {
+      margin: 0 0 6px;
+      color: #f8fafc;
+      font-size: 1.02rem;
+    }
+
+    .document-type {
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .document-action {
+      flex: 1;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #dbeafe;
+      background: rgba(255, 255, 255, 0.06);
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .document-action:hover {
+      border-color: rgba(96, 165, 250, 0.55);
+      background: rgba(37, 99, 235, 0.2);
+    }
+
+    @keyframes documentCardReveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-auto-rows: 150px;
+      gap: 16px;
+    }
+
+    .gallery-item {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #dbe3ef;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+    }
+
+    .gallery-item:nth-child(1) { grid-column: span 7; grid-row: span 3; }
+    .gallery-item:nth-child(2) { grid-column: span 5; grid-row: span 2; }
+    .gallery-item:nth-child(3) { grid-column: span 5; grid-row: span 2; }
+    .gallery-item:nth-child(4) { grid-column: span 4; grid-row: span 2; }
+    .gallery-item:nth-child(5) { grid-column: span 4; grid-row: span 2; }
+    .gallery-item:nth-child(6) { grid-column: span 4; grid-row: span 2; }
+
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      transition: opacity 0.45s ease;
+    }
+
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 35% 0 0;
+      background: linear-gradient(transparent, rgba(6, 12, 27, 0.84));
+      pointer-events: none;
+    }
+
+    .gallery-item:hover img {
+      opacity: 0.94;
+    }
+
+    .gallery-caption {
+      position: absolute;
+      right: 18px;
+      bottom: 16px;
+      left: 18px;
+      z-index: 1;
+      color: #fff;
+    }
+
+    .gallery-caption strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+
+    .gallery-caption span {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 700px) {
+      .gallery-section {
+        padding: 68px 0 58px;
+      }
+
+      .gallery-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .gallery-controls {
+        width: 100%;
+      }
+
+      .gallery-lock-btn {
+        width: 100%;
+      }
+
+      .documents-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .documents-lock-btn {
+        width: 100%;
+      }
+
+      .documents-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 150px;
+      }
+
+      .gallery-item:nth-child(n) {
+        grid-column: span 1;
+        grid-row: span 2;
+      }
+
+      .gallery-item:nth-child(1),
+      .gallery-item:nth-child(2) {
+        grid-column: span 2;
+        grid-row: span 2;
+      }
+
+      .gallery-modal {
+        padding: 24px;
+      }
+
+      .gallery-modal-form {
+        flex-direction: column;
+      }
+
+      .documents-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .documents-lock-btn {
+        width: 100%;
+      }
+
+      .documents-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .documents-modal {
+        padding: 24px;
+      }
+
+      .documents-modal-form {
+        flex-direction: column;
+      }
+    }
+
     /* ── SERVICES (NEON CYBERPUNK "WHAT I OFFER" DESIGN) ── */
     .services-bg {
       background: #0a0e1a;
@@ -3401,6 +4993,7 @@
         rgba(59, 130, 246, 0.5) 50%, 
         rgba(168, 85, 247, 0) 100%);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       opacity: 0;
@@ -3706,6 +5299,7 @@
         rgba(59, 130, 246, 0.5) 50%, 
         rgba(168, 85, 247, 0) 100%);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       opacity: 0;
@@ -6960,14 +8554,89 @@
       }
     }
   </style>
+  <style>
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; }
+      .gallery-item:nth-child(n) { grid-column: span 1; grid-row: auto; min-height: 220px; }
+    }
+  </style>
+  <style>
+    .hamburger {
+      width: 52px;
+      height: 52px;
+      padding: 0;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: 1px solid rgba(129, 140, 248, 0.7);
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.56);
+      box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.18), 0 8px 24px rgba(15, 23, 42, 0.4), 0 0 28px rgba(96, 165, 250, 0.28), 0 0 38px rgba(139, 92, 246, 0.14);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+
+    .hamburger::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 55%);
+      pointer-events: none;
+    }
+
+    .hamburger:hover,
+    .hamburger:focus-visible {
+      border-color: rgba(191, 219, 254, 0.9);
+      background: rgba(30, 41, 78, 0.72);
+      box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 10px 28px rgba(15, 23, 42, 0.46), 0 0 34px rgba(139, 92, 246, 0.4), 0 0 44px rgba(96, 165, 250, 0.2);
+      outline: none;
+    }
+
+    .hamburger:active { transform: scale(.94); }
+    .hamburger span { position: relative; z-index: 1; width: 24px; height: 3px; border-radius: 99px; background: #ffffff; box-shadow: 0 0 8px rgba(219, 234, 254, 0.8), 0 0 14px rgba(96, 165, 250, 0.42); transition: transform .28s ease, opacity .2s ease, width .2s ease; }
+    .hamburger.open span:nth-child(1), .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2), .hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3), .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    @media (max-width: 1023px) {
+      html, body { max-width: 100%; overflow-x: hidden; }
+      .mobile-menu {
+        box-sizing: border-box;
+        top: calc(70px + env(safe-area-inset-top));
+        right: 0;
+        width: min(82vw, 360px);
+        max-width: 360px;
+        height: calc(100dvh - 70px - env(safe-area-inset-top));
+        max-height: calc(100dvh - 70px - env(safe-area-inset-top));
+        padding: 20px 18px calc(28px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+      .mobile-menu > * { flex: 0 0 auto; min-width: 0; max-width: 100%; box-sizing: border-box; }
+      .mobile-menu-actions { margin-top: auto; padding-top: 18px; padding-bottom: 2px; }
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .mobile-menu { top: calc(72px + env(safe-area-inset-top)); width: min(78vw, 380px); max-width: 380px; height: calc(100dvh - 72px - env(safe-area-inset-top)); max-height: calc(100dvh - 72px - env(safe-area-inset-top)); }
+    }
+  </style>
 </head>
 
-<body>
+<body class="loader-active">
 
-  <div id="pwaSplash" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0f1e 0%,#0f1f3d 45%,#1a1040 100%);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .35s ease,visibility .35s ease;">
-    <div style="text-align:center;">
-      <div style="width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,#2563eb,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3rem;box-shadow:0 0 24px rgba(37,99,235,.45);margin:0 auto 12px;">RY</div>
-      <div style="font-weight:700;letter-spacing:.04em;">Loading Portfolio...</div>
+  <div class="portfolio-loader" id="portfolioLoader" aria-label="Loading Roshan Yadav portfolio">
+    <div class="portfolio-loader-content">
+      <div class="portfolio-loader-image-wrap">
+        <img class="portfolio-loader-image" src="loadingimg.jpeg" alt="Roshan Yadav">
+      </div>
+      <h1 class="portfolio-loader-title">ROSHAN YADAV</h1>
+      <p class="portfolio-loader-subtitle">Welcome to my Portfolio</p>
+      <div class="portfolio-loader-progress" aria-label="Loading" role="progressbar"></div>
     </div>
   </div>
 
@@ -6994,18 +8663,21 @@
   <nav id="mainNav">
     <a href="#hero" class="nav-logo">
       <div class="badge">RY</div>
-      Roshan Yadav
+      <span>Portfolio</span>
     </a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li hidden><button class="vault-access-btn" id="documentsAccessBtn" type="button">🔒 Vault</button></li>
+      <li><button class="vault-access-btn admin-login-trigger" id="adminLoginBtn" type="button" hidden>Admin</button></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#journey">Journey</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <a href="mailto:roshanydvnp077@gmail.com" class="nav-cta">Hire Me</a>
-    <a href="https://roshanydv.com.np/" class="nav-cta">Login</a>
+    <a href="#admin-login" class="nav-cta" id="publicLoginBtn">Login</a>
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
@@ -7013,14 +8685,24 @@
 
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-profile">
+      <div class="mobile-menu-avatar" aria-hidden="true">RY</div>
+      <div><strong>Roshan Yadav</strong><span>Portfolio &amp; Projects</span></div>
+    </div>
     <a href="#about" class="mob-link">About</a>
     <a href="#skills" class="mob-link">Skills</a>
     <a href="#projects" class="mob-link">Projects</a>
+    <a href="#gallery" class="mob-link">Gallery</a>
+    <div class="mobile-menu-divider" role="separator" aria-label="Protected content"></div>
+    <button class="vault-access-btn mob-link" id="documentsMobileAccessBtn" type="button">🔒 Documents / Vault</button>
+    <button class="vault-access-btn mob-link admin-login-trigger" id="adminMobileLoginBtn" type="button" hidden>Admin</button>
     <a href="#services" class="mob-link">Services</a>
     <a href="#journey" class="mob-link">Journey</a>
     <a href="#contact" class="mob-link">Contact</a>
-    <a href="mailto:roshanydvnp077@gmail.com" class="mob-link mob-cta">Hire Me</a>
-    <a href="https://roshanydv.com.np/" class="mob-link mob-cta">Login</a>
+    <div class="mobile-menu-actions">
+      <a href="mailto:roshanydvnp077@gmail.com" class="mob-link mob-cta mobile-action">Hire Me</a>
+      <a href="#admin-login" class="mob-link mobile-action secondary" id="publicMobileLoginBtn">Login</a>
+    </div>
   </div>
 
   <!-- HERO -->
@@ -7197,7 +8879,7 @@
           </a>
           <a href="https://www.tiktok.com/@mike.ydv" target="_blank" rel="noopener noreferrer" title="TikTok">
             <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.1 1.82 2.89 2.89 0 0 1 5.1-1.82V9.4a6.85 6.85 0 0 0-5.03 7.03 6.85 6.85 0 0 0 10.85-5.09v-4.73a8.74 8.74 0 0 0 5.25 1.73V9.63a4.85 4.85 0 0 1-3.75-2.94z" />
+              <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
             </svg>
           </a>
           <a href="https://www.facebook.com/roshan.yadav.791873" target="_blank" rel="noopener noreferrer" title="Facebook">
@@ -7841,6 +9523,156 @@ code, scalable backend architectures, and crisp frontend experiences.
     </div>
   </section>
 
+  <!-- GALLERY -->
+  <section id="gallery" class="gallery-section">
+    <div class="gallery-container">
+      <div class="gallery-header">
+        <div>
+          <div class="gallery-kicker">Selected visuals</div>
+          <h2 class="gallery-title">A closer look at the work.</h2>
+        </div>
+        <p class="gallery-intro">Interfaces, dashboards, and digital systems shaped around real people and real workflows.</p>
+        <div class="gallery-controls">
+          <button class="gallery-lock-btn" id="galleryLockBtn" type="button" aria-controls="galleryGrid">🔒 Admin Login Required</button>
+          <button class="gallery-relock-btn" id="galleryRelockBtn" type="button" hidden>🔒 Lock</button>
+        </div>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid" hidden></div>
+      <p class="supabase-status" id="galleryStatus" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div class="gallery-modal-backdrop" id="galleryModalBackdrop" aria-hidden="true">
+    <div class="gallery-modal" role="dialog" aria-modal="true" aria-labelledby="galleryModalTitle">
+      <div class="gallery-modal-icon" aria-hidden="true">🔒</div>
+      <h3 id="galleryModalTitle">Unlock private gallery</h3>
+      <p>Enter the password or PIN to view the selected visuals.</p>
+      <form class="gallery-modal-form" id="galleryUnlockForm">
+        <input class="gallery-pin-input" id="galleryPinInput" type="password" inputmode="numeric" autocomplete="off" placeholder="Password or PIN" aria-label="Gallery password or PIN" required>
+        <button class="gallery-submit-btn" type="submit">Unlock</button>
+      </form>
+      <p class="gallery-error" id="galleryError" role="alert" aria-live="polite"></p>
+      <button class="gallery-modal-close" id="galleryModalClose" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <section class="documents-section" id="documents" hidden aria-labelledby="documentsTitle">
+    <div class="documents-container">
+      <div class="documents-header">
+        <div>
+          <div class="documents-kicker">Private workspace</div>
+          <h2 class="documents-title" id="documentsTitle">Documents Vault</h2>
+        </div>
+        <button class="documents-lock-btn" id="documentsLockBtn" type="button">🔒 Lock Vault</button>
+      </div>
+      <div class="documents-grid" id="documentsGrid"></div>
+      <p class="supabase-status" id="documentsStatus" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div class="documents-modal-backdrop" id="documentsModalBackdrop" hidden aria-hidden="true">
+    <div class="documents-modal" role="dialog" aria-modal="true" aria-labelledby="documentsModalTitle">
+      <div class="documents-modal-icon" aria-hidden="true">🔒</div>
+      <h3 id="documentsModalTitle">Unlock Documents Vault</h3>
+      <p class="documents-modal-copy">Sign in with your Supabase admin account to continue.</p>
+      <form class="documents-modal-form" id="documentsUnlockForm">
+        <input class="documents-pin-input" id="documentsEmailInput" type="email" autocomplete="username" placeholder="Admin email" aria-label="Admin email" required>
+        <input class="documents-pin-input" id="documentsPasswordInput" type="password" autocomplete="current-password" placeholder="Password" aria-label="Admin password" required>
+        <button class="documents-submit-btn" type="submit">Sign in</button>
+      </form>
+      <p class="documents-error" id="documentsError" role="alert" aria-live="polite"></p>
+      <button class="documents-modal-close" id="documentsModalClose" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <section class="admin-panel" id="adminPanel" hidden aria-labelledby="adminPanelTitle">
+    <div class="admin-panel-inner">
+      <div class="admin-panel-header">
+        <div>
+          <div class="documents-kicker">Supabase control room</div>
+          <h2 class="admin-panel-title" id="adminPanelTitle">Portfolio Admin</h2>
+          <p class="admin-panel-copy">Manage gallery images and portfolio documents stored in Supabase.</p>
+        </div>
+        <button class="admin-logout-btn" id="adminLogoutBtn" type="button">Sign out</button>
+      </div>
+      <div class="admin-tabs" role="tablist" aria-label="Admin content type">
+        <button class="admin-tab" id="adminMessagesTab" type="button" role="tab" aria-selected="false">Messages <span id="adminMessagesBadge" hidden>0</span></button>
+        <button class="admin-tab active" id="adminGalleryTab" type="button" role="tab" aria-selected="true">Gallery</button>
+        <button class="admin-tab" id="adminDocumentsTab" type="button" role="tab" aria-selected="false">Documents</button>
+      </div>
+      <div class="admin-stats" id="adminMessageStats">
+        <div class="admin-stat-card"><span class="admin-stat-label">Total Messages</span><strong class="admin-stat-value" id="adminTotalMessages">0</strong></div>
+        <div class="admin-stat-card"><span class="admin-stat-label">Unread</span><strong class="admin-stat-value" id="adminUnreadMessages">0</strong></div>
+        <div class="admin-stat-card"><span class="admin-stat-label">Today</span><strong class="admin-stat-value" id="adminTodayMessages">0</strong></div>
+        <div class="admin-stat-card"><span class="admin-stat-label">Starred</span><strong class="admin-stat-value" id="adminStarredMessages">0</strong></div>
+      </div>
+      <div class="admin-messages" id="adminMessages" hidden>
+        <div class="admin-messages-toolbar">
+          <input class="admin-search" id="adminMessageSearch" type="search" placeholder="Search name, email, subject, or message" aria-label="Search messages">
+          <button class="admin-message-action" id="adminMessageRefresh" type="button">Refresh</button>
+        </div>
+        <div class="admin-message-filters" role="tablist" aria-label="Message filters">
+          <button class="admin-message-filter active" type="button" data-message-filter="all">All</button>
+          <button class="admin-message-filter" type="button" data-message-filter="unread">Unread</button>
+          <button class="admin-message-filter" type="button" data-message-filter="read">Read</button>
+          <button class="admin-message-filter" type="button" data-message-filter="starred">Starred</button>
+        </div>
+        <p class="supabase-status" id="adminMessageStatus" role="status" aria-live="polite"></p>
+        <div class="admin-message-list" id="adminMessageList"></div>
+      </div>
+      <form class="admin-form" id="adminUploadForm">
+        <div class="admin-form-header">
+          <h3 id="adminFormTitle">Add Gallery Image</h3>
+          <button class="admin-form-toggle" id="adminFormCancel" type="button" hidden>Cancel edit</button>
+        </div>
+        <div class="admin-form-grid">
+          <input id="adminTitle" type="text" placeholder="Title" required>
+          <select id="adminFileType" aria-label="File type">
+            <option value="image">Image</option>
+            <option value="document">Document</option>
+          </select>
+        </div>
+        <textarea id="adminDescription" placeholder="Description" required></textarea>
+        <input id="adminFile" type="file" accept="image/*,.pdf,.doc,.docx" required>
+        <button class="admin-submit-btn" type="submit">Upload</button>
+        <p class="supabase-status" id="adminStatus" role="status" aria-live="polite"></p>
+      </form>
+      <div class="admin-record-list" id="adminRecordList"></div>
+    </div>
+  </section>
+
+  <div class="admin-message-modal" id="adminMessageModal" aria-hidden="true">
+    <article class="admin-message-detail" role="dialog" aria-modal="true" aria-labelledby="adminMessageDetailTitle">
+      <div class="admin-message-detail-header">
+        <h3 id="adminMessageDetailTitle">Message details</h3>
+        <button class="admin-message-close" id="adminMessageClose" type="button" aria-label="Close message">×</button>
+      </div>
+      <div class="admin-message-meta" id="adminMessageDetailMeta"></div>
+      <p class="admin-message-body" id="adminMessageDetailBody"></p>
+      <div class="admin-message-detail-actions">
+        <button class="admin-message-action" id="adminMessageReadToggle" type="button">Mark as read</button>
+        <button class="admin-message-action" id="adminMessageStarToggle" type="button">Star</button>
+        <button class="admin-message-action" id="adminMessageReply" type="button">Reply by Email</button>
+        <button class="admin-message-action" id="adminMessageDelete" type="button">Delete</button>
+      </div>
+    </article>
+  </div>
+
+  <div class="admin-login-backdrop" id="adminLoginBackdrop" aria-hidden="true">
+    <div class="admin-login-modal" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle">
+      <h3 id="adminLoginTitle">Admin sign in</h3>
+      <p>Use your Supabase Auth email and password.</p>
+      <form class="admin-login-form" id="adminLoginForm">
+        <input id="adminEmail" type="email" autocomplete="username" placeholder="Email" required>
+        <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" required>
+        <button type="submit">Sign in</button>
+      </form>
+      <p class="admin-error" id="adminLoginError" role="alert" aria-live="polite"></p>
+      <button class="admin-login-close" id="adminLoginClose" type="button">Cancel</button>
+    </div>
+  </div>
+
   <!-- SERVICES -->
   <section id="services" class="services-bg">
     <div class="section-inner">
@@ -8091,6 +9923,7 @@ code, scalable backend architectures, and crisp frontend experiences.
 
         <div class="contact-right">
           <form class="contact-form" id="publicContactForm">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" hidden>
             <div class="form-grid">
               <div class="form-field">
                 <label class="form-label">Your Name</label>
@@ -8102,6 +9935,10 @@ code, scalable backend architectures, and crisp frontend experiences.
               </div>
             </div>
             <div class="form-field">
+              <label class="form-label">Phone <span>(optional)</span></label>
+              <input type="tel" class="form-input" name="phone" placeholder="Your phone number" maxlength="40" />
+            </div>
+            <div class="form-field">
               <label class="form-label">Subject</label>
               <input type="text" class="form-input" name="subject" placeholder="Subject" required />
             </div>
@@ -8110,6 +9947,7 @@ code, scalable backend architectures, and crisp frontend experiences.
               <textarea class="form-textarea" name="message" placeholder="Your Message" required></textarea>
             </div>
             <button type="submit" class="contact-submit-btn">Send Message</button>
+            <p class="contact-status" id="publicContactStatus" role="status" aria-live="polite"></p>
           </form>
         </div>
       </div>
@@ -8119,7 +9957,7 @@ code, scalable backend architectures, and crisp frontend experiences.
   <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
-      <div class="footer-logo">[ <span>Roshan</span> Yadav]</div>
+      <div class="footer-logo">[ <span data-site-name>Roshan Yadav</span>]</div>
       <p>Crafting digital experiences. Building the future. 🇳🇵</p>
       <div class="footer-links">
         <a href="#about">About</a>
@@ -8380,8 +10218,45 @@ code, scalable backend architectures, and crisp frontend experiences.
       unique(revealElements).forEach(element => revealObserver.observe(element));
     });
   </script>
-  <script type="module" src="js/public-content.js?v=sync-2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="public-content.js" defer></script>
   <script src="app.js" defer></script>
+
+  <script>
+    const portfolioLoaderStartedAt = performance.now();
+    (async function loadConfiguredLoaderImage() {
+      const image = document.querySelector('.portfolio-loader-image');
+      const client = window.supabaseClient;
+      if (!image || !client) return;
+      const fallback = 'loadingimg.jpeg';
+      image.onerror = () => { image.onerror = null; image.src = fallback; };
+      const result = await client.from('site_settings').select('appearance').eq('is_published', true).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      const value = result.data?.appearance?.loading_image_url;
+      if (!result.error && value) image.src = /^https?:\/\//i.test(value) ? value : client.storage.from('portfolio-images').getPublicUrl(value).data.publicUrl;
+    }());
+
+    window.addEventListener('load', function () {
+      const portfolioLoader = document.getElementById('portfolioLoader');
+      if (!portfolioLoader) return;
+
+      const remainingTime = Math.max(0, 3000 - (performance.now() - portfolioLoaderStartedAt));
+      window.setTimeout(function () {
+        portfolioLoader.classList.add('is-hidden');
+        window.setTimeout(function () {
+          portfolioLoader.remove();
+          document.body.classList.remove('loader-active');
+        }, 650);
+      }, remainingTime);
+    }, { once: true });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const galleryGrid = document.getElementById('galleryGrid');
+      if (galleryGrid) galleryGrid.hidden = true;
+    });
+  </script>
   
   <!-- Hamburger Menu Script -->
   <script>
@@ -8420,6 +10295,744 @@ code, scalable backend architectures, and crisp frontend experiences.
           }
         });
       }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const documentsSection = document.getElementById('documents');
+      if (documentsSection) documentsSection.hidden = true;
+    });
+  </script>
+
+  <script>
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+    const MAX_DOCUMENT_SIZE = 20 * 1024 * 1024;
+    const ALLOWED_DOCUMENT_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const supabaseClient = window.supabaseClient;
+      const configured = typeof supabaseClient !== 'undefined' && Boolean(supabaseClient) && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_PUBLISHABLE_KEY !== 'undefined';
+      const galleryGrid = document.getElementById('galleryGrid');
+      const galleryStatus = document.getElementById('galleryStatus');
+      const documentsSection = document.getElementById('documents');
+      const documentsGrid = document.getElementById('documentsGrid');
+      const documentsStatus = document.getElementById('documentsStatus');
+      const documentsModal = document.getElementById('documentsModalBackdrop');
+      const documentsForm = document.getElementById('documentsUnlockForm');
+      const documentsEmail = document.getElementById('documentsEmailInput');
+      const documentsPassword = document.getElementById('documentsPasswordInput');
+      const documentsError = document.getElementById('documentsError');
+      const documentsClose = document.getElementById('documentsModalClose');
+      const adminModal = document.getElementById('adminLoginBackdrop');
+      const adminForm = document.getElementById('adminLoginForm');
+      const adminEmail = document.getElementById('adminEmail');
+      const adminPassword = document.getElementById('adminPassword');
+      const adminError = document.getElementById('adminLoginError');
+      const adminClose = document.getElementById('adminLoginClose');
+      const adminNavButton = document.getElementById('adminLoginBtn');
+      const adminMobileNavButton = document.getElementById('adminMobileLoginBtn');
+      const publicLoginButton = document.getElementById('publicLoginBtn');
+      const publicMobileLoginButton = document.getElementById('publicMobileLoginBtn');
+      const adminPanel = document.getElementById('adminPanel');
+      const adminStatus = document.getElementById('adminStatus');
+      const adminRecordList = document.getElementById('adminRecordList');
+      const adminTitle = document.getElementById('adminTitle');
+      const adminDescription = document.getElementById('adminDescription');
+      const adminFile = document.getElementById('adminFile');
+      const adminFileType = document.getElementById('adminFileType');
+      const adminFormTitle = document.getElementById('adminFormTitle');
+      const adminFormCancel = document.getElementById('adminFormCancel');
+      const adminGalleryTab = document.getElementById('adminGalleryTab');
+      const adminDocumentsTab = document.getElementById('adminDocumentsTab');
+      const adminMessagesTab = document.getElementById('adminMessagesTab');
+      const adminMessages = document.getElementById('adminMessages');
+      const adminMessageStats = document.getElementById('adminMessageStats');
+      const adminMessageList = document.getElementById('adminMessageList');
+      const adminMessageStatus = document.getElementById('adminMessageStatus');
+      const adminMessageSearch = document.getElementById('adminMessageSearch');
+      const adminMessagesBadge = document.getElementById('adminMessagesBadge');
+      const adminMessageModal = document.getElementById('adminMessageModal');
+      const adminMessageDetailMeta = document.getElementById('adminMessageDetailMeta');
+      const adminMessageDetailBody = document.getElementById('adminMessageDetailBody');
+      const adminMessageReadToggle = document.getElementById('adminMessageReadToggle');
+      const adminMessageStarToggle = document.getElementById('adminMessageStarToggle');
+      const adminMessageReply = document.getElementById('adminMessageReply');
+      const adminMessageDelete = document.getElementById('adminMessageDelete');
+      const adminUploadForm = document.getElementById('adminUploadForm');
+      const galleryLockButton = document.getElementById('galleryLockBtn');
+      const galleryRelockButton = document.getElementById('galleryRelockBtn');
+      const documentsLockButton = document.getElementById('documentsLockBtn');
+      const storedRecords = { gallery: [], documents: [] };
+      const GALLERY_BUCKET = 'portfolio-gallery';
+      let galleryAdmin = false;
+      let pendingGalleryLogin = false;
+      let contactMessages = [];
+      let activeMessageFilter = 'all';
+      let selectedMessage = null;
+      let hasLoadedMessages = false;
+      let messageChannel = null;
+      let messagePoller = null;
+      let activeAdminType = 'gallery';
+      let editingRecord = null;
+
+      function setStatus(element, message, type) {
+        if (!element) return;
+        element.textContent = message || '';
+        element.className = 'supabase-status' + (type ? ' ' + type : '');
+      }
+
+      function setAdminNavigation(isVisible) {
+        [adminNavButton, adminMobileNavButton].forEach(function (button) {
+          if (button) button.hidden = !isVisible;
+        });
+        [publicLoginButton].forEach(function (button) {
+          if (!button) return;
+          button.textContent = 'Login';
+          button.setAttribute('aria-label', 'Admin login');
+          button.href = '#admin-login';
+        });
+        if (publicMobileLoginButton) publicMobileLoginButton.hidden = false;
+      }
+
+      async function syncAdminNavigation() {
+        const authorized = Boolean(supabaseClient) && await isAdmin();
+        setAdminNavigation(authorized);
+        return authorized;
+      }
+
+      function formatMessageDate(value) {
+        return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
+      }
+
+      function updateMessageStats() {
+        const unread = contactMessages.filter(message => message.status === 'unread').length;
+        const starred = contactMessages.filter(message => message.is_starred).length;
+        const today = new Date().toDateString();
+        const todayCount = contactMessages.filter(message => new Date(message.created_at).toDateString() === today).length;
+        document.getElementById('adminTotalMessages').textContent = contactMessages.length;
+        document.getElementById('adminUnreadMessages').textContent = unread;
+        document.getElementById('adminTodayMessages').textContent = todayCount;
+        document.getElementById('adminStarredMessages').textContent = starred;
+        adminMessagesBadge.textContent = unread;
+        adminMessagesBadge.hidden = unread === 0;
+      }
+
+      function filteredMessages() {
+        const query = adminMessageSearch.value.trim().toLowerCase();
+        return contactMessages.filter(function (message) {
+          const matchesFilter = activeMessageFilter === 'all'
+            || (activeMessageFilter === 'starred' ? message.is_starred : message.status === activeMessageFilter);
+          const searchable = [message.name, message.email, message.subject, message.message].join(' ').toLowerCase();
+          return matchesFilter && (!query || searchable.includes(query));
+        });
+      }
+
+      function renderMessages() {
+        clearElement(adminMessageList);
+        const messages = filteredMessages();
+        if (!messages.length) {
+          adminMessageList.innerHTML = '<div class="admin-message-empty">📭 No messages yet<br><span>Messages submitted through your website will appear here.</span></div>';
+          return;
+        }
+        messages.forEach(function (message) {
+          const row = document.createElement('article');
+          row.className = 'admin-message-row' + (message.status === 'unread' ? ' is-unread' : '');
+          row.dataset.messageId = message.id;
+          const sender = document.createElement('div');
+          sender.className = 'admin-message-sender';
+          sender.appendChild(createTextElement('strong', '', message.name));
+          sender.appendChild(createTextElement('span', '', message.email));
+          const subject = document.createElement('div');
+          subject.className = 'admin-message-subject';
+          subject.appendChild(createTextElement('strong', '', message.subject || '(No subject)'));
+          subject.appendChild(createTextElement('span', 'admin-message-preview', message.message));
+          const date = createTextElement('div', 'admin-message-date', formatMessageDate(message.created_at));
+          const actions = document.createElement('div');
+          actions.innerHTML = '<span class="admin-message-status">' + (message.status === 'unread' ? 'Unread' : 'Read') + '</span> <button class="admin-message-star" type="button" data-message-star="' + message.id + '" aria-label="' + (message.is_starred ? 'Unstar' : 'Star') + '">' + (message.is_starred ? '★' : '☆') + '</button>';
+          row.append(sender, subject, date, actions);
+          adminMessageList.appendChild(row);
+        });
+      }
+
+      function showMessageModal(message) {
+        selectedMessage = message;
+        adminMessageDetailMeta.innerHTML = '';
+        [['Name', message.name], ['Email', message.email], ['Phone', message.phone || 'Not provided'], ['Subject', message.subject || '(No subject)'], ['Received', formatMessageDate(message.created_at)], ['Status', message.status]].forEach(function (entry) {
+          const line = document.createElement('div');
+          line.appendChild(createTextElement('strong', '', entry[0] + ': '));
+          line.appendChild(createTextElement('span', '', entry[1]));
+          adminMessageDetailMeta.appendChild(line);
+        });
+        adminMessageDetailBody.textContent = message.message;
+        adminMessageReadToggle.textContent = message.status === 'unread' ? 'Mark as read' : 'Mark as unread';
+        adminMessageStarToggle.textContent = message.is_starred ? 'Unstar' : 'Star';
+        adminMessageReply.onclick = function () { window.location.href = 'mailto:' + encodeURIComponent(message.email) + '?subject=' + encodeURIComponent('Re: ' + (message.subject || 'Your message')); };
+        adminMessageModal.classList.add('is-open');
+        adminMessageModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeMessageModal() {
+        adminMessageModal.classList.remove('is-open');
+        adminMessageModal.setAttribute('aria-hidden', 'true');
+        selectedMessage = null;
+      }
+
+      async function loadMessages(showLoading) {
+        if (!supabaseClient) return;
+        if (showLoading) setStatus(adminMessageStatus, 'Loading messages…', '');
+        const result = await supabaseClient.from('contact_messages').select('*').order('created_at', { ascending: false });
+        if (result.error) {
+          setStatus(adminMessageStatus, 'Messages are unavailable right now.', 'error');
+          return;
+        }
+        const previousUnread = contactMessages.filter(message => message.status === 'unread').length;
+        contactMessages = result.data || [];
+        updateMessageStats();
+        renderMessages();
+        setStatus(adminMessageStatus, contactMessages.length ? '' : 'No messages yet.', '');
+        if (hasLoadedMessages && contactMessages.filter(message => message.status === 'unread').length > previousUnread) {
+          setStatus(adminMessageStatus, '🔔 New Message', 'success');
+        }
+        hasLoadedMessages = true;
+      }
+
+      async function updateMessage(messageId, changes) {
+        const result = await supabaseClient.from('contact_messages').update(changes).eq('id', messageId);
+        if (result.error) { setStatus(adminMessageStatus, 'Could not update this message.', 'error'); return false; }
+        await loadMessages(false);
+        return true;
+      }
+
+      async function deleteMessage(message) {
+        if (!window.confirm('Delete Message?\n\nThis message will be permanently deleted.')) return;
+        const result = await supabaseClient.from('contact_messages').delete().eq('id', message.id);
+        if (result.error) { setStatus(adminMessageStatus, 'Could not delete this message.', 'error'); return; }
+        closeMessageModal();
+        await loadMessages(false);
+      }
+
+      function startMessageSync() {
+        if (messagePoller) window.clearInterval(messagePoller);
+        messagePoller = window.setInterval(function () { loadMessages(false); }, 30000);
+        if (!supabaseClient || messageChannel) return;
+        messageChannel = supabaseClient.channel('contact-messages-admin')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, function () { loadMessages(false); })
+          .subscribe();
+      }
+
+      function stopMessageSync() {
+        if (messagePoller) window.clearInterval(messagePoller);
+        messagePoller = null;
+        if (messageChannel) supabaseClient.removeChannel(messageChannel);
+        messageChannel = null;
+      }
+
+      function escapeText(value) {
+        return String(value || '');
+      }
+
+      function closeModal(modal) {
+        if (!modal) return;
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+
+      function openModal(modal, input) {
+        if (!modal) return;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        if (input) window.setTimeout(function () { input.focus(); }, 100);
+      }
+
+      function closeMobileMenu() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (!hamburger || !mobileMenu) return;
+        hamburger.classList.remove('active', 'open');
+        mobileMenu.classList.remove('active', 'open');
+        document.body.classList.remove('menu-open');
+      }
+
+      function clearElement(element) {
+        while (element && element.firstChild) element.removeChild(element.firstChild);
+      }
+
+      function createTextElement(tag, className, text) {
+        const element = document.createElement(tag);
+        element.className = className;
+        element.textContent = escapeText(text);
+        return element;
+      }
+
+      function isAdmin() {
+        return supabaseClient.auth.getUser().then(function (result) {
+          if (result.error || !result.data.user) return false;
+          return supabaseClient.from('admin_users').select('user_id,role').eq('user_id', result.data.user.id).eq('role', 'admin').maybeSingle().then(function (adminResult) {
+            return !adminResult.error && Boolean(adminResult.data);
+          });
+        });
+      }
+
+      function lockGallery(message) {
+        galleryAdmin = false;
+        storedRecords.gallery = [];
+        clearElement(galleryGrid);
+        galleryGrid.hidden = true;
+        galleryLockButton.textContent = '🔒 Admin Login Required';
+        setStatus(galleryStatus, message || 'Administrator access required to view these photos.', '');
+      }
+
+      async function loadPrivateGallery() {
+        if (!configured || !supabaseClient) { lockGallery('Admin Login Required.'); return; }
+        galleryLockButton.disabled = true;
+        const admin = await isAdmin();
+        if (!admin) { pendingGalleryLogin = true; lockGallery('Admin Login Required.'); galleryLockButton.disabled = false; openModal(adminModal, adminEmail); return; }
+        const result = await supabaseClient.from('gallery').select('id,title,description,file_path,file_type,file_size,is_public,created_at').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+        if (result.error) { lockGallery('Access denied.'); galleryLockButton.disabled = false; return; }
+        galleryAdmin = true;
+        storedRecords.gallery = result.data || [];
+        await renderGallery(storedRecords.gallery);
+        galleryGrid.hidden = false;
+        galleryGrid.removeAttribute('hidden');
+        galleryLockButton.disabled = false;
+      }
+
+      function validateUpload(file, type) {
+        if (!file) return 'Choose a file first.';
+        if (type === 'gallery' && (!file.type.startsWith('image/') || file.size > MAX_IMAGE_SIZE)) return 'Gallery images must be image files under 10 MB.';
+        if (type === 'documents' && (!ALLOWED_DOCUMENT_TYPES.includes(file.type) || file.size > MAX_DOCUMENT_SIZE)) return 'Documents must be PDF or image files under 20 MB.';
+        return '';
+      }
+
+      function storagePath(userId, file, type) {
+        const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
+        return userId + (type === 'gallery' ? '/gallery/' : '/') + crypto.randomUUID() + '-' + safeName;
+      }
+
+      async function renderGallery(records) {
+        clearElement(galleryGrid);
+        for (const record of records) {
+          const signed = await supabaseClient.storage.from(GALLERY_BUCKET).createSignedUrl(record.file_path, 300);
+          if (signed.error) continue;
+          const figure = document.createElement('figure');
+          figure.className = 'gallery-item';
+          figure.dataset.supabaseId = record.id;
+          const image = document.createElement('img');
+          image.src = signed.data.signedUrl;
+          image.alt = record.title || 'Portfolio gallery image';
+          image.loading = 'lazy';
+          const caption = document.createElement('figcaption');
+          caption.className = 'gallery-caption';
+          caption.appendChild(createTextElement('strong', '', record.title));
+          caption.appendChild(createTextElement('span', '', record.description));
+          figure.appendChild(image);
+          figure.appendChild(caption);
+          galleryGrid.appendChild(figure);
+        }
+        galleryGrid.hidden = false;
+        galleryLockButton.textContent = '🔓 Gallery Live';
+        setStatus(galleryStatus, records.length ? '' : 'No gallery images available.', '');
+      }
+
+      function renderDocuments(records) {
+        clearElement(documentsGrid);
+        records.forEach(function (record) {
+          const card = document.createElement('article');
+          card.className = 'document-card';
+          card.dataset.supabaseId = record.id;
+          card.appendChild(createTextElement('div', 'document-icon', record.file_type === 'application/pdf' ? '📄' : '🖼️'));
+          card.appendChild(createTextElement('h3', 'document-name', record.title));
+          card.appendChild(createTextElement('p', 'document-description', record.description));
+          card.appendChild(createTextElement('div', 'document-type', record.file_type + ' · ' + Math.ceil(record.file_size / 1024) + ' KB'));
+          const actions = document.createElement('div');
+          actions.className = 'document-actions';
+          ['View / Preview', 'Download'].forEach(function (label, index) {
+            const action = document.createElement('button');
+            action.className = 'document-action';
+            action.type = 'button';
+            action.dataset.documentId = record.id;
+            action.dataset.download = index === 1 ? 'true' : 'false';
+            action.textContent = label;
+            actions.appendChild(action);
+          });
+          card.appendChild(actions);
+          documentsGrid.appendChild(card);
+        });
+        setStatus(documentsStatus, records.length ? '' : 'No documents are available for this admin account.', '');
+      }
+
+      async function loadPublicGallery() {
+        return loadPrivateGallery();
+      }
+
+      async function unlockDocuments() {
+        if (!configured || !supabaseClient) {
+          documentsError.textContent = 'Supabase is not configured yet.';
+          return;
+        }
+        documentsError.textContent = '';
+        const signInResult = await supabaseClient.auth.signInWithPassword({ email: documentsEmail.value.trim(), password: documentsPassword.value });
+        if (signInResult.error || !(await isAdmin())) {
+          await supabaseClient.auth.signOut();
+          documentsError.textContent = 'Admin authorization failed.';
+          return;
+        }
+        const result = await supabaseClient.from('documents').select('id,title,description,file_path,file_name,file_type,file_size,is_public,created_at').eq('is_public', false).order('created_at', { ascending: false });
+        if (result.error) {
+          documentsError.textContent = result.error.message;
+          return;
+        }
+        storedRecords.documents = result.data || [];
+        renderDocuments(storedRecords.documents);
+        documentsSection.hidden = false;
+        closeModal(documentsModal);
+        documentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      async function migrateLegacyGalleryFiles() {
+        if (!(await isAdmin())) return;
+        const result = await supabaseClient.from('gallery').select('id,file_path,file_name,file_type');
+        if (result.error) return;
+        for (const record of result.data || []) {
+          if (!record.file_path || record.file_path.includes('/gallery/')) continue;
+          const download = await supabaseClient.storage.from('portfolio-images').download(record.file_path);
+          if (download.error || !download.data) continue;
+          const user = (await supabaseClient.auth.getUser()).data.user;
+          if (!user) return;
+          const safeName = (record.file_name || 'gallery-image').toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
+          const newPath = user.id + '/gallery/' + crypto.randomUUID() + '-' + safeName;
+          const upload = await supabaseClient.storage.from(GALLERY_BUCKET).upload(newPath, download.data, { contentType:record.file_type || download.data.type || 'application/octet-stream', upsert:false });
+          if (upload.error) continue;
+          const update = await supabaseClient.from('gallery').update({ file_path:newPath }).eq('id', record.id);
+          if (update.error) { await supabaseClient.storage.from(GALLERY_BUCKET).remove([newPath]); continue; }
+          await supabaseClient.storage.from('portfolio-images').remove([record.file_path]);
+        }
+      }
+
+      async function refreshAdminRecords() {
+        await migrateLegacyGalleryFiles();
+        const galleryResult = await supabaseClient.from('gallery').select('*').order('created_at', { ascending: false });
+        const documentResult = await supabaseClient.from('documents').select('*').order('created_at', { ascending: false });
+        if (galleryResult.error || documentResult.error) {
+          setStatus(adminStatus, (galleryResult.error || documentResult.error).message, 'error');
+          return;
+        }
+        storedRecords.gallery = galleryResult.data || [];
+        storedRecords.documents = documentResult.data || [];
+        renderAdminRecords();
+        await loadMessages(false);
+      }
+
+      function renderAdminRecords() {
+        clearElement(adminRecordList);
+        storedRecords[activeAdminType].forEach(function (record) {
+          const item = document.createElement('article');
+          item.className = 'admin-record';
+          item.appendChild(createTextElement('h4', '', record.title));
+          item.appendChild(createTextElement('p', '', record.description));
+          item.appendChild(createTextElement('p', '', record.file_name + ' · ' + record.file_type));
+          const actions = document.createElement('div');
+          actions.className = 'admin-record-actions';
+          ['Preview', 'Edit', 'Delete'].forEach(function (label) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.dataset.action = label.toLowerCase();
+            button.dataset.id = record.id;
+            button.textContent = label;
+            actions.appendChild(button);
+          });
+          item.appendChild(actions);
+          adminRecordList.appendChild(item);
+        });
+      }
+
+      function resetAdminForm() {
+        editingRecord = null;
+        adminUploadForm.reset();
+        adminFileType.value = activeAdminType === 'gallery' ? 'image' : 'document';
+        adminFileType.disabled = true;
+        adminFile.required = true;
+        adminFormTitle.textContent = activeAdminType === 'gallery' ? 'Add Gallery Image' : 'Add Portfolio Document';
+        adminFormCancel.hidden = true;
+      }
+
+      function selectAdminType(type) {
+        activeAdminType = type;
+        const messagesActive = type === 'messages';
+        adminMessages.hidden = !messagesActive;
+        adminMessageStats.hidden = false;
+        adminUploadForm.hidden = messagesActive;
+        adminRecordList.hidden = messagesActive;
+        adminMessagesTab.classList.toggle('active', messagesActive);
+        adminGalleryTab.classList.toggle('active', type === 'gallery');
+        adminDocumentsTab.classList.toggle('active', type === 'documents');
+        adminMessagesTab.setAttribute('aria-selected', messagesActive);
+        adminGalleryTab.setAttribute('aria-selected', type === 'gallery');
+        adminDocumentsTab.setAttribute('aria-selected', type === 'documents');
+        if (messagesActive) { renderMessages(); return; }
+        resetAdminForm();
+        renderAdminRecords();
+      }
+
+      async function uploadRecord(file, user) {
+        const type = activeAdminType;
+        const validationError = validateUpload(file, type);
+        if (validationError) throw new Error(validationError);
+        const bucket = type === 'gallery' ? GALLERY_BUCKET : 'portfolio-documents';
+        const path = storagePath(user.id, file, type);
+        const uploadResult = await supabaseClient.storage.from(bucket).upload(path, file, { contentType: file.type, upsert: false });
+        if (uploadResult.error) throw uploadResult.error;
+        const table = type === 'gallery' ? 'gallery' : 'documents';
+        const payload = { title: adminTitle.value.trim(), description: adminDescription.value.trim(), file_path: path, file_name: file.name, file_type: file.type, file_size: file.size, is_public: type === 'gallery', created_by: user.id };
+        const insertResult = await supabaseClient.from(table).insert([payload]).select().single();
+        if (insertResult.error) {
+          await supabaseClient.storage.from(bucket).remove([path]);
+          throw insertResult.error;
+        }
+        return insertResult.data;
+      }
+
+      async function updateRecord(file, user) {
+        const type = activeAdminType;
+        const table = type === 'gallery' ? 'gallery' : 'documents';
+        const bucket = type === 'gallery' ? GALLERY_BUCKET : 'portfolio-documents';
+        const changes = { title: adminTitle.value.trim(), description: adminDescription.value.trim(), updated_at: new Date().toISOString(), is_public: type === 'gallery' };
+        if (file) {
+          const validationError = validateUpload(file, type);
+          if (validationError) throw new Error(validationError);
+          const newPath = storagePath(user.id, file, type);
+          const uploadResult = await supabaseClient.storage.from(bucket).upload(newPath, file, { contentType: file.type, upsert: false });
+          if (uploadResult.error) throw uploadResult.error;
+          Object.assign(changes, { file_path: newPath, file_name: file.name, file_type: file.type, file_size: file.size });
+          const oldPath = editingRecord.file_path;
+          const updateResult = await supabaseClient.from(table).update(changes).eq('id', editingRecord.id);
+          if (updateResult.error) {
+            await supabaseClient.storage.from(bucket).remove([newPath]);
+            throw updateResult.error;
+          }
+          await supabaseClient.storage.from(bucket).remove([oldPath]);
+          return;
+        }
+        const updateResult = await supabaseClient.from(table).update(changes).eq('id', editingRecord.id);
+        if (updateResult.error) throw updateResult.error;
+      }
+
+      if (galleryLockButton) galleryLockButton.addEventListener('click', loadPrivateGallery);
+      if (galleryRelockButton) galleryRelockButton.addEventListener('click', function () { lockGallery('Gallery locked.'); galleryLockButton.textContent = '🔒 Lock Gallery'; });
+      document.getElementById('documentsAccessBtn')?.addEventListener('click', function () { closeMobileMenu(); openModal(documentsModal, documentsEmail); });
+      document.getElementById('documentsMobileAccessBtn')?.addEventListener('click', function () { closeMobileMenu(); openModal(documentsModal, documentsEmail); });
+      documentsForm?.addEventListener('submit', function (event) { event.preventDefault(); unlockDocuments(); });
+      documentsClose?.addEventListener('click', function () { closeModal(documentsModal); });
+      documentsLockButton?.addEventListener('click', async function () { documentsSection.hidden = true; await supabaseClient?.auth.signOut(); });
+      documentsGrid?.addEventListener('click', async function (event) {
+        const action = event.target.closest('[data-document-id]');
+        if (!action || !supabaseClient) return;
+        const record = storedRecords.documents.find(function (item) { return item.id === action.dataset.documentId; });
+        if (!record) return;
+        const signedResult = await supabaseClient.storage.from('portfolio-documents').createSignedUrl(record.file_path, 60);
+        if (signedResult.error) { setStatus(documentsStatus, signedResult.error.message, 'error'); return; }
+        if (action.dataset.download === 'true') { const link = document.createElement('a'); link.href = signedResult.data.signedUrl; link.download = record.file_name; link.click(); } else window.open(signedResult.data.signedUrl, '_blank', 'noopener');
+      });
+
+      document.getElementById('publicContactForm')?.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const status = document.getElementById('publicContactStatus');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const data = new FormData(form);
+        const name = String(data.get('name') || '').trim();
+        const email = String(data.get('email') || '').trim();
+        const phone = String(data.get('phone') || '').trim();
+        const subject = String(data.get('subject') || '').trim();
+        const message = String(data.get('message') || '').trim();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (data.get('website')) return;
+        if (!name || !email || !subject || !message) { status.textContent = 'Please complete all required fields.'; status.className = 'contact-status error'; return; }
+        if (!emailPattern.test(email)) { status.textContent = 'Enter a valid email address.'; status.className = 'contact-status error'; return; }
+        if (name.length > 160 || email.length > 320 || subject.length > 240 || message.length > 5000) { status.textContent = 'Please shorten one or more fields and try again.'; status.className = 'contact-status error'; return; }
+        if (!supabaseClient) { status.textContent = 'Messaging is temporarily unavailable. Please email directly.'; status.className = 'contact-status error'; return; }
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending…';
+        status.textContent = 'Sending your message…';
+        status.className = 'contact-status';
+        const result = await supabaseClient.from('contact_messages').insert({ name: name, email: email, phone: phone || null, subject: subject || null, message: message, status: 'unread' });
+        submitButton.disabled = false;
+        submitButton.textContent = 'Send Message';
+        if (result.error) { status.textContent = 'We could not send your message. Please try again or email directly.'; status.className = 'contact-status error'; return; }
+        form.reset();
+        status.textContent = 'Message sent successfully. I’ll get back to you soon.';
+        status.className = 'contact-status success';
+      });
+
+      document.querySelectorAll('.admin-login-trigger').forEach(function (button) {
+        button.addEventListener('click', async function () {
+          closeMobileMenu();
+          if (await syncAdminNavigation()) {
+            window.location.href = 'admin/';
+            return;
+          }
+          window.location.hash = 'admin-login';
+          openModal(adminModal, adminEmail);
+        });
+      });
+      async function handlePublicLoginClick(event, isMobile) {
+        event.preventDefault();
+        const authorized = await syncAdminNavigation();
+        if (authorized) {
+          if (isMobile) {
+            closeMobileMenu();
+            window.location.href = 'admin/';
+            return;
+          }
+          stopMessageSync();
+          await supabaseClient.auth.signOut();
+          adminPanel.hidden = true;
+          setAdminNavigation(false);
+          if (isMobile) closeMobileMenu();
+          if (window.location.hash === '#admin') window.location.hash = '';
+          return;
+        }
+        if (isMobile) closeMobileMenu();
+        adminPanel.hidden = true;
+        stopMessageSync();
+        window.location.hash = 'admin-login';
+        openModal(adminModal, adminEmail);
+      }
+      publicLoginButton?.addEventListener('click', function (event) { handlePublicLoginClick(event, false); });
+      publicMobileLoginButton?.addEventListener('click', function (event) { handlePublicLoginClick(event, true); });
+      adminClose?.addEventListener('click', function () { closeModal(adminModal); });
+      adminForm?.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        if (!supabaseClient) { adminError.textContent = 'Supabase is not configured yet.'; return; }
+        const result = await supabaseClient.auth.signInWithPassword({ email: adminEmail.value.trim(), password: adminPassword.value });
+        if (result.error) { adminError.textContent = result.error.message; return; }
+        const userResult = await supabaseClient.auth.getUser();
+        const adminResult = userResult.data.user
+          ? await supabaseClient.from('admin_users').select('user_id').eq('user_id', userResult.data.user.id).maybeSingle()
+          : { error: null, data: null };
+        if (adminResult.error || !adminResult.data) {
+          await supabaseClient.auth.signOut();
+          setAdminNavigation(false);
+          adminError.textContent = adminResult.error
+            ? 'Admin check failed: ' + adminResult.error.message
+            : 'This account is signed in but is not listed in public.admin_users.';
+          return;
+        }
+        closeModal(adminModal);
+        setAdminNavigation(true);
+        if (pendingGalleryLogin) { pendingGalleryLogin = false; await loadPrivateGallery(); return; }
+        window.location.href = 'admin/';
+      });
+      document.getElementById('adminLogoutBtn')?.addEventListener('click', async function () { stopMessageSync(); await supabaseClient?.auth.signOut(); adminPanel.hidden = true; setAdminNavigation(false); closeMessageModal(); });
+      adminMessagesTab?.addEventListener('click', function () { selectAdminType('messages'); });
+      adminGalleryTab?.addEventListener('click', function () { selectAdminType('gallery'); });
+      adminDocumentsTab?.addEventListener('click', function () { selectAdminType('documents'); });
+      document.getElementById('adminMessageRefresh')?.addEventListener('click', function () { loadMessages(true); });
+      adminMessageSearch?.addEventListener('input', renderMessages);
+      document.querySelectorAll('[data-message-filter]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          activeMessageFilter = button.dataset.messageFilter;
+          document.querySelectorAll('[data-message-filter]').forEach(item => item.classList.toggle('active', item === button));
+          renderMessages();
+        });
+      });
+      adminMessageList?.addEventListener('click', async function (event) {
+        const starButton = event.target.closest('[data-message-star]');
+        if (starButton) {
+          event.stopPropagation();
+          await updateMessage(starButton.dataset.messageStar, { is_starred: !contactMessages.find(message => message.id === starButton.dataset.messageStar)?.is_starred });
+          return;
+        }
+        const row = event.target.closest('[data-message-id]');
+        const message = row && contactMessages.find(item => item.id === row.dataset.messageId);
+        if (message) showMessageModal(message);
+      });
+      document.getElementById('adminMessageClose')?.addEventListener('click', closeMessageModal);
+      adminMessageModal?.addEventListener('click', function (event) { if (event.target === adminMessageModal) closeMessageModal(); });
+      adminMessageReadToggle?.addEventListener('click', async function () {
+        if (!selectedMessage) return;
+        const changes = selectedMessage.status === 'unread' ? { status: 'read', read_at: new Date().toISOString() } : { status: 'unread', read_at: null };
+        if (await updateMessage(selectedMessage.id, changes)) closeMessageModal();
+      });
+      adminMessageStarToggle?.addEventListener('click', async function () {
+        if (!selectedMessage) return;
+        await updateMessage(selectedMessage.id, { is_starred: !selectedMessage.is_starred });
+        selectedMessage.is_starred = !selectedMessage.is_starred;
+        adminMessageStarToggle.textContent = selectedMessage.is_starred ? 'Unstar' : 'Star';
+      });
+      adminMessageDelete?.addEventListener('click', function () { if (selectedMessage) deleteMessage(selectedMessage); });
+      adminFormCancel?.addEventListener('click', resetAdminForm);
+      adminUploadForm?.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        try {
+          const userResult = await supabaseClient.auth.getUser();
+          if (!userResult.data.user || !(await isAdmin())) throw new Error('Admin authorization required.');
+          if (editingRecord) await updateRecord(adminFile.files[0], userResult.data.user); else await uploadRecord(adminFile.files[0], userResult.data.user);
+          setStatus(adminStatus, 'Saved successfully.', 'success');
+          resetAdminForm();
+          await refreshAdminRecords();
+        } catch (error) { setStatus(adminStatus, error.message, 'error'); }
+      });
+      adminRecordList?.addEventListener('click', async function (event) {
+        const button = event.target.closest('[data-action]');
+        if (!button) return;
+        const record = storedRecords[activeAdminType].find(function (item) { return item.id === button.dataset.id; });
+        if (!record) return;
+        const table = activeAdminType === 'gallery' ? 'gallery' : 'documents';
+        const bucket = activeAdminType === 'gallery' ? GALLERY_BUCKET : 'portfolio-documents';
+        if (button.dataset.action === 'preview') {
+          let previewUrl;
+          if (activeAdminType === 'gallery' && record.is_public) {
+            previewUrl = supabaseClient.storage.from(bucket).getPublicUrl(record.file_path).data.publicUrl;
+          } else {
+            const signedResult = await supabaseClient.storage.from(bucket).createSignedUrl(record.file_path, 60);
+            if (signedResult.error) { setStatus(adminStatus, signedResult.error.message, 'error'); return; }
+            previewUrl = signedResult.data.signedUrl;
+          }
+          window.open(previewUrl, '_blank', 'noopener');
+          return;
+        }
+        if (button.dataset.action === 'edit') {
+          editingRecord = record;
+          adminTitle.value = record.title;
+          adminDescription.value = record.description;
+          adminFile.required = false;
+          adminFormCancel.hidden = false;
+          adminFormTitle.textContent = 'Edit ' + (activeAdminType === 'gallery' ? 'Gallery Image' : 'Portfolio Document');
+          adminUploadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        if (!window.confirm('Delete this record and its stored file?')) return;
+        const deleteResult = await supabaseClient.from(table).delete().eq('id', record.id);
+        if (!deleteResult.error) await supabaseClient.storage.from(bucket).remove([record.file_path]);
+        await refreshAdminRecords();
+      });
+      document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeModal(documentsModal); closeModal(adminModal); } });
+      documentsModal?.addEventListener('click', function (event) { if (event.target === documentsModal) closeModal(documentsModal); });
+      adminModal?.addEventListener('click', function (event) { if (event.target === adminModal) closeModal(adminModal); });
+      async function handleAdminRoute() {
+        if (window.location.hash === '#admin-login') {
+          adminPanel.hidden = true;
+          stopMessageSync();
+          setAdminNavigation(await syncAdminNavigation());
+          openModal(adminModal, adminEmail);
+          return;
+        }
+        if (window.location.hash !== '#admin') return;
+        window.location.href = 'admin/';
+      }
+      window.addEventListener('hashchange', handleAdminRoute);
+      supabaseClient?.auth.onAuthStateChange(function () {
+        window.setTimeout(function () { syncAdminNavigation(); }, 0);
+      });
+      if (!configured) setStatus(galleryStatus, 'Supabase gallery is not configured yet.', 'error');
+      lockGallery();
+      selectAdminType('gallery');
+      supabaseClient?.auth.onAuthStateChange(function (_event, session) { if (!session) lockGallery('Admin Login Required.'); });
+      setAdminNavigation(false);
+      syncAdminNavigation();
+      handleAdminRoute();
     });
   </script>
 </body>

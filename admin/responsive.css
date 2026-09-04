@@ -1,0 +1,115 @@
+/* Responsive overrides for the existing admin shell. */
+html, body { min-width: 0; max-width: 100%; overflow-x: hidden; }
+.app { min-width: 0; }
+.main, .panel, .card, .table, .form, .toolbar, .actions, .cards, .settings-section { min-width: 0; }
+.table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table table { min-width: 680px; }
+.field, input, textarea, select { max-width: 100%; }
+img { max-width: 100%; height: auto; }
+.card img { height: auto; max-height: 100%; aspect-ratio: auto; object-fit: contain; }
+.family-page { min-width: 0; }
+.family-toolbar, .family-controls, .family-card-head, .family-actions, .family-form-actions { display: flex; align-items: center; gap: 12px; }
+.family-toolbar { justify-content: space-between; margin-bottom: 20px; }
+.family-toolbar h2 { margin: 4px 0; }
+.family-controls { flex-wrap: wrap; margin-bottom: 18px; }
+.family-controls > .field { flex: 1 1 190px; }
+.family-controls > strong { color: var(--muted); margin-right: auto; }
+.family-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.family-card { border: 1px solid var(--line); border-radius: 13px; padding: 16px; background: var(--panel); min-width: 0; }
+.family-card-head { align-items: flex-start; }
+.family-card-head h3 { overflow-wrap: anywhere; }
+.family-card-head p { color: var(--muted); }
+.family-avatar { width: 52px; height: 52px; flex: 0 0 52px; border-radius: 50%; object-fit: cover; background: #2563eb44; }
+.family-avatar-fallback { display: grid; place-items: center; color: #dbeafe; font-size: 1.3rem; font-weight: 700; }
+.family-details { display: grid; gap: 8px; margin: 16px 0; }
+.family-detail { display: grid; gap: 1px; overflow-wrap: anywhere; }
+.family-detail span { color: var(--muted); font-size: .72rem; text-transform: capitalize; }
+.family-detail strong { font-weight: 500; }
+.family-actions { flex-wrap: wrap; }
+.family-actions button { flex: 1 1 70px; border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; color: var(--text); background: #ffffff0d; }
+.family-empty, .family-loading, .family-error { border: 1px dashed var(--line); border-radius: 13px; padding: 42px 20px; text-align: center; color: var(--muted); }
+.family-empty h3 { color: var(--text); margin-bottom: 8px; }
+.family-empty .button, .family-error .button { margin-top: 16px; }
+.family-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.family-field { display: grid; gap: 6px; min-width: 0; color: var(--muted); }
+.family-field input, .family-field textarea, .family-field select { width: 100%; }
+.family-wide { grid-column: 1 / -1; }
+.family-form-actions { justify-content: flex-end; margin-top: 18px; }
+.family-form-actions .button { min-width: 110px; }
+.family-photo-wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.family-photo-preview { width: 84px; height: 84px; border-radius: 10px; object-fit: cover; background: #ffffff0d; }
+.family-photo-empty { display: grid; place-items: center; padding: 8px; color: var(--muted); text-align: center; font-size: .75rem; }
+.family-message.error { color: #fca5a5; }
+.family-detail-dialog { display: grid; gap: 10px; }
+.family-detail-photo { width: min(180px, 100%); aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+.family-detail-list { display: grid; gap: 10px; margin-top: 8px; }
+.family-detail-list p { display: grid; gap: 2px; overflow-wrap: anywhere; }
+.family-detail-list span { color: var(--muted); }
+.vault-page { min-width: 0; }
+.vault-profile { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.vault-info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.vault-documents { display: grid; gap: 10px; }
+.vault-document { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #ffffff08; }
+.vault-document-icon { flex: 0 0 34px; font-size: 1.4rem; }
+.vault-document-copy { min-width: 0; flex: 1; }
+.vault-document-copy h4, .vault-document-copy p { overflow-wrap: anywhere; }
+.vault-document-copy p, .vault-document-copy small { color: var(--muted); }
+.vault-badge { display: inline-block; margin-left: 6px; font-size: .72rem; }
+.vault-badge.valid { color: #86efac; }
+.vault-badge.soon { color: #fde68a; }
+.vault-badge.expired { color: #fca5a5; }
+#overlay { padding: clamp(12px, 3vw, 32px); }
+#overlay > article { width: min(720px, 100%); max-height: calc(100dvh - 24px); overflow-y: auto; }
+#adminMenuBackdrop { display: none; }
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 190px minmax(0, 1fr); }
+  .main { padding: 22px clamp(14px, 3vw, 28px); }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .app { display: block; }
+  .menu { display: inline-flex !important; align-items: center; justify-content: center; min-width: 42px; min-height: 42px; }
+  .side { position: fixed; inset: 0 auto 0 0; left: 0; top: 0; bottom: 0; z-index: 20; width: min(280px, 86vw); height: 100dvh; transform: translateX(-105%); transition: transform .2s ease; overflow-y: auto; box-shadow: 18px 0 40px #0008; }
+  .side.open { transform: translateX(0); }
+  #adminMenuBackdrop { display: block; position: fixed; inset: 0; z-index: 19; background: rgb(0 0 0 / 58%); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+  #adminMenuBackdrop.open { opacity: 1; pointer-events: auto; }
+  body.admin-menu-open { overflow: hidden; }
+  .main { width: 100%; padding: 18px 12px 32px; }
+  .top { align-items: flex-start; margin-bottom: 18px; }
+  h1 { font-size: clamp(1.65rem, 8vw, 2.3rem); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .stat { padding: 11px; }
+  .stat b { font-size: 1.35rem; }
+  .panel { padding: 14px; border-radius: 10px; }
+  .toolbar { align-items: flex-start; }
+  .toolbar > * { max-width: 100%; }
+  .form { grid-template-columns: 1fr !important; }
+  .form .full { grid-column: auto !important; }
+  .actions, .row-actions, .settings-links { width: 100%; }
+  .actions > *, .row-actions > *, .settings-links > * { flex: 1 1 auto; min-height: 42px; }
+  .cards { grid-template-columns: 1fr !important; }
+  .family-toolbar { align-items: stretch; flex-direction: column; }
+  .family-toolbar > .button { width: 100%; }
+  .family-controls { align-items: stretch; flex-direction: column; }
+  .family-controls > .field, .family-controls > .button { width: 100%; flex-basis: auto; }
+  .family-controls > strong { margin-right: 0; }
+  .family-form-grid { grid-template-columns: 1fr; }
+  .family-wide { grid-column: auto; }
+  .family-form-actions { align-items: stretch; flex-direction: column-reverse; }
+  .family-form-actions .button { width: 100%; }
+  .vault-profile { align-items: flex-start; }
+  .vault-info { grid-template-columns: 1fr; }
+  .vault-document { align-items: flex-start; flex-wrap: wrap; }
+  .vault-document .family-actions { width: 100%; }
+  #overlay > article { border-radius: 10px; }
+  #dialogBody { overflow-wrap: anywhere; }
+}
+@media (max-width: 420px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .top { flex-direction: column; }
+  .top > * { width: 100%; }
+  .button { min-height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .side { transition: none; }
+}

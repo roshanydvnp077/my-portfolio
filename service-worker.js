@@ -1,4 +1,4 @@
-const CACHE_VERSION = "roshan-pwa-v1.0.1";
+const CACHE_VERSION = "roshan-pwa-v1.0.3";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -8,6 +8,7 @@ const STATIC_ASSETS = [
   "/offline.html",
   "/manifest.webmanifest",
   "/app.js",
+  "/supabase-config.js",
   "/cv.png",
   "/roshan.jpg",
   "/roshan.png.jpg",
@@ -15,8 +16,6 @@ const STATIC_ASSETS = [
   "/SLMS.png",
   "/task.png",
   "/weather.png",
-  "/dit.png",
-  "/resultit.png",
   "/icons/icon-72x72.png",
   "/icons/icon-96x96.png",
   "/icons/icon-128x128.png",
@@ -70,6 +69,19 @@ self.addEventListener("fetch", (event) => {
           const cachedPage = await caches.match(request);
           return cachedPage || caches.match("/offline.html");
         })
+    );
+    return;
+  }
+
+  if (request.destination === "script" || request.destination === "style") {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const cloned = response.clone();
+          caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, cloned));
+          return response;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }
