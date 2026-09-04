@@ -10384,7 +10384,7 @@ code, scalable backend architectures, and crisp frontend experiences.
 
       function setAdminNavigation(isVisible) {
         [adminNavButton, adminMobileNavButton].forEach(function (button) {
-          if (button) button.hidden = !isVisible;
+          if (button) button.hidden = true;
         });
         [publicLoginButton].forEach(function (button) {
           if (!button) return;
