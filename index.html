@@ -9512,14 +9512,6 @@ code, scalable backend architectures, and crisp frontend experiences.
 
       </div>
 
-      <!-- GitHub CTA Banner -->
-      <div class="projects-github-cta">
-        <div class="cta-github-title">Want to explore more of my open-source work &amp; repositories?</div>
-        <a href="https://github.com/roshanydvnp077" target="_blank" class="btn-github-more">
-          <i class="fab fa-github" style="font-size: 1.1rem;"></i> Visit My GitHub Profile <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-
     </div>
   </section>
 
@@ -10218,7 +10210,7 @@ code, scalable backend architectures, and crisp frontend experiences.
       unique(revealElements).forEach(element => revealObserver.observe(element));
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin/vendor/supabase.js"></script>
   <script src="./supabase-config.js"></script>
   <script src="public-content.js" defer></script>
   <script src="app.js" defer></script>
@@ -10534,6 +10526,8 @@ code, scalable backend architectures, and crisp frontend experiences.
 
       function closeModal(modal) {
         if (!modal) return;
+        const active = document.activeElement;
+        if (active && modal.contains(active)) active.blur();
         modal.classList.remove('is-open');
         modal.setAttribute('aria-hidden', 'true');
       }
@@ -10565,13 +10559,16 @@ code, scalable backend architectures, and crisp frontend experiences.
         return element;
       }
 
-      function isAdmin() {
-        return supabaseClient.auth.getUser().then(function (result) {
-          if (result.error || !result.data.user) return false;
-          return supabaseClient.from('admin_users').select('user_id,role').eq('user_id', result.data.user.id).eq('role', 'admin').maybeSingle().then(function (adminResult) {
-            return !adminResult.error && Boolean(adminResult.data);
-          });
-        });
+      async function isAdmin() {
+        const sessionResult = await supabaseClient.auth.getSession();
+        if (sessionResult.error || !sessionResult.data.session) return false;
+        const userResult = await supabaseClient.auth.getUser();
+        if (userResult.error || !userResult.data.user) {
+          await supabaseClient.auth.signOut({ scope: 'local' });
+          return false;
+        }
+        const adminResult = await supabaseClient.from('admin_users').select('user_id,role').eq('user_id', userResult.data.user.id).eq('role', 'admin').maybeSingle();
+        return !adminResult.error && Boolean(adminResult.data);
       }
 
       function lockGallery(message) {

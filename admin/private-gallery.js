@@ -5,6 +5,7 @@
   const galleryBucket = 'portfolio-gallery';
   const legacyBucket = 'portfolio-images';
   if (!client) return;
+  let migrationPromise = null;
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[character]));
   const errorText = error => [error?.message, error?.details, error?.hint].filter(Boolean).join(' | ');
@@ -34,6 +35,9 @@
   }
 
   async function signedRows() {
+    const user = await adminUser();
+    if (user && !migrationPromise) migrationPromise = migrateLegacyRows(user);
+    if (migrationPromise) await migrationPromise;
     const result = await client.from('gallery').select('*').order('created_at', { ascending: false });
     if (result.error) throw result.error;
     return Promise.all((result.data || []).map(async row => {
