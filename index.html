@@ -11010,10 +11010,7 @@ code, scalable backend architectures, and crisp frontend experiences.
       adminModal?.addEventListener('click', function (event) { if (event.target === adminModal) closeModal(adminModal); });
       async function handleAdminRoute() {
         if (window.location.hash === '#admin-login') {
-          adminPanel.hidden = true;
-          stopMessageSync();
-          setAdminNavigation(await syncAdminNavigation());
-          openModal(adminModal, adminEmail);
+          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
           return;
         }
         if (window.location.hash !== '#admin') return;
