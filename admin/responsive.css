@@ -1,12 +1,18 @@
 /* Responsive overrides for the existing admin shell. */
 html, body { min-width: 0; max-width: 100%; overflow-x: hidden; }
 .app { width: 100%; height: 100vh; min-width: 0; min-height: 0; overflow: hidden; }
-.side { height: 100vh; min-height: 0; overflow-y: auto; overflow-x: hidden; }
-.main { height: 100vh; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.side { height: 100vh; min-height: 0; overflow-y: auto; overflow-x: hidden; pointer-events: auto; }
+.main { height: 100vh; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-bottom: 16px; }
 .main, .panel, .card, .table, .form, .toolbar, .actions, .cards, .settings-section, .settings-grid { min-width: 0; }
 .settings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .top > *, .toolbar > *, .actions > *, .row-actions > *, .settings-links > * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
 .top #account { overflow-wrap: anywhere; text-align: right; }
+.side .nav, .side .nav button, .side .side-bottom, .side .side-bottom > * { position: relative; z-index: 1; pointer-events: auto; }
+.side .nav button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.side .nav button, .side-bottom a, .side-bottom button { display: block; width: 100%; min-height: 44px; user-select: none; -webkit-user-select: none; }
+.side-bottom { margin-top: 24px; }
+.side { background: rgba(8, 11, 20, 0.76); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: inset -1px 0 rgba(148, 163, 184, 0.12), 10px 0 40px rgba(2, 6, 23, 0.18); }
+.stat, .panel, .card { background: rgba(17, 24, 39, 0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 14px 34px rgba(2, 6, 23, 0.16), inset 0 1px rgba(255, 255, 255, 0.04); }
 .table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .table table { min-width: 680px; }
 .field, input, textarea, select { max-width: 100%; }
@@ -125,15 +131,16 @@ img { max-width: 100%; height: auto; }
   .main { padding: 22px clamp(14px, 3vw, 28px); }
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .app { display: block; height: 100dvh; min-height: 0; }
-  .menu { display: inline-flex !important; align-items: center; justify-content: center; min-width: 42px; min-height: 42px; }
-  .side { position: fixed; inset: 0 auto 0 0; left: 0; top: 0; bottom: 0; z-index: 20; width: min(280px, 86vw); height: 100dvh; transform: translateX(-105%); transition: transform .2s ease; overflow-y: auto; box-shadow: 18px 0 40px #0008; }
+  .menu { display: inline-flex !important; align-items: center; justify-content: center; min-width: 42px; min-height: 42px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+  .side { position: fixed; inset: 0 auto 0 0; left: 0; top: 0; bottom: 0; z-index: 21; width: min(280px, 86vw); height: 100dvh; min-height: 0; padding-bottom: 12px; transform: translateX(-105%); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; touch-action: pan-y; background: #080b14; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 18px 0 40px #0008, inset -1px 0 rgba(96, 165, 250, 0.18); }
   .side.open { transform: translateX(0); }
-  #adminMenuBackdrop { display: block; position: fixed; inset: 0; z-index: 19; background: rgb(0 0 0 / 58%); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+  #adminMenuBackdrop { display: block; position: fixed; inset: 0; z-index: 19; background: rgb(2 6 23 / 58%); opacity: 0; pointer-events: none; touch-action: manipulation; }
   #adminMenuBackdrop.open { opacity: 1; pointer-events: auto; }
+  .side.open .nav button.active { color: #fff; background: rgba(37, 99, 235, 0.28); box-shadow: inset 3px 0 #60a5fa, 0 8px 20px rgba(37, 99, 235, 0.12); }
   body.admin-menu-open { overflow: hidden; }
-  .main { width: 100%; height: 100dvh; padding: 18px 12px 32px; }
+  .main { width: 100%; height: 100dvh; padding: 18px 12px 16px; }
   .top { align-items: flex-start; margin-bottom: 18px; }
   h1 { font-size: clamp(1.65rem, 8vw, 2.3rem); }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -195,7 +202,4 @@ img { max-width: 100%; height: auto; }
   .top { flex-direction: column; }
   .top > * { width: 100%; }
   .button { min-height: 42px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .side { transition: none; }
 }

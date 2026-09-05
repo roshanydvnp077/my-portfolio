@@ -1,24 +1,24 @@
 const cmsScript = document.createElement('script');
-cmsScript.src = 'cms.js';
+cmsScript.src = 'cms.js?v=20260905';
 document.head.appendChild(cmsScript);
 const responsiveStyles = document.createElement('link');
 responsiveStyles.rel = 'stylesheet';
-responsiveStyles.href = 'responsive.css';
+responsiveStyles.href = 'responsive.css?v=20260905';
 document.head.appendChild(responsiveStyles);
 const privateGalleryScript = document.createElement('script');
-privateGalleryScript.src = 'private-gallery.js';
+privateGalleryScript.src = 'private-gallery.js?v=20260905';
 document.head.appendChild(privateGalleryScript);
 const familyVaultScript = document.createElement('script');
-familyVaultScript.src = 'family-vault.js';
+familyVaultScript.src = 'family-vault.js?v=20260905';
 document.head.appendChild(familyVaultScript);
 const familyVaultEditScript = document.createElement('script');
-familyVaultEditScript.src = 'family-vault-edit.js';
+familyVaultEditScript.src = 'family-vault-edit.js?v=20260905';
 document.head.appendChild(familyVaultEditScript);
 const passwordVaultScript = document.createElement('script');
-passwordVaultScript.src = 'password-vault.js';
+passwordVaultScript.src = 'password-vault.js?v=20260905';
 document.head.appendChild(passwordVaultScript);
 const bankDetailsScript = document.createElement('script');
-bankDetailsScript.src = 'bank-details.js';
+bankDetailsScript.src = 'bank-details.js?v=20260905';
 document.head.appendChild(bankDetailsScript);
 const adminFavicon = document.createElement('link');
 adminFavicon.rel = 'icon';
@@ -186,7 +186,8 @@ document.head.appendChild(adminFavicon);
   function openDialog(title, html) { $('dialogTitle').textContent = title; $('dialogBody').innerHTML = html; $('overlay').hidden = false; }
   function closeDialog() { $('overlay').hidden = true; }
   async function requireAdmin() { const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) return null; const check = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle(); return check.error || !check.data ? null : user; }
-  async function fetchRows(table) { const result = await client.from(table).select('*').order('created_at', { ascending:false }); if (result.error) throw result.error; return result.data || []; }
+  async function fetchRows(table) { const result = await client.from(table).select('*').order('created_at', { ascending:false }); if (result.error) { console.error('Admin request failed for ' + table + ':', result.error); return []; } return result.data || []; }
+  async function fetchRowsSafe(table) { try { return await fetchRows(table); } catch (error) { console.error('Admin dashboard request failed for ' + table + ':', error); return []; } }
   function fieldMarkup(field, row) { const [name, label, type, required] = field; const value = row?.[name] ?? ''; if (type === 'checkbox') return '<label>' + label + '<input name="' + name + '" type="checkbox" ' + (value ? 'checked' : '') + '></label>'; const tag = type === 'textarea' ? 'textarea' : 'input'; return '<label>' + label + '<' + tag + ' class="field" name="' + name + '" type="' + type + '" ' + (required ? 'required' : '') + '>' + (tag === 'textarea' ? escape(value) + '</textarea>' : '</input>') + '</label>'; }
   function normalizeArrayField(value) { if (Array.isArray(value)) return value; return String(value || '').split(',').map(item => item.trim()).filter(Boolean); }
   function createFieldValue(row, name, type, data) { if (type === 'checkbox') return !row && name === 'is_published' ? true : data.has(name); if (type === 'number') return Number(data.get(name) || 0); return String(data.get(name) || '').trim(); }
@@ -205,14 +206,29 @@ document.head.appendChild(adminFavicon);
   $('dialogClose').onclick = closeDialog; $('overlay').onclick = event => { if (event.target === $('overlay')) closeDialog(); };
   const menu = $('menu'), side = $('side');
   const menuBackdrop = document.createElement('div'); menuBackdrop.id = 'adminMenuBackdrop'; menuBackdrop.setAttribute('aria-hidden', 'true'); document.body.appendChild(menuBackdrop);
-  function isMobileMenu() { return window.matchMedia('(max-width: 767px)').matches; }
-  function closeMenu() { side.classList.remove('open'); menuBackdrop.classList.remove('open'); document.body.classList.remove('admin-menu-open'); menu?.setAttribute('aria-expanded', 'false'); }
-  function openMenu() { if (!isMobileMenu()) return; side.classList.add('open'); menuBackdrop.classList.add('open'); document.body.classList.add('admin-menu-open'); menu?.setAttribute('aria-expanded', 'true'); }
+  function isMobileMenu() { return window.matchMedia('(max-width: 1023px)').matches; }
+  function closeMenu() { side.classList.remove('open'); menuBackdrop.classList.remove('open'); document.body.classList.remove('admin-menu-open'); menu?.setAttribute('aria-expanded', 'false'); menuBackdrop?.setAttribute('aria-hidden', 'true'); }
+  function openMenu() { if (!isMobileMenu()) return; side.classList.add('open'); menuBackdrop.classList.add('open'); document.body.classList.add('admin-menu-open'); menu?.setAttribute('aria-expanded', 'true'); menuBackdrop?.setAttribute('aria-hidden', 'false'); }
   function toggleMenu() { if (!isMobileMenu()) return; side.classList.contains('open') ? closeMenu() : openMenu(); }
-  menu.hidden = false; menu.setAttribute('aria-expanded', 'false'); menu.onclick = toggleMenu; menuBackdrop.onclick = closeMenu;
+  menu.hidden = false; menu.type = 'button'; menu.setAttribute('aria-controls', 'side'); menu.setAttribute('aria-expanded', 'false'); menu.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); toggleMenu(); }); menuBackdrop.onclick = closeMenu;
+  let navigationInProgress = false;
+  const coreViews = new Set(['dashboard', 'messages', 'projects', 'gallery', 'documents', 'skills', 'services', 'journey', 'profile']);
+  const handleNavClick = event => {
+    const button = event.target.closest('.nav button[data-view]');
+    if (!button || !coreViews.has(button.dataset.view) || navigationInProgress) return;
+    event.preventDefault();
+    event.stopPropagation();
+    navigationInProgress = true;
+    closeMenu();
+    Promise.resolve(show(button.dataset.view)).finally(() => { navigationInProgress = false; });
+  };
+  side.querySelector('.nav')?.addEventListener('click', handleNavClick);
+  side.querySelector('.side-bottom')?.addEventListener('click', event => {
+    if (event.target.closest('a, button')) closeMenu();
+  });
   document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
   window.addEventListener('resize', () => { if (!isMobileMenu()) closeMenu(); });
-  document.addEventListener('click', event => { if (isMobileMenu() && event.target.closest('.nav button, .side-bottom a, .side-bottom button')) closeMenu(); }, true);
+  document.addEventListener('click', event => { if (isMobileMenu() && side.classList.contains('open') && !side.contains(event.target) && !menu?.contains(event.target)) closeMenu(); }, true);
   closeMenu();
   $('logout').onclick = async () => { closeMenu(); await client.auth.signOut(); location.replace('../index.html'); };
   let knownUnreadMessageIds = null;
