@@ -72,7 +72,7 @@
   async function renderDashboard() {
     const view = viewFor('dashboard');
     const tables = ['projects', 'skills', 'services', 'journey', 'testimonials', 'certificates', 'contact_messages', 'gallery', 'documents'];
-    const results = await Promise.all(tables.map(table => client.from(table).select('id,is_published')));
+    const results = await Promise.all(tables.map(table => client.from(table).select(table === 'contact_messages' ? 'id' : 'id,is_published')));
     const failed = results.find(result => result.error);
     if (failed) { view.innerHTML = `<div class="panel"><p class="status error">Failed to load dashboard: ${escape(failed.error.message)}</p></div>`; return; }
     const counts = results.map(result => result.data || []);

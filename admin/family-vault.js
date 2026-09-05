@@ -12,6 +12,23 @@
   if (!client || !nav || !main) return;
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[c]));
+  const makeUuid = () => {
+    const cryptoApi = window.crypto || globalThis.crypto;
+    if (cryptoApi && typeof cryptoApi.randomUUID === 'function') return cryptoApi.randomUUID();
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      cryptoApi.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+      return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+      const random = Math.random() * 16 | 0;
+      const value = character === 'x' ? random : (random & 0x3 | 0x8);
+      return value.toString(16);
+    });
+  };
   const dateText = value => value ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(value + (value.length === 10 ? 'T00:00:00' : ''))) : '';
   const sizeText = value => value ? (value < 1024 * 1024 ? Math.ceil(value / 1024) + ' KB' : (value / 1024 / 1024).toFixed(1) + ' MB') : '';
   const errorText = error => [error?.message, error?.details, error?.hint].filter(Boolean).join(' | ') || 'The Family Vault request failed.';
@@ -116,7 +133,7 @@
       if (!member) createdMemberId = saved.data.id;
       const file = data.get('photo');
       if (file?.name) {
-        uploaded = saved.data.id + '/profile/' + crypto.randomUUID() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
+        uploaded = saved.data.id + '/profile/' + makeUuid() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
         const upload = await client.storage.from(bucket).upload(uploaded, file, { contentType: file.type, upsert: false });
         if (upload.error) throw upload.error;
         const photoUpdate = await client.from('family_members').update({ profile_photo_path: uploaded }).eq('id', saved.data.id).select().single();

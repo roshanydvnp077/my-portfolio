@@ -6,6 +6,23 @@
   if (!client) return;
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[c]));
+  const makeUuid = () => {
+    const cryptoApi = window.crypto || globalThis.crypto;
+    if (cryptoApi && typeof cryptoApi.randomUUID === 'function') return cryptoApi.randomUUID();
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      cryptoApi.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+      return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+      const random = Math.random() * 16 | 0;
+      const value = character === 'x' ? random : (random & 0x3 | 0x8);
+      return value.toString(16);
+    });
+  };
   const overlay = () => document.getElementById('overlay');
   const body = () => document.getElementById('dialogBody');
   const title = () => document.getElementById('dialogTitle');
@@ -123,7 +140,7 @@
       try {
         let path = doc.file_path;
         if (file?.name) {
-          replacement = user.id + '/' + doc.family_member_id + '/' + String(data.get('document_type')).toLowerCase().replace(/[^a-z0-9]+/g, '-') + '/' + crypto.randomUUID() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
+          replacement = user.id + '/' + doc.family_member_id + '/' + String(data.get('document_type')).toLowerCase().replace(/[^a-z0-9]+/g, '-') + '/' + makeUuid() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
           const upload = await client.storage.from(bucket).upload(replacement, file, { contentType: file.type, upsert: false });
           if (upload.error) throw upload.error;
           path = replacement;

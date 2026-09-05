@@ -15,6 +15,23 @@
   if (!client || !app || !main || !nav) return;
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[character]));
+  const makeUuid = () => {
+    const cryptoApi = window.crypto || globalThis.crypto;
+    if (cryptoApi && typeof cryptoApi.randomUUID === 'function') return cryptoApi.randomUUID();
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      cryptoApi.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+      return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+      const random = Math.random() * 16 | 0;
+      const value = character === 'x' ? random : (random & 0x3 | 0x8);
+      return value.toString(16);
+    });
+  };
   const errorText = error => [error?.message, error?.details, error?.hint].filter(Boolean).join(' | ') || 'The Family request could not be completed.';
   const dateText = value => value ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(value + (value.length === 10 ? 'T00:00:00' : ''))) : '';
   const field = (name, label, value, type = 'text', required = false) => '<label class="family-field">' + label + (required ? ' *' : '') + '<input class="field" name="' + name + '" type="' + type + '" value="' + escape(value) + '"' + (required ? ' required' : '') + '></label>';
@@ -133,7 +150,7 @@
       const user = await authorizedUser();
       if (!user) throw new Error('Admin authorization required.');
       const file = data.get('photo');
-      if (file?.name) { uploadedPath = user.id + '/' + crypto.randomUUID() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); const upload = await client.storage.from(FAMILY_BUCKET).upload(uploadedPath, file, { contentType: file.type, upsert: false }); if (upload.error) throw upload.error; photoPath = uploadedPath; }
+      if (file?.name) { uploadedPath = user.id + '/' + makeUuid() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); const upload = await client.storage.from(FAMILY_BUCKET).upload(uploadedPath, file, { contentType: file.type, upsert: false }); if (upload.error) throw upload.error; photoPath = uploadedPath; }
       if (form.dataset.removePhoto === 'true') photoPath = null;
       const payload = { name, relation, date_of_birth: data.get('date_of_birth') || null, phone: String(data.get('phone') || '').trim() || null, email: String(data.get('email') || '').trim() || null, address: String(data.get('address') || '').trim() || null, occupation: String(data.get('occupation') || '').trim() || null, notes: String(data.get('notes') || '').trim() || null, photo_url: photoPath };
       const result = row ? await client.from('family_details').update(payload).eq('id', row.id) : await client.from('family_details').insert({ ...payload, created_by: user.id });

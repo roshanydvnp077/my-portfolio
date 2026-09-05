@@ -1,11 +1,18 @@
 /* Responsive overrides for the existing admin shell. */
 html, body { min-width: 0; max-width: 100%; overflow-x: hidden; }
-.app { min-width: 0; }
-.main, .panel, .card, .table, .form, .toolbar, .actions, .cards, .settings-section { min-width: 0; }
+.app { width: 100%; height: 100vh; min-width: 0; min-height: 0; overflow: hidden; }
+.side { height: 100vh; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.main { height: 100vh; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.main, .panel, .card, .table, .form, .toolbar, .actions, .cards, .settings-section, .settings-grid { min-width: 0; }
+.settings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.top > *, .toolbar > *, .actions > *, .row-actions > *, .settings-links > * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.top #account { overflow-wrap: anywhere; text-align: right; }
 .table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .table table { min-width: 680px; }
 .field, input, textarea, select { max-width: 100%; }
 img { max-width: 100%; height: auto; }
+#dialogBody { overflow-wrap: anywhere; }
+#dialogBody p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
 .card img { height: auto; max-height: 100%; aspect-ratio: auto; object-fit: contain; }
 .family-page { min-width: 0; }
 .family-toolbar, .family-controls, .family-card-head, .family-actions, .family-form-actions { display: flex; align-items: center; gap: 12px; }
@@ -58,6 +65,58 @@ img { max-width: 100%; height: auto; }
 .vault-badge.valid { color: #86efac; }
 .vault-badge.soon { color: #fde68a; }
 .vault-badge.expired { color: #fca5a5; }
+.password-vault-page { min-width: 0; color: var(--text); }
+.password-vault-header, .password-vault-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.password-vault-header { margin-bottom: 22px; }
+.password-vault-header h2 { margin: 4px 0; }
+.password-vault-controls { margin-bottom: 18px; }
+.password-vault-controls .field:first-child { flex: 1 1 280px; }
+.password-vault-controls select { flex: 0 1 180px; }
+.password-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+.password-card { position: relative; min-width: 0; padding: 18px; border: 1px solid rgba(96, 165, 250, .24); border-radius: 16px; background: linear-gradient(145deg, rgba(15, 23, 42, .88), rgba(30, 27, 75, .68)); box-shadow: 0 18px 42px rgba(2, 6, 23, .28), inset 0 1px rgba(255, 255, 255, .08); }
+.password-card::before { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(120deg, rgba(34, 211, 238, .08), transparent 42%, rgba(168, 85, 247, .08)); }
+.password-card-heading, .password-actions { position: relative; display: flex; align-items: center; gap: 10px; }
+.password-card-heading { justify-content: space-between; margin-bottom: 16px; }
+.password-card h3 { margin-top: 5px; overflow-wrap: anywhere; }
+.password-category { color: #93c5fd; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.password-icon-button { border: 0; background: transparent; cursor: pointer; }
+.password-details { position: relative; display: grid; gap: 10px; margin: 0 0 18px; }
+.password-details div { min-width: 0; }
+.password-details dt { color: #94a3b8; font-size: .72rem; }
+.password-details dd { margin: 2px 0 0; overflow-wrap: anywhere; color: #e2e8f0; }
+.password-details a { color: #7dd3fc; }
+.password-value { min-height: 24px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; }
+.password-actions { flex-wrap: wrap; }
+.password-actions .button { flex: 1 1 92px; min-height: 40px; padding: 8px 10px; }
+.password-actions .danger { color: #fecaca; border-color: rgba(248, 113, 113, .3); }
+.password-empty { grid-column: 1 / -1; padding: 54px 20px; border: 1px dashed rgba(148, 163, 184, .3); border-radius: 16px; color: var(--muted); text-align: center; }
+.password-empty-icon { margin-bottom: 10px; font-size: 2rem; }
+.password-empty h3 { margin-bottom: 8px; color: var(--text); }
+.password-empty .button { margin-top: 18px; }
+.vault-form-actions { grid-column: 1 / -1; }
+.bank-page { min-width: 0; color: var(--text); }
+.bank-header, .bank-card-title, .bank-qr-actions, .bank-account-actions { display: flex; align-items: center; gap: 12px; }
+.bank-header { justify-content: space-between; margin-bottom: 22px; }
+.bank-header h2 { margin: 4px 0; }
+.bank-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.bank-card { min-width: 0; padding: 22px; border: 1px solid rgba(96, 165, 250, .25); border-radius: 18px; background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(30, 27, 75, .68)); box-shadow: 0 18px 44px rgba(2, 6, 23, .3), inset 0 1px rgba(255, 255, 255, .08); }
+.bank-card-title { margin-bottom: 20px; color: #dbeafe; }
+.bank-card-title span { font-size: 1.4rem; }
+.bank-details { display: grid; gap: 16px; margin: 0; }
+.bank-details div { min-width: 0; }
+.bank-details dt { color: #94a3b8; font-size: .75rem; }
+.bank-details dd { margin: 3px 0 0; overflow-wrap: anywhere; color: #f8fafc; font-size: 1rem; }
+.bank-account-value { min-height: 28px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; }
+.bank-account-actions { flex-wrap: wrap; margin-top: 10px; }
+.bank-account-actions .button, .bank-qr-actions .button { min-height: 40px; }
+.bank-delete-record { margin-top: 24px; }
+.bank-qr-card { display: flex; flex-direction: column; align-items: stretch; }
+.bank-qr-image { display: block; width: min(100%, 300px); max-height: 300px; margin: 0 auto 18px; border-radius: 12px; object-fit: contain; background: #fff; }
+.bank-qr-empty { display: grid; min-height: 220px; place-items: center; margin-bottom: 18px; border: 1px dashed rgba(148, 163, 184, .3); border-radius: 12px; color: var(--muted); text-align: center; }
+.bank-qr-actions { justify-content: center; flex-wrap: wrap; }
+.bank-form-actions { grid-column: 1 / -1; }
+.bank-field { display: grid; gap: 6px; min-width: 0; color: var(--muted); }
+.bank-field-wide { grid-column: 1 / -1; }
 #overlay { padding: clamp(12px, 3vw, 32px); }
 #overlay > article { width: min(720px, 100%); max-height: calc(100dvh - 24px); overflow-y: auto; }
 #adminMenuBackdrop { display: none; }
@@ -67,14 +126,14 @@ img { max-width: 100%; height: auto; }
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 767px) {
-  .app { display: block; }
+  .app { display: block; height: 100dvh; min-height: 0; }
   .menu { display: inline-flex !important; align-items: center; justify-content: center; min-width: 42px; min-height: 42px; }
   .side { position: fixed; inset: 0 auto 0 0; left: 0; top: 0; bottom: 0; z-index: 20; width: min(280px, 86vw); height: 100dvh; transform: translateX(-105%); transition: transform .2s ease; overflow-y: auto; box-shadow: 18px 0 40px #0008; }
   .side.open { transform: translateX(0); }
   #adminMenuBackdrop { display: block; position: fixed; inset: 0; z-index: 19; background: rgb(0 0 0 / 58%); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
   #adminMenuBackdrop.open { opacity: 1; pointer-events: auto; }
   body.admin-menu-open { overflow: hidden; }
-  .main { width: 100%; padding: 18px 12px 32px; }
+  .main { width: 100%; height: 100dvh; padding: 18px 12px 32px; }
   .top { align-items: flex-start; margin-bottom: 18px; }
   h1 { font-size: clamp(1.65rem, 8vw, 2.3rem); }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -84,9 +143,24 @@ img { max-width: 100%; height: auto; }
   .toolbar { align-items: flex-start; }
   .toolbar > * { max-width: 100%; }
   .form { grid-template-columns: 1fr !important; }
+  .settings-grid { grid-template-columns: 1fr !important; }
   .form .full { grid-column: auto !important; }
   .actions, .row-actions, .settings-links { width: 100%; }
   .actions > *, .row-actions > *, .settings-links > * { flex: 1 1 auto; min-height: 42px; }
+  #messagesView .table { overflow: visible; }
+  #messagesView .table table, #messagesView .table tbody, #messagesView .table tr, #messagesView .table td { display: block; min-width: 0; width: 100%; }
+  #messagesView .table thead { display: none; }
+  #messagesView .table tr { margin-bottom: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #ffffff08; }
+  #messagesView .table td { padding: 4px 0; border: 0; overflow-wrap: anywhere; }
+  #messagesView .table td:nth-child(1)::before { content: 'From: '; color: var(--muted); }
+  #messagesView .table td:nth-child(2)::before { content: 'Subject: '; color: var(--muted); }
+  #messagesView .table td:nth-child(3)::before { content: 'Message: '; color: var(--muted); }
+  #messagesView .table td:nth-child(4)::before { content: 'Date: '; color: var(--muted); }
+  #messagesView .table td:nth-child(5)::before { content: 'Status: '; color: var(--muted); }
+  #messagesView .table td:nth-child(6) { padding-top: 10px; }
+  #messagesView .table td:nth-child(6)::before { content: ''; }
+  #messagesView .row-actions { gap: 8px; }
+  #messagesView .row-actions > * { min-width: 0; white-space: normal; text-align: center; }
   .cards { grid-template-columns: 1fr !important; }
   .family-toolbar { align-items: stretch; flex-direction: column; }
   .family-toolbar > .button { width: 100%; }
@@ -101,6 +175,18 @@ img { max-width: 100%; height: auto; }
   .vault-info { grid-template-columns: 1fr; }
   .vault-document { align-items: flex-start; flex-wrap: wrap; }
   .vault-document .family-actions { width: 100%; }
+  .password-vault-header, .password-vault-controls { align-items: stretch; flex-direction: column; }
+  .password-vault-header > .button, .password-vault-controls > .field { width: 100%; }
+  .password-vault-controls select { flex-basis: auto; }
+  .password-grid { grid-template-columns: 1fr; }
+  .password-actions .button { flex: 1 1 100px; }
+  .bank-header { align-items: stretch; flex-direction: column; }
+  .bank-header > .button { width: 100%; }
+  .bank-grid { grid-template-columns: 1fr; }
+  .bank-card { padding: 16px; }
+  .bank-account-actions, .bank-qr-actions { align-items: stretch; flex-direction: column; }
+  .bank-account-actions .button, .bank-qr-actions .button { width: 100%; }
+  .bank-qr-image { width: min(100%, 260px); }
   #overlay > article { border-radius: 10px; }
   #dialogBody { overflow-wrap: anywhere; }
 }

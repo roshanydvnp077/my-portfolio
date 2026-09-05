@@ -81,3 +81,11 @@ git push origin main
 - Do not upload private documents into GitHub. Upload them only through the Admin panel.
 
 Client-side JavaScript cannot make a static GitHub Pages site a true secret store. Supabase Auth, RLS, and Storage policies are the security boundary; the publishable/anon key is safe to expose only with those policies enabled.
+
+## 8. Password Vault
+
+To enable the admin-only Password Vault, run `password-vault.sql` in the existing Supabase SQL Editor. It creates `public.password_vault` only if missing, enables RLS, and scopes every policy to the authenticated admin's `auth.uid()`. No public policy is created.
+
+## 9. Bank Details
+
+To enable the admin-only Bank Details section, run `bank-details.sql` in the existing Supabase SQL Editor. It creates user-scoped RLS policies for `public.bank_details` and the private `bank-qr` Storage bucket. QR files use `{user_id}/qr/...` paths and short-lived signed URLs; no public Storage policy is created.

@@ -8,6 +8,23 @@
   let migrationPromise = null;
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[character]));
+  const makeUuid = () => {
+    const cryptoApi = window.crypto || globalThis.crypto;
+    if (cryptoApi && typeof cryptoApi.randomUUID === 'function') return cryptoApi.randomUUID();
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      cryptoApi.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+      return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+      const random = Math.random() * 16 | 0;
+      const value = character === 'x' ? random : (random & 0x3 | 0x8);
+      return value.toString(16);
+    });
+  };
   const errorText = error => [error?.message, error?.details, error?.hint].filter(Boolean).join(' | ');
   const pathFor = file => file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
 
@@ -72,7 +89,7 @@
         return;
       }
       button.disabled = true;
-      const path = user.id + '/' + crypto.randomUUID() + '-' + pathFor(file);
+      const path = user.id + '/' + makeUuid() + '-' + pathFor(file);
       const upload = await client.storage.from(galleryBucket).upload(path, file, { contentType: file.type, upsert: false });
       if (upload.error) { status.textContent = errorText(upload.error); status.className = 'status full error'; button.disabled = false; return; }
       const insert = await client.from('gallery').insert({ title: form.title.value.trim(), category: form.category.value.trim(), description: form.description.value.trim(), file_path: path, created_by: user.id });
