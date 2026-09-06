@@ -1,6 +1,27 @@
+const adminHistoryScript = document.createElement('script');
+adminHistoryScript.src = 'admin-history.js?v=20261003';
+document.head.appendChild(adminHistoryScript);
+const projectEditorScript = document.createElement('script');
+projectEditorScript.src = 'project-editor.js?v=20261004';
+document.head.appendChild(projectEditorScript);
 const cmsScript = document.createElement('script');
-cmsScript.src = 'cms.js?v=20260905';
+cmsScript.src = 'cms.js?v=20260927';
 document.head.appendChild(cmsScript);
+const testimonialsScript = document.createElement('script');
+testimonialsScript.src = 'testimonials.js?v=20260921';
+document.head.appendChild(testimonialsScript);
+const documentUploadScript = document.createElement('script');
+documentUploadScript.src = 'document-upload.js?v=20260928';
+document.head.appendChild(documentUploadScript);
+const documentListScript = document.createElement('script');
+documentListScript.src = 'document-list.js?v=20260929';
+document.head.appendChild(documentListScript);
+const galleryUploadScript = document.createElement('script');
+galleryUploadScript.src = 'gallery-upload-v2.js?v=20261001';
+document.head.appendChild(galleryUploadScript);
+const galleryListScript = document.createElement('script');
+galleryListScript.src = 'gallery-list.js?v=20261002';
+document.head.appendChild(galleryListScript);
 const responsiveStyles = document.createElement('link');
 responsiveStyles.rel = 'stylesheet';
 responsiveStyles.href = 'responsive.css?v=20260905';
@@ -9,13 +30,13 @@ const privateGalleryScript = document.createElement('script');
 privateGalleryScript.src = 'private-gallery.js?v=20260905';
 document.head.appendChild(privateGalleryScript);
 const familyVaultScript = document.createElement('script');
-familyVaultScript.src = 'family-vault.js?v=20260906';
+familyVaultScript.src = 'family-vault.js?v=20260912';
 document.head.appendChild(familyVaultScript);
 const familyVaultEditScript = document.createElement('script');
-familyVaultEditScript.src = 'family-vault-edit.js?v=20260906';
+familyVaultEditScript.src = 'family-vault-edit.js?v=20260910';
 document.head.appendChild(familyVaultEditScript);
 const passwordVaultScript = document.createElement('script');
-passwordVaultScript.src = 'password-vault.js?v=20260905';
+passwordVaultScript.src = 'password-vault.js?v=20260922';
 document.head.appendChild(passwordVaultScript);
 const bankDetailsScript = document.createElement('script');
 bankDetailsScript.src = 'bank-details.js?v=20260906';
@@ -173,7 +194,7 @@ document.head.appendChild(adminFavicon);
   const app = document.getElementById('app');
   const state = { user: null, rows: {} };
   const modules = {
-    projects: [['title','Title','text',true],['slug','Slug','text',true],['short_description','Short description','text',true],['full_description','Full description','textarea',true],['category','Category','text'],['technologies','Technologies','text'],['live_url','Live demo URL','url'],['github_url','GitHub URL','url'],['is_featured','Featured','checkbox'],['is_published','Published','checkbox']],
+    projects: [['title','Title','text',true],['slug','Slug','text',true],['short_description','Short description','text',true],['full_description','Full description','textarea',true],['category','Category','text'],['technologies','Technologies','text'],['live_url','Live demo URL','url'],['github_url','GitHub URL','url'],['is_published','Visibility','checkbox']],
     skills: [['name','Skill name','text',true],['category','Category','text',true],['icon','Icon','text'],['level','Level','number'],['sort_order','Sort order','number'],['is_published','Published','checkbox']],
     services: [['title','Title','text',true],['description','Description','textarea',true],['icon','Icon','text'],['features','Features','textarea'],['sort_order','Sort order','number'],['is_published','Published','checkbox']],
     journey: [['title','Title','text'],['organization','Organization','text'],['type','Type','text'],['start_date','Start date','date'],['end_date','End date','date'],['description','Description','textarea'],['location','Location','text'],['sort_order','Sort order','number'],['is_published','Published','checkbox']]
@@ -186,7 +207,7 @@ document.head.appendChild(adminFavicon);
   function openDialog(title, html) { $('dialogTitle').textContent = title; $('dialogBody').innerHTML = html; $('overlay').hidden = false; }
   function closeDialog() { $('overlay').hidden = true; }
   async function requireAdmin() { const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) return null; const check = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle(); return check.error || !check.data ? null : user; }
-  async function fetchRows(table) { const result = await client.from(table).select('*').order('created_at', { ascending:false }); if (result.error) { console.error('Admin request failed for ' + table + ':', result.error); return []; } return result.data || []; }
+  async function fetchRows(table) { const result = await client.from(table).select('*').order('created_at', { ascending:false }); if (result.error) { if (table === 'projects') state.projectFetchError = result.error; console.error('Admin request failed for ' + table + ':', result.error); return []; } if (table === 'projects') state.projectFetchError = null; return result.data || []; }
   async function fetchRowsSafe(table) { try { return await fetchRows(table); } catch (error) { console.error('Admin dashboard request failed for ' + table + ':', error); return []; } }
   function fieldMarkup(field, row) { const [name, label, type, required] = field; const value = row?.[name] ?? ''; if (type === 'checkbox') return '<label>' + label + '<input name="' + name + '" type="checkbox" ' + (value ? 'checked' : '') + '></label>'; const tag = type === 'textarea' ? 'textarea' : 'input'; return '<label>' + label + '<' + tag + ' class="field" name="' + name + '" type="' + type + '" ' + (required ? 'required' : '') + '>' + (tag === 'textarea' ? escape(value) + '</textarea>' : '</input>') + '</label>'; }
   function normalizeArrayField(value) { if (Array.isArray(value)) return value; return String(value || '').split(',').map(item => item.trim()).filter(Boolean); }
@@ -254,5 +275,89 @@ document.head.appendChild(adminFavicon);
     $('fileEditForm').addEventListener('submit', async event => { event.preventDefault(); const form = event.currentTarget, file = form.file.files[0], button = form.querySelector('button'), status = $('fileEditStatus'); button.disabled = true; let newPath = ''; try { if (file) { newPath = state.user.id + '/' + makeUuid() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); const upload = await client.storage.from(bucket).upload(newPath, file, { contentType:file.type, upsert:false }); if (upload.error) throw upload.error; } const changes = { title:form.title.value.trim(), category:form.category.value.trim(), description:form.description.value.trim() }; if (newPath) Object.assign(changes, { file_path:newPath, file_name:file.name, file_type:file.type, file_size:file.size }); const result = await client.from(key).update(changes).eq('id', id); if (result.error) throw result.error; if (newPath && row.file_path) await client.storage.from(bucket).remove([row.file_path]); closeDialog(); await showFiles(key); } catch (error) { if (newPath) await client.storage.from(bucket).remove([newPath]); status.textContent = showError(error); status.className = 'status full error'; button.disabled = false; } });
   }
   document.addEventListener('click', event => { const editButton = event.target.closest('[data-edit-file]'); if (!editButton) return; event.preventDefault(); event.stopImmediatePropagation(); editFile(editButton.dataset.editFile, editButton.dataset.id); }, true);
+  function decorateProjects() {
+    const view = $('projectsView');
+    const rows = state.rows.projects || [];
+    const table = view?.querySelector('table');
+    if (!table || view?.querySelector('[data-project-cms]') || table.dataset.visibilityDecorated || table.querySelectorAll('tbody tr').length !== rows.length) return;
+    table.dataset.visibilityDecorated = 'true';
+    table.querySelector('thead tr')?.insertAdjacentHTML('beforeend', '<th>Visibility</th>');
+    table.querySelectorAll('tbody tr').forEach((tableRow, index) => {
+      const row = rows[index];
+      tableRow.insertAdjacentHTML('beforeend', '<td><span class="project-visibility-badge ' + (row.is_published ? 'visible' : 'hidden') + '">' + (row.is_published ? '🟢 Visible' : '⚪ Hidden') + '</span><button class="project-visibility-action" data-project-visibility-id="' + escape(row.id) + '">' + (row.is_published ? 'Hide' : 'Unhide') + '</button></td>');
+    });
+  }
+  const projectListObserver = new MutationObserver(decorateProjects);
+  projectListObserver.observe($('projectsView') || app, { childList: true, subtree: true });
+  const projectImageBucket = 'portfolio-images';
+  const getProjectImageUrl = imagePath => {
+    if (typeof imagePath !== 'string') return '';
+    const value = imagePath.trim();
+    if (!value) return '';
+    if (/^https?:\/\//i.test(value)) return value;
+    return client.storage.from(projectImageBucket).getPublicUrl(value).data.publicUrl || '';
+  };
+  const normalizedProject = row => ({ ...row, title: String(row?.title || ''), slug: String(row?.slug || ''), short_description: String(row?.short_description || ''), full_description: String(row?.full_description || ''), category: String(row?.category || ''), image_url: typeof row?.image_url === 'string' ? row.image_url : '', is_published: Boolean(row?.is_published), is_featured: Boolean(row?.is_featured) });
+  const projectImageMarkup = row => {
+    const url = getProjectImageUrl(row.image_url);
+    return '<button type="button" class="project-thumbnail-button" data-project-preview="' + escape(row.id) + '" aria-label="Preview ' + escape(row.title || 'project image') + '"><span class="project-thumbnail">' + (url ? '<img src="' + escape(url) + '" alt="' + escape(row.title || 'Project image') + '" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false;console.error(\'Project image failed to load:\',this.src)">' : '') + '<span class="project-thumbnail-fallback"' + (url ? ' hidden' : '') + '>No image</span></span></button>';
+  };
+  function renderProjectsCms() {
+    const view = $('projectsView');
+    if (!view || !state.rows.projects) return;
+    if (state.projectFetchError) { view.innerHTML = '<div class="panel projects-cms-panel"><div class="toolbar"><div><h2>Projects</h2><span class="muted">Manage portfolio projects</span></div></div><div class="projects-error-state"><strong>Could not load projects.</strong><span>' + escape(showError(state.projectFetchError)) + '</span><button class="button primary" data-project-retry>Retry</button></div></div>'; return; }
+    const rows = state.rows.projects.map(normalizedProject).sort((left, right) => new Date(right.created_at || 0) - new Date(left.created_at || 0));
+    state.rows.projects = rows;
+    view.innerHTML = '<div class="panel projects-cms-panel" data-project-cms><div class="toolbar"><div><h2>Projects</h2><span class="muted">Manage portfolio projects</span></div><button class="button primary" data-add="projects">+ Add Project</button></div>' + (rows.length ? '<div class="table projects-cms-table"><table><thead><tr><th>Image</th><th>Title</th><th>Slug</th><th>Category</th><th>Status</th><th>Featured</th><th>Created Date</th><th>Actions</th></tr></thead><tbody>' + rows.map(row => '<tr data-project-view="' + escape(row.id) + '"><td data-label="Image">' + projectImageMarkup(row) + '</td><td data-label="Title"><strong>' + escape(row.title || '-') + '</strong></td><td data-label="Slug"><span class="project-table-text">' + escape(row.slug || '-') + '</span></td><td data-label="Category"><span class="project-category-badge">' + escape(row.category || '-') + '</span></td><td data-label="Status"><span class="project-status-badge ' + (row.is_published ? 'published' : 'hidden') + '">' + (row.is_published ? 'Published' : 'Draft') + '</span></td><td data-label="Featured"><span class="project-featured-badge ' + (row.is_featured ? 'featured' : '') + '">' + (row.is_featured ? 'Yes' : 'No') + '</span></td><td data-label="Created Date"><time>' + escape(date(row.created_at)) + '</time></td><td data-label="Actions"><div class="row-actions"><button data-project-view-button="' + escape(row.id) + '">View</button><button data-edit="projects" data-id="' + escape(row.id) + '">Edit</button><button data-project-delete="' + escape(row.id) + '">Delete</button></div></td></tr>').join('') + '</tbody></table></div>' : '<div class="projects-empty-state"><strong>No projects found</strong><button class="button primary" data-add="projects">+ Add Project</button></div>') + '</div>';
+    ensureProjectRealtime();
+  }
+  let projectRealtimeChannel;
+  function ensureProjectRealtime() {
+    if (projectRealtimeChannel) return;
+    projectRealtimeChannel = client.channel('admin-projects-cms').on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, payload => {
+      const incoming = payload.new ? normalizedProject(payload.new) : null;
+      const current = state.rows.projects || [];
+      if (payload.eventType === 'INSERT' && incoming && !current.some(row => row.id === incoming.id)) current.push(incoming);
+      if (payload.eventType === 'UPDATE' && incoming) { const index = current.findIndex(row => row.id === incoming.id); if (index >= 0) current[index] = incoming; else current.push(incoming); }
+      if (payload.eventType === 'DELETE') state.rows.projects = current.filter(row => row.id !== payload.old?.id);
+      if (document.querySelector('#projectsView [data-project-cms]')) renderProjectsCms();
+    }).subscribe(status => { if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') console.error('Projects realtime subscription:', status); });
+  }
+  const projectsCmsObserver = new MutationObserver(() => { const view = $('projectsView'); if (view && !view.querySelector('[data-project-cms]') && state.rows.projects) renderProjectsCms(); });
+  projectsCmsObserver.observe($('projectsView') || app, { childList: true, subtree: true });
+  function openProjectDetails(row) {
+    const url = getProjectImageUrl(row.image_url);
+    openDialog('Project Details', '<div class="project-details-dialog">' + (url ? '<img class="project-details-image" src="' + escape(url) + '" alt="' + escape(row.title || 'Project image') + '" onerror="this.hidden=true;this.nextElementSibling.hidden=false;console.error(\'Project details image failed to load:\',this.src)"><span class="project-details-fallback" hidden>Image unavailable</span>' : '<span class="project-details-fallback">No image available</span>') + '<div class="project-details-copy"><h3>' + escape(row.title || '-') + '</h3><dl><dt>Slug</dt><dd>' + escape(row.slug || '-') + '</dd><dt>Short description</dt><dd>' + escape(row.short_description || '-') + '</dd><dt>Full description</dt><dd>' + escape(row.full_description || '-') + '</dd><dt>Category</dt><dd>' + escape(row.category || '-') + '</dd><dt>Status</dt><dd>' + (row.is_published ? 'Published' : 'Draft') + '</dd><dt>Featured</dt><dd>' + (row.is_featured ? 'Yes' : 'No') + '</dd><dt>Created date</dt><dd>' + escape(date(row.created_at)) + '</dd></dl></div><button type="button" class="button" data-project-details-close>Close</button></div>');
+  }
+  document.addEventListener('click', async event => {
+    const retry = event.target.closest('[data-project-retry]');
+    if (retry) { event.preventDefault(); await show('projects'); return; }
+    const preview = event.target.closest('[data-project-preview]');
+    if (preview) { const row = state.rows.projects?.find(item => item.id === preview.dataset.projectPreview); const url = getProjectImageUrl(row?.image_url); if (url) openDialog('Project Image', '<div class="project-image-dialog"><img src="' + escape(url) + '" alt="' + escape(row?.title || 'Project image') + '" onerror="this.hidden=true;console.error(\'Project image preview failed to load:\',this.src)"><button type="button" class="button" data-project-preview-close>Close</button></div>'); return; }
+    if (event.target.closest('[data-project-preview-close]')) { closeDialog(); return; }
+    const viewButton = event.target.closest('[data-project-view-button]');
+    const rowElement = event.target.closest('[data-project-view]');
+    if (viewButton || (rowElement && !event.target.closest('button,a'))) { const row = state.rows.projects?.find(item => item.id === (viewButton?.dataset.projectViewButton || rowElement.dataset.projectView)); if (row) openProjectDetails(row); return; }
+    if (event.target.closest('[data-project-details-close]')) { closeDialog(); return; }
+    const deleteButton = event.target.closest('[data-project-delete]');
+    if (!deleteButton) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const row = state.rows.projects?.find(item => item.id === deleteButton.dataset.projectDelete);
+    if (!row || !confirm('Delete this project permanently?')) return;
+    deleteButton.disabled = true;
+    const result = await client.from('projects').delete().eq('id', row.id);
+    if (result.error) { toast(showError(result.error), true); deleteButton.disabled = false; return; }
+    if (row.image_url && !/^https?:\/\//i.test(row.image_url)) await client.storage.from(projectImageBucket).remove([row.image_url]);
+    state.rows.projects = state.rows.projects.filter(item => item.id !== row.id);
+    renderProjectsCms();
+    toast('Project deleted.');
+  }, true);
+  window.addEventListener('beforeunload', () => { if (projectRealtimeChannel) client.removeChannel(projectRealtimeChannel); });
+  document.addEventListener('click', event => {
+    if (!event.target.closest('[data-view="projects"]')) return;
+    const view = $('projectsView');
+    if (view) view.innerHTML = '<div class="panel projects-cms-panel"><div class="toolbar"><h2>Projects</h2></div><div class="projects-loading-state">Loading projects...</div></div>';
+  }, true);
   (async () => { state.user = await requireAdmin(); if (!state.user) return location.replace('../index.html#admin-login'); $('account').textContent = state.user.email || ''; app.hidden = false; await show('dashboard'); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); await checkUnreadMessages(); window.setInterval(checkUnreadMessages, 30000); client.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_OUT' || !session) location.replace('../index.html'); }); })();
 }());

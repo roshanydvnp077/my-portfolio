@@ -91,18 +91,39 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function openPhotoLightbox(url, name) {
+    const existing = document.querySelector('[data-family-photo-lightbox]');
+    existing?.remove();
+    const lightbox = document.createElement('div');
+    lightbox.className = 'family-photo-lightbox';
+    lightbox.dataset.familyPhotoLightbox = 'true';
+    lightbox.innerHTML = '<button type="button" class="family-photo-lightbox-close" aria-label="Close profile image">×</button><img src="' + escape(url) + '" alt="Profile image of ' + escape(name) + '">';
+    const closeLightbox = () => { lightbox.remove(); document.removeEventListener('keydown', onKeydown); };
+    const onKeydown = event => { if (event.key === 'Escape') closeLightbox(); };
+    lightbox.addEventListener('click', event => { if (event.target === lightbox || event.target.closest('.family-photo-lightbox-close')) closeLightbox(); });
+    document.addEventListener('keydown', onKeydown);
+    document.body.appendChild(lightbox);
+  }
+
   async function viewMemberDetails(id) {
     const details = await getMemberDetails(id);
     if (!details) return;
     const { member, documents } = details;
+    let photoUrl = '';
+    if (member.profile_photo_path) {
+      const signed = await client.storage.from(bucket).createSignedUrl(member.profile_photo_path, 120);
+      if (!signed.error) photoUrl = signed.data.signedUrl;
+    }
     const dialog = document.getElementById('overlay');
     const dialogTitle = document.getElementById('dialogTitle');
     const dialogBody = document.getElementById('dialogBody');
     if (!dialog || !dialogTitle || !dialogBody) return;
-    dialogTitle.textContent = member.full_name || 'Family Details';
-    dialogBody.innerHTML = '<div class="family-detail-dialog"><h3>' + escape(member.full_name) + '</h3><p class="muted">' + escape(member.relation || 'Family member') + '</p><div class="family-detail-list">' + [['Gender',member.gender],['Date of Birth',member.date_of_birth],['Blood Group',member.blood_group],['Phone',member.phone],['Email',member.email],['Address',member.address],['Occupation',member.occupation],['Notes',member.notes]].filter(item => item[1]).map(item => '<p><strong>' + item[0] + '</strong><span>' + escape(item[1]) + '</span></p>').join('') + '</div><p><strong>Documents</strong><span>' + documents.length + '</span></p><div class="family-form-actions"><button type="button" class="button" data-vault-close-details>Close</button><button type="button" class="button primary" data-vault-print-member="' + member.id + '">Print</button></div></div>';
+    dialogTitle.textContent = 'Member Details';
+    const card = (icon, label, value) => '<div class="family-detail-card"><span class="family-detail-card-icon">' + icon + '</span><div><strong>' + label + '</strong><span>' + escape(value) + '</span></div></div>';
+    dialogBody.innerHTML = '<div class="family-detail-dialog"><div class="family-detail-heading"><div><span class="family-detail-breadcrumb">Family Vault / Member</span><h3>' + escape(member.full_name) + '</h3><p class="muted">' + escape(member.relation || 'Family member') + '</p></div></div><div class="family-detail-hero">' + (photoUrl ? '<button type="button" class="family-detail-photo-button" data-vault-photo-preview title="Open profile image"><img class="family-detail-photo" src="' + escape(photoUrl) + '" alt="Profile image of ' + escape(member.full_name) + '"></button>' : '<div class="family-detail-photo family-detail-photo-empty">No photo</div>') + '<div class="family-detail-summary"><p><strong>Member</strong><span>' + escape(member.full_name) + '</span></p><p><strong>Relationship</strong><span>' + escape(member.relation || 'Family member') + '</span></p><p><strong>Gender</strong><span>' + escape(member.gender || 'Not provided') + '</span></p><p><strong>Date of Birth</strong><span>' + escape(member.date_of_birth || 'Not provided') + '</span></p></div></div><div class="family-detail-cards">' + card('📞', 'Phone', member.phone || 'Not provided') + card('📍', 'Address', member.address || 'Not provided') + card('💼', 'Occupation', member.occupation || 'Not provided') + card('📄', 'Documents', documents.length + (documents.length === 1 ? ' document' : ' documents')) + '</div>' + (member.email || member.blood_group || member.notes ? '<div class="family-detail-list">' + [['Email',member.email],['Blood Group',member.blood_group],['Notes',member.notes]].filter(item => item[1]).map(item => '<p><strong>' + item[0] + '</strong><span>' + escape(item[1]) + '</span></p>').join('') + '</div>' : '') + '<div class="family-detail-actions"><button type="button" class="button" data-vault-close-details>Close</button><button type="button" class="button primary" data-vault-print-member="' + member.id + '">🖨 Print</button></div></div>';
     dialog.hidden = false;
     dialogBody.querySelector('[data-vault-close-details]').onclick = () => { dialog.hidden = true; };
+    dialogBody.querySelector('[data-vault-photo-preview]')?.addEventListener('click', () => openPhotoLightbox(photoUrl, member.full_name));
   }
 
   async function printMemberDetails(id) {
@@ -154,7 +175,7 @@
     };
   }
 
-  document.addEventListener('click', event => { const button = event.target.closest('[data-vault-edit-doc], [data-vault-download-member], [data-vault-view-member-details], [data-vault-print-member]'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); if (button.hasAttribute('data-vault-edit-doc')) openEdit(button.dataset.vaultEditDoc); else if (button.hasAttribute('data-vault-download-member')) downloadMemberDetails(button.dataset.vaultDownloadMember); else if (button.hasAttribute('data-vault-view-member-details')) viewMemberDetails(button.dataset.vaultViewMemberDetails); else printMemberDetails(button.dataset.vaultPrintMember); }, true);
+  document.addEventListener('click', event => { const button = event.target.closest('[data-vault-edit-doc], [data-vault-member-photo], [data-vault-download-member], [data-vault-view-member-details], [data-vault-print-member]'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); if (button.hasAttribute('data-vault-edit-doc')) openEdit(button.dataset.vaultEditDoc); else if (button.hasAttribute('data-vault-member-photo')) openPhotoLightbox(button.dataset.vaultMemberPhoto, 'Profile image'); else if (button.hasAttribute('data-vault-download-member')) downloadMemberDetails(button.dataset.vaultDownloadMember); else if (button.hasAttribute('data-vault-view-member-details')) viewMemberDetails(button.dataset.vaultViewMemberDetails); else printMemberDetails(button.dataset.vaultPrintMember); }, true);
   new MutationObserver(injectButtons).observe(document.body, { childList: true, subtree: true });
   injectButtons();
 }());

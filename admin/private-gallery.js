@@ -92,7 +92,7 @@
       const path = user.id + '/' + makeUuid() + '-' + pathFor(file);
       const upload = await client.storage.from(galleryBucket).upload(path, file, { contentType: file.type, upsert: false });
       if (upload.error) { status.textContent = errorText(upload.error); status.className = 'status full error'; button.disabled = false; return; }
-      const insert = await client.from('gallery').insert({ title: form.title.value.trim(), category: form.category.value.trim(), description: form.description.value.trim(), file_path: path, created_by: user.id });
+      const insert = await client.from('gallery').insert({ title: form.title.value.trim(), category: form.category.value.trim(), description: form.description.value.trim(), file_path: path, file_name: file.name, file_type: file.type, file_size: file.size, is_public: true, is_published: true, created_by: user.id });
       if (insert.error) { await client.storage.from(galleryBucket).remove([path]); status.textContent = errorText(insert.error); status.className = 'status full error'; button.disabled = false; return; }
       closeDialog();
       document.querySelector('[data-view="gallery"]')?.click();
@@ -116,6 +116,63 @@
     document.querySelector('[data-view="gallery"]')?.click();
   }
 
+  function injectEditButtons() {
+    document.querySelectorAll('#galleryView [data-file-delete="gallery"]').forEach(deleteButton => {
+      const actions = deleteButton.parentElement;
+      if (!actions || actions.querySelector('[data-edit="gallery"]')) return;
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.dataset.edit = 'gallery';
+      editButton.dataset.id = deleteButton.dataset.id;
+      editButton.textContent = 'Edit';
+      actions.insertBefore(editButton, deleteButton);
+    });
+  }
+
+  async function edit(id) {
+    const rows = await signedRows();
+    const row = rows.find(item => item.id === id);
+    const overlay = document.getElementById('overlay');
+    const body = document.getElementById('dialogBody');
+    const title = document.getElementById('dialogTitle');
+    if (!row || !overlay || !body || !title) return;
+    title.textContent = 'Edit Gallery Image';
+    body.innerHTML = '<form id="privateGalleryEdit" class="form"><label>Title<input class="field" name="title" value="' + escape(row.title) + '" required></label><label>Category<input class="field" name="category" value="' + escape(row.category) + '"></label><label class="full">Description<textarea class="field" name="description">' + escape(row.description) + '</textarea></label><label class="full">Replace Image<input class="field" name="file" type="file" accept="image/*"><small class="muted">Optional. Image up to 10 MB.</small></label><p class="status full" id="privateGalleryEditStatus"></p><div class="row-actions full"><button type="button" class="button" data-gallery-edit-cancel>Cancel</button><button type="submit" class="button primary">Save Changes</button></div></form>';
+    overlay.hidden = false;
+    document.getElementById('privateGalleryEdit').addEventListener('submit', async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const file = form.file.files[0];
+      const status = document.getElementById('privateGalleryEditStatus');
+      const button = form.querySelector('button[type="submit"]');
+      if (file && (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024)) { status.textContent = 'Choose an image up to 10 MB.'; status.className = 'status full error'; return; }
+      button.disabled = true;
+      let replacement = '';
+      try {
+        const user = await adminUser();
+        if (!user) throw new Error('Admin authorization required.');
+        if (file) {
+          replacement = user.id + '/' + makeUuid() + '-' + pathFor(file);
+          const upload = await client.storage.from(galleryBucket).upload(replacement, file, { contentType: file.type, upsert: false });
+          if (upload.error) throw upload.error;
+        }
+        const changes = { title: form.title.value.trim(), category: form.category.value.trim(), description: form.description.value.trim() };
+        if (replacement) Object.assign(changes, { file_path: replacement, file_name: file.name, file_type: file.type, file_size: file.size });
+        const update = await client.from('gallery').update(changes).eq('id', id);
+        if (update.error) throw update.error;
+        if (replacement && row.file_path) await client.storage.from(galleryBucket).remove([row.file_path]);
+        closeDialog();
+        document.querySelector('[data-view="gallery"]')?.click();
+      } catch (error) {
+        if (replacement) await client.storage.from(galleryBucket).remove([replacement]);
+        status.textContent = errorText(error);
+        status.className = 'status full error';
+        button.disabled = false;
+      }
+    });
+    body.querySelector('[data-gallery-edit-cancel]').onclick = closeDialog;
+  }
+
   async function refreshImages() {
     const view = document.getElementById('galleryView');
     if (!view || view.hidden) return;
@@ -126,15 +183,17 @@
   document.addEventListener('click', event => {
     const upload = event.target.closest('[data-upload="gallery"]');
     const previewButton = event.target.closest('[data-preview="gallery"]');
+    const editButton = event.target.closest('[data-edit="gallery"]');
     const deleteButton = event.target.closest('[data-file-delete="gallery"]');
-    if (!upload && !previewButton && !deleteButton) return;
+    if (!upload && !previewButton && !editButton && !deleteButton) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     if (upload) openUpload();
     if (previewButton) preview(previewButton.dataset.id);
+    if (editButton) edit(editButton.dataset.id);
     if (deleteButton) remove(deleteButton.dataset.id);
   }, true);
 
-  const observer = new MutationObserver(() => refreshImages().catch(() => {}));
+  const observer = new MutationObserver(() => { injectEditButtons(); refreshImages().catch(() => {}); });
   observer.observe(document.body, { childList: true, subtree: true });
 }());

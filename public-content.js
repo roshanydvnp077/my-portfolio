@@ -22,5 +22,22 @@ document.head.appendChild(publicCmsScript);
   function handleRealtimeChange(payload) { if (!realtimeTables.has(payload.table)) return; load().catch(error => console.error('Public CMS refresh failed:', error)); }
   let channel;
   function subscribe() { if (channel) client.removeChannel(channel); channel = client.channel('public-portfolio-content').on('postgres_changes', { event:'*', schema:'public' }, handleRealtimeChange).subscribe(status => { if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') console.error('Public CMS realtime subscription:', status); }); }
-  document.addEventListener('DOMContentLoaded', () => { load(); subscribe(); }, { once:true });
+  function renderProjectImages() {
+    const grid = document.querySelector('.projects-modern-grid');
+    if (!grid) return;
+    grid.querySelectorAll('[data-supabase-content="projects"]').forEach(card => {
+      if (card.querySelector('.proj-mockup-img')) return;
+      const row = collectionRows.projects.find(item => String(item.id) === card.dataset.supabaseId);
+      const url = imageUrl(row?.image_url);
+      const wrapper = card.querySelector('.proj-mockup-wrapper');
+      if (!wrapper) return;
+      if (wrapper.dataset.imageFallbackRendered) return;
+      if (!url) { wrapper.dataset.imageFallbackRendered = 'true'; wrapper.classList.add('project-image-fallback'); wrapper.insertAdjacentHTML('beforeend', '<span class="project-image-fallback-label">Image unavailable</span>'); return; }
+      wrapper.insertAdjacentHTML('afterbegin', '<img class="proj-mockup-img" src="' + escape(url) + '" alt="' + escape(row.title || 'Project image') + '" loading="lazy">');
+      const image = wrapper.querySelector('.proj-mockup-img');
+      image.addEventListener('error', () => { console.error('Project image failed to load:', image.src); image.remove(); wrapper.dataset.imageFallbackRendered = 'true'; wrapper.classList.add('project-image-fallback'); wrapper.insertAdjacentHTML('beforeend', '<span class="project-image-fallback-label">Image unavailable</span>'); }, { once:true });
+    });
+  }
+  const projectImageObserver = new MutationObserver(renderProjectImages);
+  document.addEventListener('DOMContentLoaded', () => { load(); subscribe(); renderProjectImages(); const grid = document.querySelector('.projects-modern-grid'); if (grid) projectImageObserver.observe(grid, { childList:true, subtree:true }); }, { once:true });
 }());

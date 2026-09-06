@@ -70,7 +70,7 @@ create table if not exists public.contact_messages (
 );
 
 create table if not exists public.testimonials (
-  id uuid primary key default gen_random_uuid(), name text not null default '', position text not null default '',
+  id uuid primary key default gen_random_uuid(), person_name text not null default '', name text not null default '', position text not null default '',
   photo text, message text not null default '', rating integer not null default 5 check (rating between 1 and 5),
   sort_order integer not null default 0, is_published boolean not null default true,
   created_at timestamptz not null default now(), updated_at timestamptz not null default now(), created_by uuid references auth.users(id) on delete restrict
@@ -89,8 +89,14 @@ create table if not exists public.section_settings (
 );
 
 -- Repair older deployments that already had section_settings without the current columns.
+alter table public.section_settings add column if not exists section_key text;
+alter table public.section_settings add column if not exists section_label text;
 alter table public.section_settings add column if not exists key text;
+alter table public.section_settings add column if not exists label text not null default '';
 alter table public.section_settings add column if not exists is_visible boolean not null default true;
+alter table public.section_settings add column if not exists sort_order integer not null default 0;
+alter table public.section_settings add column if not exists updated_at timestamptz not null default now();
+alter table public.section_settings add column if not exists updated_by uuid;
 
 create table if not exists public.activity_logs (
   id uuid primary key default gen_random_uuid(), admin_id uuid references auth.users(id) on delete set null,
@@ -108,6 +114,50 @@ begin
 end $$;
 alter table public.profile add column if not exists experience text;
 alter table public.profile add column if not exists availability text;
+alter table public.testimonials add column if not exists name text not null default '';
+alter table public.testimonials add column if not exists position text not null default '';
+alter table public.testimonials add column if not exists photo text;
+alter table public.testimonials add column if not exists message text not null default '';
+alter table public.testimonials add column if not exists rating integer not null default 5;
+alter table public.testimonials add column if not exists sort_order integer not null default 0;
+alter table public.testimonials add column if not exists is_published boolean not null default true;
+alter table public.testimonials add column if not exists created_at timestamptz not null default now();
+alter table public.testimonials add column if not exists updated_at timestamptz not null default now();
+alter table public.testimonials add column if not exists created_by uuid;
+alter table public.testimonials add column if not exists full_name text not null default '';
+alter table public.testimonials add column if not exists person_name text not null default '';
+alter table public.testimonials add column if not exists profile_image text;
+alter table public.testimonials add column if not exists role text not null default '';
+alter table public.testimonials add column if not exists company text not null default '';
+alter table public.testimonials add column if not exists location text not null default '';
+alter table public.testimonials add column if not exists review text not null default '';
+alter table public.testimonials add column if not exists website_url text;
+alter table public.testimonials add column if not exists linkedin_url text;
+alter table public.testimonials add column if not exists is_featured boolean not null default false;
+alter table public.testimonials add column if not exists display_order integer not null default 0;
+update public.testimonials
+set full_name = coalesce(nullif(full_name, ''), name),
+    profile_image = coalesce(profile_image, photo),
+    role = coalesce(nullif(role, ''), position),
+    review = coalesce(nullif(review, ''), message),
+    display_order = case when display_order = 0 then sort_order else display_order end
+where full_name = '' or review = '' or role = '' or profile_image is null;
+alter table public.certificates add column if not exists title text not null default '';
+alter table public.certificates add column if not exists description text not null default '';
+alter table public.certificates add column if not exists issuer text not null default '';
+alter table public.certificates add column if not exists issue_date date;
+alter table public.certificates add column if not exists credential_id text;
+alter table public.certificates add column if not exists credential_url text;
+alter table public.certificates add column if not exists category text not null default 'Education';
+alter table public.certificates add column if not exists file_path text;
+alter table public.certificates add column if not exists file_name text;
+alter table public.certificates add column if not exists file_type text;
+alter table public.certificates add column if not exists file_size bigint;
+alter table public.certificates add column if not exists sort_order integer not null default 0;
+alter table public.certificates add column if not exists is_published boolean not null default true;
+alter table public.certificates add column if not exists created_at timestamptz not null default now();
+alter table public.certificates add column if not exists updated_at timestamptz not null default now();
+alter table public.certificates add column if not exists created_by uuid;
 alter table public.projects add column if not exists image_url text;
 alter table public.projects add column if not exists gallery text[] not null default '{}';
 alter table public.projects add column if not exists completion_date date;
@@ -129,11 +179,17 @@ alter table public.site_settings add column if not exists footer_settings jsonb 
 alter table public.site_settings add column if not exists notification_settings jsonb not null default '{}'::jsonb;
 alter table public.site_settings add column if not exists contact_form_enabled boolean not null default true;
 
-insert into public.section_settings (key, label, sort_order) values
+insert into public.section_settings (section_key, section_label, key, label, sort_order)
+select seed.key, seed.label, seed.key, seed.label, seed.sort_order
+from (values
   ('hero','Hero',0), ('about','About',1), ('skills','Skills',2), ('projects','Projects',3),
   ('services','Services',4), ('journey','Journey',5), ('testimonials','Testimonials',6),
   ('certificates','Certificates',7), ('contact','Contact',8), ('resume','Resume',9), ('hire_me','Hire Me',10)
-on conflict (key) do nothing;
+) as seed(key, label, sort_order)
+where not exists (
+  select 1 from public.section_settings existing
+  where existing.key = seed.key or existing.section_key = seed.key
+);
 
 -- 2. Add missing columns to legacy tables. Defaults keep existing rows valid.
 alter table public.admin_users add column if not exists created_at timestamptz not null default now();
@@ -322,6 +378,7 @@ create index if not exists contact_messages_created_at_idx on public.contact_mes
 create index if not exists contact_messages_status_idx on public.contact_messages (status);
 create index if not exists gallery_sort_order_idx on public.gallery (sort_order, created_at desc);
 create index if not exists projects_published_idx on public.projects (is_published, created_at desc);
+create index if not exists testimonials_display_order_idx on public.testimonials (is_published, display_order, created_at desc);
 
 create or replace function public.set_updated_at()
 returns trigger language plpgsql security invoker set search_path = public as $$
@@ -336,6 +393,10 @@ begin
     execute format('create trigger %I_updated_at before update on public.%I for each row execute procedure public.set_updated_at()', table_name, table_name);
   end loop;
 end $$;
+
+drop trigger if exists testimonials_updated_at on public.testimonials;
+create trigger testimonials_updated_at before update on public.testimonials
+for each row execute procedure public.set_updated_at();
 
 -- 5. RLS. Policies are created only after all referenced columns exist.
 alter table public.admin_users enable row level security;

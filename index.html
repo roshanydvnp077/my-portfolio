@@ -3288,6 +3288,17 @@
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.08));
     }
 
+    .project-image-fallback {
+      display: grid;
+      place-items: center;
+    }
+
+    .project-image-fallback-label {
+      color: rgba(226, 232, 240, 0.65);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+
     .proj-mockup-img {
       width: 100%;
       height: 100%;
@@ -8864,6 +8875,7 @@
       .mobile-menu { top: calc(72px + env(safe-area-inset-top)); width: min(78vw, 380px); max-width: 380px; height: calc(100dvh - 72px - env(safe-area-inset-top)); max-height: calc(100dvh - 72px - env(safe-area-inset-top)); }
     }
   </style>
+  <link rel="stylesheet" href="testimonials.css">
 </head>
 
 <body class="loader-active">
@@ -9084,6 +9096,7 @@
         </div>
       </div>
       <div class="hero-copy">
+        <span class="section-tag">// 01. HOME</span>
         <div class="hero-badge">Available for Work</div>
         <div class="typewriter-wrap">
           <span class="typewriter-prefix">&gt;_</span>
@@ -9183,6 +9196,7 @@
       
       <!-- Section Header with Animated Glowing Badge -->
       <div class="about-header-wrapper">
+        <span class="section-tag">// 02. ABOUT</span>
         <span class="about-badge-pill"><i class="fas fa-sparkles"></i> — ABOUT ME —</span>
         <h2 class="about-hero-title">Building Solutions with <span class="gradient-text-purple">Code &amp; Creativity</span></h2>
         <p class="about-hero-subtitle">Motivated IT student and full-stack software developer from Nepal, dedicated to crafting robust web applications, sleek user interfaces, and scalable backend architectures.</p>
@@ -9407,6 +9421,7 @@ code, scalable backend architectures, and crisp frontend experiences.
   <section id="skills" class="skills-section">
     <div class="section-inner">
       <div class="skills-header">
+        <span class="section-tag">// 03. SKILLS</span>
         <span class="skills-sub">— MY SKILLS —</span>
         <h2 class="skills-title">Technologies I <span class="gradient-text">Master</span></h2>
       </div>
@@ -9601,6 +9616,7 @@ code, scalable backend architectures, and crisp frontend experiences.
       <div class="projects-header-wrapper">
         <div class="projects-header-top">
           <div>
+            <span class="section-tag">// 04. PROJECTS</span>
             <span class="projects-badge-pill">MY WORK</span>
             <h2 class="projects-hero-title">Featured Projects</h2>
             <p class="projects-hero-subtitle">Explore my latest work in web development, from enterprise systems to interactive applications</p>
@@ -9759,6 +9775,7 @@ code, scalable backend architectures, and crisp frontend experiences.
     <div class="gallery-container">
       <div class="gallery-header">
         <div>
+          <div class="section-tag">// 05. GALLERY</div>
           <div class="gallery-kicker">Selected visuals</div>
           <h2 class="gallery-title">A closer look at the work.</h2>
         </div>
@@ -9907,7 +9924,7 @@ code, scalable backend architectures, and crisp frontend experiences.
   <!-- SERVICES -->
   <section id="services" class="services-bg">
     <div class="section-inner">
-      <span class="section-tag">// 06. WHAT I DO</span>
+      <span class="section-tag">// 06. SERVICES</span>
       <h2 class="section-title">My Services</h2>
       <p class="section-desc">Professional digital solutions tailored for your business needs.</p>
       <div class="services-grid">
@@ -9999,10 +10016,25 @@ code, scalable backend architectures, and crisp frontend experiences.
     </div>
   </section>
 
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="testimonials-section">
+    <div class="section-inner">
+      <span class="section-tag">// 07. TESTIMONIALS</span>
+      <h2 class="section-title">Testimonials</h2>
+      <p class="section-desc">What People Say About My Work</p>
+      <div class="testimonials-grid"></div>
+      <div class="testimonials-carousel-controls" hidden aria-label="Testimonials controls">
+        <button type="button" data-testimonial-prev aria-label="Previous testimonials">&#8592;</button>
+        <div class="testimonials-dots" data-testimonial-dots></div>
+        <button type="button" data-testimonial-next aria-label="Next testimonials">&#8594;</button>
+      </div>
+    </div>
+  </section>
+
   <!-- JOURNEY -->
   <section id="journey">
     <div class="section-inner">
-      <span class="section-tag">// 05. STORY ARC</span>
+      <span class="section-tag">// 08. JOURNEY</span>
       <h2 class="section-title">My Journey</h2>
       <p class="section-desc">Experience and education that shaped who I am as a developer.</p>
       <div class="journey-grid">
@@ -10083,7 +10115,7 @@ code, scalable backend architectures, and crisp frontend experiences.
   <!-- CONTACT -->
   <section id="contact" class="contact-bg">
     <div class="section-inner">
-      <span class="section-tag">// 07. TRANSMISSION</span>
+      <span class="section-tag">// 09. CONTACT</span>
       <h2 class="section-title">Get In Touch</h2>
       <p class="section-desc">Let's build something extraordinary together. Have a project in mind? My inbox is always
         open.</p>
@@ -10831,9 +10863,27 @@ code, scalable backend architectures, and crisp frontend experiences.
         return '';
       }
 
+      function makeUuid() {
+        const cryptoApi = window.crypto || globalThis.crypto;
+        if (cryptoApi && typeof cryptoApi.randomUUID === 'function') return cryptoApi.randomUUID();
+        if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') {
+          const bytes = new Uint8Array(16);
+          cryptoApi.getRandomValues(bytes);
+          bytes[6] = (bytes[6] & 0x0f) | 0x40;
+          bytes[8] = (bytes[8] & 0x3f) | 0x80;
+          const hex = Array.from(bytes, function (byte) { return byte.toString(16).padStart(2, '0'); }).join('');
+          return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (character) {
+          const random = Math.random() * 16 | 0;
+          const value = character === 'x' ? random : (random & 0x3 | 0x8);
+          return value.toString(16);
+        });
+      }
+
       function storagePath(userId, file, type) {
         const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
-        return userId + (type === 'gallery' ? '/gallery/' : '/') + crypto.randomUUID() + '-' + safeName;
+        return userId + (type === 'gallery' ? '/gallery/' : '/') + makeUuid() + '-' + safeName;
       }
 
       async function renderGallery(records) {
@@ -10927,7 +10977,7 @@ code, scalable backend architectures, and crisp frontend experiences.
           const user = (await supabaseClient.auth.getUser()).data.user;
           if (!user) return;
           const safeName = (record.file_name || 'gallery-image').toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
-          const newPath = user.id + '/gallery/' + crypto.randomUUID() + '-' + safeName;
+          const newPath = user.id + '/gallery/' + makeUuid() + '-' + safeName;
           const upload = await supabaseClient.storage.from(GALLERY_BUCKET).upload(newPath, download.data, { contentType:record.file_type || download.data.type || 'application/octet-stream', upsert:false });
           if (upload.error) continue;
           const update = await supabaseClient.from('gallery').update({ file_path:newPath }).eq('id', record.id);

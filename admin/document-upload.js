@@ -1,0 +1,27 @@
+(function () {
+  'use strict';
+  const client = window.supabaseClient;
+  const overlay = document.getElementById('overlay');
+  const title = document.getElementById('dialogTitle');
+  const body = document.getElementById('dialogBody');
+  if (!client || !overlay || !title || !body) return;
+  const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[c]));
+  const uuid = () => window.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2);
+  const close = () => { overlay.hidden = true; };
+  function open() {
+    title.textContent = 'Upload Document';
+    body.innerHTML = '<form class="form document-upload-editor" data-document-upload-form><p class="document-upload-intro">Add a private document to your portfolio vault.</p><div class="document-upload-grid"><label>Document Title *<input class="field" name="title" placeholder="e.g. My Resume" required></label><label>Category *<select class="field" name="category" required><option>Education</option><option>Professional</option><option>Identity</option><option>Other</option></select></label><label class="document-upload-wide">Description<textarea class="field" name="description" placeholder="Add a short description..."></textarea></label></div><label class="document-dropzone"><input name="file" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,image/jpeg,image/png" required><span class="document-upload-icon">📄</span><strong>Drag &amp; drop your document</strong><small>or click to browse</small><span>PDF, JPG, PNG, DOC, DOCX, XLS, XLSX · Max 10 MB</span></label><div class="document-selected" hidden><span data-document-file-name></span><span data-document-file-size></span><button type="button" class="button" data-document-remove>Remove</button></div><p class="status full" data-document-status></p><div class="document-upload-actions"><button type="button" class="button" data-document-cancel>Cancel</button><button type="submit" class="button primary">Upload</button></div></form>';
+    overlay.hidden = false;
+    const form = body.querySelector('[data-document-upload-form]'); const input = form.elements.file; const selected = form.querySelector('.document-selected'); const dropzone = form.querySelector('.document-dropzone');
+    const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','image/jpeg','image/png'];
+    const showFile = file => { selected.hidden = !file; if (file) { form.querySelector('[data-document-file-name]').textContent = '📄 ' + file.name; form.querySelector('[data-document-file-size]').textContent = (file.size / 1024 / 1024).toFixed(1) + ' MB'; } };
+    input.onchange = () => showFile(input.files[0]);
+    form.querySelector('[data-document-remove]').onclick = () => { input.value = ''; showFile(null); };
+    form.querySelector('[data-document-cancel]').onclick = close;
+    ['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.add('dragging'); }));
+    ['dragleave','drop'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.remove('dragging'); }));
+    dropzone.addEventListener('drop', event => { const file = event.dataTransfer.files[0]; if (file && window.DataTransfer) { const transfer = new DataTransfer(); transfer.items.add(file); input.files = transfer.files; showFile(file); } });
+    form.onsubmit = async event => { event.preventDefault(); const file = input.files[0]; const status = form.querySelector('[data-document-status]'); const button = form.querySelector('button[type="submit"]'); if (!file || !allowed.includes(file.type) || file.size > 10 * 1024 * 1024) { status.textContent = 'Choose a supported file up to 10 MB.'; status.className = 'status full error'; return; } const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) { status.textContent = 'Admin session expired. Please sign in again.'; status.className = 'status full error'; return; } button.disabled = true; button.textContent = 'Uploading...'; const path = user.id + '/' + uuid() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); try { const upload = await client.storage.from('portfolio-documents').upload(path, file, { contentType: file.type, upsert: false }); if (upload.error) throw upload.error; const insert = await client.from('documents').insert({ title: String(form.elements.title.value).trim(), description: String(form.elements.description.value).trim(), category: form.elements.category.value, file_path: path, file_name: file.name, file_type: file.type, file_size: file.size, created_by: user.id }); if (insert.error) throw insert.error; close(); document.querySelector('[data-view="documents"]')?.click(); } catch (error) { await client.storage.from('portfolio-documents').remove([path]); status.textContent = 'Could not upload document. Please try again.'; status.className = 'status full error'; button.disabled = false; button.textContent = 'Upload'; console.error('Document upload failed:', error); } };
+  }
+  document.addEventListener('click', event => { const button = event.target.closest('[data-upload="documents"]'); if (!button) return; event.preventDefault(); event.stopImmediatePropagation(); open(); }, true);
+}());
