@@ -101,13 +101,19 @@ img { max-width: 100%; height: auto; }
 .password-empty .button { margin-top: 18px; }
 .vault-form-actions { grid-column: 1 / -1; }
 .bank-page { min-width: 0; color: var(--text); }
-.bank-header, .bank-card-title, .bank-qr-actions, .bank-account-actions { display: flex; align-items: center; gap: 12px; }
+.bank-header, .bank-card-title, .bank-qr-actions, .bank-account-actions, .bank-header-actions { display: flex; align-items: center; gap: 12px; }
 .bank-header { justify-content: space-between; margin-bottom: 22px; }
 .bank-header h2 { margin: 4px 0; }
-.bank-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.bank-grid { display: grid; gap: 18px; }
 .bank-card { min-width: 0; padding: 22px; border: 1px solid rgba(96, 165, 250, .25); border-radius: 18px; background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(30, 27, 75, .68)); box-shadow: 0 18px 44px rgba(2, 6, 23, .3), inset 0 1px rgba(255, 255, 255, .08); }
 .bank-card-title { margin-bottom: 20px; color: #dbeafe; }
 .bank-card-title span { font-size: 1.4rem; }
+.bank-account-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(220px, .75fr); gap: 24px; align-items: stretch; }
+.bank-account-info { min-width: 0; }
+.bank-card-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.bank-card-actions .button { min-width: 100px; }
+.bank-qr-panel { display: flex; min-width: 0; flex-direction: column; align-items: stretch; justify-content: center; padding-left: 24px; border-left: 1px solid var(--line); }
+.bank-qr-label { margin-bottom: 12px; color: var(--muted); font-size: .75rem; text-transform: uppercase; }
 .bank-details { display: grid; gap: 16px; margin: 0; }
 .bank-details div { min-width: 0; }
 .bank-details dt { color: #94a3b8; font-size: .75rem; }
@@ -188,8 +194,11 @@ img { max-width: 100%; height: auto; }
   .password-grid { grid-template-columns: 1fr; }
   .password-actions .button { flex: 1 1 100px; }
   .bank-header { align-items: stretch; flex-direction: column; }
-  .bank-header > .button { width: 100%; }
+  .bank-header-actions { flex-direction: column; }
+  .bank-header-actions .button { width: 100%; }
   .bank-grid { grid-template-columns: 1fr; }
+  .bank-account-layout { grid-template-columns: 1fr; }
+  .bank-qr-panel { padding: 18px 0 0; border-top: 1px solid var(--line); border-left: 0; }
   .bank-card { padding: 16px; }
   .bank-account-actions, .bank-qr-actions { align-items: stretch; flex-direction: column; }
   .bank-account-actions .button, .bank-qr-actions .button { width: 100%; }

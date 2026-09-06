@@ -9,7 +9,7 @@
   const dialogBody = document.getElementById('dialogBody');
   const bucket = 'bank-qr';
   const accountTypes = ['Savings', 'Current', 'Other'];
-  const state = { user: null, view: null, row: null, qrUrl: '', revealed: false };
+  const state = { user: null, view: null, rows: [], revealed: {} };
   if (!client || !nav || !main) return;
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[character]));
@@ -124,69 +124,70 @@
     }
   }
 
-  function maskedAccount() {
-    const value = String(state.row?.account_number || '');
+  function maskedAccount(row) {
+    const value = String(row?.account_number || '');
     return value.length > 4 ? '••••••' + value.slice(-4) : '••••';
   }
 
   function paint() {
     if (!state.view) return;
-    if (!state.row) {
+    if (!state.rows.length) {
       state.view.innerHTML = '<div class="bank-page"><div class="bank-empty"><div class="bank-empty-icon">🏦</div><h2>No Bank Details Added</h2><p class="muted">Add private bank information for your admin account.</p><button class="button primary" type="button" data-bank-add>＋ Add Bank Details</button></div></div>';
       activate();
       return;
     }
-    const row = state.row;
-    const account = state.revealed ? escape(row.account_number) : maskedAccount();
-    const qr = state.qrUrl ? '<img class="bank-qr-image" src="' + escape(state.qrUrl) + '" alt="Private bank QR code">' : '<div class="bank-qr-empty">No bank QR uploaded</div>';
-    state.view.innerHTML = '<div class="bank-page"><div class="bank-header"><div><span class="eyebrow">Private admin area</span><h2>Bank Details</h2><p class="muted">Visible only to the authenticated admin account.</p></div><button class="button primary" type="button" data-bank-edit>✏️ Edit</button></div><div class="bank-grid"><section class="bank-card"><div class="bank-card-title"><span>🏦</span><h3>Bank Information</h3></div><dl class="bank-details"><div><dt>Bank Name</dt><dd>' + escape(row.bank_name) + '</dd></div><div><dt>Account Holder Name</dt><dd>' + escape(row.account_holder_name) + '</dd></div><div><dt>Account Number</dt><dd class="bank-account-value">' + account + '</dd><div class="bank-account-actions"><button class="button" type="button" data-bank-toggle>' + (state.revealed ? '🙈 Hide' : '👁 Show') + '</button><button class="button" type="button" data-bank-copy>📋 Copy Account Number</button></div></div><div><dt>Account Type</dt><dd>' + escape(row.account_type || 'Other') + '</dd></div></dl><button class="button danger bank-delete-record" type="button" data-bank-delete>🗑 Delete Bank Details</button></section><section class="bank-card bank-qr-card"><div class="bank-card-title"><span>▦</span><h3>Bank QR Code</h3></div>' + qr + '<div class="bank-qr-actions"><button class="button" type="button" data-bank-upload>📤 Upload QR</button>' + (state.qrUrl ? '<button class="button danger" type="button" data-bank-delete-qr>🗑️ Delete QR</button>' : '') + '</div></section></div></div>';
+    const cards = state.rows.map(row => {
+      const account = state.revealed[row.id] ? escape(row.account_number) : maskedAccount(row);
+      const qr = row.qrUrl ? '<img class="bank-qr-image" src="' + escape(row.qrUrl) + '" alt="Private bank QR code">' : '<div class="bank-qr-empty">No bank QR uploaded</div>';
+      return '<article class="bank-card bank-account-card"><div class="bank-card-title"><span>🏦</span><h3>' + escape(row.bank_name) + '</h3></div><div class="bank-account-layout"><div class="bank-account-info"><dl class="bank-details"><div><dt>Account Holder Name</dt><dd>' + escape(row.account_holder_name) + '</dd></div><div><dt>Account Number</dt><dd class="bank-account-value">' + account + '</dd><div class="bank-account-actions"><button class="button" type="button" data-bank-toggle="' + row.id + '">' + (state.revealed[row.id] ? '🙈 Hide' : '👁 Show') + '</button><button class="button" type="button" data-bank-copy="' + row.id + '">📋 Copy Account Number</button></div></div><div><dt>Account Type</dt><dd>' + escape(row.account_type || 'Other') + '</dd></div></dl><div class="bank-card-actions"><button class="button primary" type="button" data-bank-edit="' + row.id + '">✏️ Edit</button><button class="button danger" type="button" data-bank-delete="' + row.id + '">🗑 Delete</button></div></div><section class="bank-qr-panel"><div class="bank-qr-label">QR Code</div>' + qr + '<div class="bank-qr-actions"><button class="button" type="button" data-bank-upload="' + row.id + '">📤 Upload QR</button>' + (row.qrUrl ? '<button class="button danger" type="button" data-bank-delete-qr="' + row.id + '">🗑️ Delete QR</button>' : '') + '</div></section></div></article>';
+    }).join('');
+    state.view.innerHTML = '<div class="bank-page"><div class="bank-header"><div><span class="eyebrow">Private admin area</span><h2>Bank Details</h2><p class="muted">' + state.rows.length + (state.rows.length === 1 ? ' account' : ' accounts') + ' saved for the authenticated admin.</p></div><button class="button primary" type="button" data-bank-add>＋ Add Bank Details</button></div>' + cards + '</div>';
     activate();
   }
 
   async function loadBank() {
     const user = await currentAdmin();
-    if (!user) { state.row = null; state.qrUrl = ''; state.revealed = false; if (state.view) state.view.hidden = true; window.location.replace('../index.html#admin-login'); return; }
+    if (!user) { state.rows = []; state.revealed = {}; if (state.view) state.view.hidden = true; window.location.replace('../index.html#admin-login'); return; }
     state.user = user;
-    const result = await client.from('bank_details').select('id,user_id,bank_name,account_holder_name,account_number,account_type,qr_storage_path,created_at,updated_at').eq('user_id', user.id).order('updated_at', { ascending: false }).limit(1).maybeSingle();
+    const result = await client.from('bank_details').select('id,user_id,bank_name,account_holder_name,account_number,account_type,qr_storage_path,created_at,updated_at').eq('user_id', user.id).order('updated_at', { ascending: false });
     if (result.error) { toast('Could not load Bank Details.', true); return; }
-    state.row = result.data || null;
-    state.revealed = false;
-    state.qrUrl = '';
-    if (state.row?.qr_storage_path) {
-      const signed = await client.storage.from(bucket).createSignedUrl(state.row.qr_storage_path, 120);
-      if (!signed.error) state.qrUrl = signed.data.signedUrl;
-    }
+    state.rows = result.data || [];
+    state.revealed = {};
+    await Promise.all(state.rows.map(async row => {
+      row.qrUrl = '';
+      if (row.qr_storage_path) {
+        const signed = await client.storage.from(bucket).createSignedUrl(row.qr_storage_path, 120);
+        if (!signed.error) row.qrUrl = signed.data.signedUrl;
+      }
+    }));
     paint();
   }
 
-  async function copyAccount() {
-    if (!state.row?.account_number || !navigator.clipboard?.writeText) { toast('Clipboard is unavailable on this device.', true); return; }
-    try { await navigator.clipboard.writeText(state.row.account_number); toast('Account number copied.'); } catch { toast('Could not copy the account number.', true); }
+  async function copyAccount(row) {
+    if (!row?.account_number || !navigator.clipboard?.writeText) { toast('Clipboard is unavailable on this device.', true); return; }
+    try { await navigator.clipboard.writeText(row.account_number); toast('Account number copied.'); } catch { toast('Could not copy the account number.', true); }
   }
 
-  async function deleteQr() {
-    if (!state.row?.qr_storage_path || !window.confirm('Are you sure you want to delete this bank QR?')) return;
+  async function deleteQr(row) {
+    if (!row?.qr_storage_path || !window.confirm('Are you sure you want to delete this bank QR?')) return;
     const user = await currentAdmin();
     if (!user) { window.location.replace('../index.html#admin-login'); return; }
-    const removed = await client.storage.from(bucket).remove([state.row.qr_storage_path]);
+    const removed = await client.storage.from(bucket).remove([row.qr_storage_path]);
     if (removed.error) { toast('Could not delete the bank QR.', true); return; }
-    const updated = await client.from('bank_details').update({ qr_storage_path: null }).eq('id', state.row.id).eq('user_id', user.id);
+    const updated = await client.from('bank_details').update({ qr_storage_path: null }).eq('id', row.id).eq('user_id', user.id);
     if (updated.error) { toast('QR was removed, but Bank Details could not be updated.', true); return; }
     await loadBank();
     toast('Bank QR deleted.');
   }
 
-  async function deleteBank() {
-    if (!state.row || !window.confirm('Are you sure you want to delete all Bank Details?')) return;
+  async function deleteBank(row) {
+    if (!row || !window.confirm('Are you sure you want to delete these Bank Details?')) return;
     const user = await currentAdmin();
     if (!user) { window.location.replace('../index.html#admin-login'); return; }
-    const result = await client.from('bank_details').delete().eq('id', state.row.id).eq('user_id', user.id);
+    const result = await client.from('bank_details').delete().eq('id', row.id).eq('user_id', user.id);
     if (result.error) { toast('Could not delete Bank Details.', true); return; }
-    if (state.row.qr_storage_path) await client.storage.from(bucket).remove([state.row.qr_storage_path]);
-    state.row = null;
-    state.qrUrl = '';
-    state.revealed = false;
-    paint();
+    if (row.qr_storage_path) await client.storage.from(bucket).remove([row.qr_storage_path]);
+    await loadBank();
     toast('Bank Details deleted.');
   }
 
@@ -203,15 +204,17 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     if (action.matches('[data-bank-details-view]')) return show();
-    if (action.matches('[data-bank-add]') || action.matches('[data-bank-edit]')) return bankForm(state.row);
-    if (action.matches('[data-bank-toggle]')) { state.revealed = !state.revealed; paint(); return; }
-    if (action.matches('[data-bank-copy]')) return copyAccount();
-    if (action.matches('[data-bank-upload]')) return bankForm(state.row);
-    if (action.matches('[data-bank-delete-qr]')) return deleteQr();
-    if (action.matches('[data-bank-delete]')) return deleteBank();
+    const rowId = action.dataset.bankEdit || action.dataset.bankToggle || action.dataset.bankCopy || action.dataset.bankUpload || action.dataset.bankDeleteQr || action.dataset.bankDelete;
+    const row = state.rows.find(item => item.id === rowId);
+    if (action.matches('[data-bank-add]')) return bankForm();
+    if (action.matches('[data-bank-edit]') || action.matches('[data-bank-upload]')) return bankForm(row);
+    if (action.matches('[data-bank-toggle]')) { state.revealed[rowId] = !state.revealed[rowId]; paint(); return; }
+    if (action.matches('[data-bank-copy]')) return copyAccount(row);
+    if (action.matches('[data-bank-delete-qr]')) return deleteQr(row);
+    if (action.matches('[data-bank-delete]')) return deleteBank(row);
   }, true);
 
-  client.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_OUT' || !session) { state.row = null; state.qrUrl = ''; state.revealed = false; if (state.view) state.view.hidden = true; } });
+  client.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_OUT' || !session) { state.rows = []; state.revealed = {}; if (state.view) state.view.hidden = true; } });
   addNavigation();
   if (window.location.hash === '#bank-details') show();
 }());
