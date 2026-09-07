@@ -10609,6 +10609,14 @@ code, scalable backend architectures, and crisp frontend experiences.
             body.classList.remove('menu-open');
           });
         });
+        mobileMenu.querySelector('a[href="#gallery"]')?.addEventListener('click', function(event) {
+          const gallery = document.getElementById('gallery');
+          if (!gallery) return;
+          event.preventDefault();
+          closeMobileMenu();
+          const top = gallery.getBoundingClientRect().top + window.scrollY - 70;
+          window.scrollTo({ top, behavior: 'smooth' });
+        });
         mobileMenuClose?.addEventListener('click', function () {
           hamburger.classList.remove('active', 'open');
           mobileMenu.classList.remove('active', 'open');
