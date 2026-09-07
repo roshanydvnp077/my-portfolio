@@ -4860,11 +4860,10 @@
 
     .gallery-item img {
       width: 100%;
-      height: auto;
-      max-height: 100%;
-      object-fit: contain;
+      height: 100%;
+      max-height: none;
+      object-fit: cover;
       display: block;
-      margin: 0 auto;
       transition: opacity 0.45s ease;
     }
 
@@ -8908,6 +8907,13 @@
   </style>
   <link rel="stylesheet" href="testimonials.css">
   <style>
+    .testimonials-section .testimonial-card[role="button"] { min-height: 0; height: auto; padding: 22px 24px; }
+    .testimonials-section .testimonial-card[role="button"] .testimonial-client-top { min-height: 58px; margin: 0; padding: 0; border-top: 0; }
+    .testimonials-section .testimonial-card[role="button"] .testimonial-client-top .testimonial-client-avatar { width: 58px; height: 58px; flex-basis: 58px; }
+    .testimonials-section .testimonial-card[role="button"] .testimonial-details { max-height: 0; margin: 0; padding: 0; }
+    .testimonials-section .testimonial-card[role="button"].is-expanded .testimonial-details { max-height: 420px; padding-top: 18px; }
+    @media (max-width: 760px) { .testimonials-section .testimonial-card[role="button"] { min-height: 0; padding: 20px; } .testimonials-section .testimonials-grid { margin-top: 30px; } }
+
     .back-to-top { position: fixed; right: clamp(18px, 4vw, 42px); bottom: max(22px, env(safe-area-inset-bottom)); z-index: 20; display: inline-flex; align-items: center; gap: 9px; min-width: 132px; height: 46px; padding: 0 16px 0 10px; border: 1px solid rgba(103, 232, 249, .42); border-radius: 999px; color: #ecfeff; background: linear-gradient(135deg, rgba(8, 47, 73, .96), rgba(15, 23, 42, .96)); box-shadow: 0 12px 30px rgba(2, 6, 23, .38), 0 0 22px rgba(34, 211, 238, .12), inset 0 1px rgba(255, 255, 255, .12); backdrop-filter: blur(14px); cursor: pointer; opacity: 0; pointer-events: none; transform: translateY(14px) scale(.94); transition: opacity .22s ease, transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease; }
     .back-to-top::before { content: '↑'; display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; color: #082f49; background: #67e8f9; font-size: 1rem; font-weight: 800; }
     .back-to-top::after { content: 'Back to Top'; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
@@ -10295,7 +10301,7 @@ code, scalable backend architectures, and crisp frontend experiences.
   <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
-      <div class="footer-logo">[ <span data-site-name>Roshan Yadav</span>]</div>
+      <div class="footer-logo">[ <span>Roshan Yadav</span>]</div>
       <p>Crafting digital experiences. Building the future. 🇳🇵</p>
       <div class="footer-links">
         <a href="#about">About</a>
