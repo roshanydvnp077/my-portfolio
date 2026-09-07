@@ -5524,6 +5524,37 @@
     }
 
     /* ── CONTACT ── */
+    .faq-section { position: relative; overflow: hidden; padding: 104px 0; background: linear-gradient(135deg, #07111f, #0b1020 55%, #101827); }
+    .faq-section::before { content: '?'; position: absolute; top: -100px; right: 8%; color: rgba(103, 232, 249, .04); font-size: 28rem; font-weight: 900; line-height: 1; pointer-events: none; }
+    .faq-layout { position: relative; display: block; }
+    .faq-intro { padding-top: 12px; margin-bottom: 38px; }
+    .faq-intro::after { content: 'ANSWERS FOR YOUR NEXT MOVE'; display: inline-flex; margin-top: 28px; padding: 8px 12px; border: 1px solid rgba(103, 232, 249, .24); border-radius: 999px; color: #67e8f9; font-size: .65rem; font-weight: 800; letter-spacing: .14em; }
+    .faq-intro .section-desc { max-width: 360px; }
+    .faq-list { display: grid; gap: 14px; counter-reset: faq; }
+    .faq-item { position: relative; overflow: hidden; border: 1px solid rgba(148, 163, 184, .16); border-radius: 18px; background: rgba(15, 23, 42, .68); box-shadow: 0 16px 36px rgba(2, 6, 23, .18); counter-increment: faq; animation: faq-card-in .62s cubic-bezier(.22, 1, .36, 1) both; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+    .faq-item:nth-child(2) { animation-delay: .08s; }
+    .faq-item:nth-child(3) { animation-delay: .16s; }
+    .faq-item:nth-child(4) { animation-delay: .24s; }
+    .faq-item:nth-child(5) { animation-delay: .32s; }
+    .faq-item::before { content: '0' counter(faq); position: absolute; top: 20px; left: 20px; color: rgba(103, 232, 249, .55); font-size: .7rem; font-weight: 800; letter-spacing: .08em; }
+    .faq-item[open] { border-color: rgba(103, 232, 249, .52); background: linear-gradient(110deg, rgba(14, 38, 60, .88), rgba(15, 23, 42, .78)); transform: translateX(5px); }
+    .faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 68px; padding: 18px 20px 18px 64px; color: #e2e8f0; font-size: 1rem; font-weight: 700; cursor: pointer; list-style: none; transition: color .2s ease, background .2s ease, transform .12s ease; }
+    .faq-item summary:active { transform: scale(.99); }
+    .faq-item[open] summary { color: #f8fafc; background: rgba(103, 232, 249, .035); }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: '+'; display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border: 1px solid rgba(103, 232, 249, .52); border-radius: 50%; color: #67e8f9; background: rgba(103, 232, 249, .04); box-shadow: 0 0 0 5px rgba(103, 232, 249, .035); font-family: Arial, sans-serif; font-size: 1.35rem; font-weight: 400; line-height: 1; padding-bottom: 2px; transition: transform .22s ease, color .22s ease, background .22s ease, box-shadow .22s ease; }
+    .faq-item summary:hover::after { color: #082f49; background: #67e8f9; box-shadow: 0 0 0 6px rgba(103, 232, 249, .08), 0 0 20px rgba(103, 232, 249, .24); }
+    .faq-item[open] summary::after { content: '−'; color: #082f49; background: #67e8f9; box-shadow: 0 0 0 6px rgba(103, 232, 249, .08), 0 0 20px rgba(103, 232, 249, .22); transform: rotate(180deg); }
+    .faq-answer { margin: -2px 20px 20px; padding-top: 15px; border-top: 1px solid rgba(148, 163, 184, .14); color: #a8b8cf; line-height: 1.7; }
+    .faq-item[open] .faq-answer { animation: faq-answer-in .28s ease-out both; }
+    .faq-answer a { color: #67e8f9; text-decoration: none; }
+    @keyframes faq-card-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes faq-answer-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .faq-item, .faq-item[open] .faq-answer { animation: none; } }
+    @media (max-width: 800px) { .faq-intro { margin-bottom: 28px; } .faq-item[open] { transform: none; } }
+    @media (max-width: 520px) { .faq-section { padding: 70px 0; } .faq-item summary { min-height: 58px; padding: 16px; font-size: .92rem; } .faq-answer { margin: -2px 16px 18px; } }
+
+    /* ── CONTACT ── */
     .contact-bg {
       background: #090b1f;
       padding: 80px 0;
@@ -8876,6 +8907,16 @@
     }
   </style>
   <link rel="stylesheet" href="testimonials.css">
+  <style>
+    .back-to-top { position: fixed; right: clamp(18px, 4vw, 42px); bottom: max(22px, env(safe-area-inset-bottom)); z-index: 20; display: inline-flex; align-items: center; gap: 9px; min-width: 132px; height: 46px; padding: 0 16px 0 10px; border: 1px solid rgba(103, 232, 249, .42); border-radius: 999px; color: #ecfeff; background: linear-gradient(135deg, rgba(8, 47, 73, .96), rgba(15, 23, 42, .96)); box-shadow: 0 12px 30px rgba(2, 6, 23, .38), 0 0 22px rgba(34, 211, 238, .12), inset 0 1px rgba(255, 255, 255, .12); backdrop-filter: blur(14px); cursor: pointer; opacity: 0; pointer-events: none; transform: translateY(14px) scale(.94); transition: opacity .22s ease, transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease; }
+    .back-to-top::before { content: '↑'; display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; color: #082f49; background: #67e8f9; font-size: 1rem; font-weight: 800; }
+    .back-to-top::after { content: 'Back to Top'; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .back-to-top.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .back-to-top:hover { border-color: #67e8f9; background: linear-gradient(135deg, rgba(14, 116, 144, .96), rgba(15, 23, 42, .96)); transform: translateY(-3px) scale(1.02); }
+    .back-to-top:active { transform: translateY(-1px) scale(.97); box-shadow: 0 7px 18px rgba(2, 6, 23, .35), 0 0 14px rgba(34, 211, 238, .18); }
+    .back-to-top:focus-visible { outline: 2px solid #fbbf24; outline-offset: 4px; }
+    @media (max-width: 640px) { .back-to-top { right: 14px; bottom: max(20px, calc(env(safe-area-inset-bottom) + 10px)); min-width: 46px; width: 46px; height: 46px; padding: 0; justify-content: center; } .back-to-top::before { width: 28px; height: 28px; font-size: 1rem; } .back-to-top::after { display: none; } }
+  </style>
 </head>
 
 <body class="loader-active">
@@ -8925,6 +8966,7 @@
       <li><button class="vault-access-btn admin-login-trigger" id="adminLoginBtn" type="button" hidden>Admin</button></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#journey">Journey</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <a href="mailto:roshanydvnp077@gmail.com" class="nav-cta">Hire Me</a>
@@ -8949,6 +8991,7 @@
     <button class="vault-access-btn mob-link admin-login-trigger" id="adminMobileLoginBtn" type="button" hidden>Admin</button>
     <a href="#services" class="mob-link">Services</a>
     <a href="#journey" class="mob-link">Journey</a>
+    <a href="#faq" class="mob-link">FAQ / Questions</a>
     <a href="#contact" class="mob-link">Contact</a>
     <div class="mobile-menu-actions">
       <a href="mailto:roshanydvnp077@gmail.com" class="mob-link mob-cta mobile-action">Hire Me</a>
@@ -9411,8 +9454,7 @@ code, scalable backend architectures, and crisp frontend experiences.
               <i class="fas fa-paper-plane"></i> Let's Talk
             </a>
           </div>
-        </div>
-
+          </div>
       </div>
     </div>
   </section>
@@ -10112,10 +10154,43 @@ code, scalable backend architectures, and crisp frontend experiences.
     </div>
   </section>
 
+  <!-- FAQ / QUESTIONS -->
+  <section id="faq" class="faq-section">
+    <div class="section-inner faq-layout">
+      <div class="faq-intro">
+        <span class="section-tag">// 09. FAQ / QUESTIONS</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">A quick look at who I am, what I build, and how we can work together.</p>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Who are you?</summary>
+          <div class="faq-answer">I am Roshan Kumar Yadav, a full-stack developer and IT student focused on building useful, secure, and polished digital experiences.</div>
+        </details>
+        <details class="faq-item">
+          <summary>What do you do?</summary>
+          <div class="faq-answer">I design and develop responsive websites, web applications, dashboards, APIs, and custom digital products for real-world needs.</div>
+        </details>
+        <details class="faq-item">
+          <summary>What technologies do you use?</summary>
+          <div class="faq-answer">My main tools include React, JavaScript, Node.js, Laravel, PHP, MySQL, Supabase, Git, and modern HTML/CSS.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Can I work with you?</summary>
+          <div class="faq-answer">Yes. I am open to freelance projects, collaborations, and practical product ideas where thoughtful design and reliable development matter.</div>
+        </details>
+        <details class="faq-item">
+          <summary>How can I contact you?</summary>
+          <div class="faq-answer">Use the contact form below or email me directly at <a href="mailto:roshanydvnp077@gmail.com">roshanydvnp077@gmail.com</a>.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- CONTACT -->
   <section id="contact" class="contact-bg">
     <div class="section-inner">
-      <span class="section-tag">// 09. CONTACT</span>
+      <span class="section-tag">// 10. CONTACT</span>
       <h2 class="section-title">Get In Touch</h2>
       <p class="section-desc">Let's build something extraordinary together. Have a project in mind? My inbox is always
         open.</p>
@@ -10228,6 +10303,7 @@ code, scalable backend architectures, and crisp frontend experiences.
         <a href="#projects">Projects</a>
         <a href="#services">Services</a>
         <a href="#journey">Journey</a>
+        <a href="#faq">FAQ</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="footer-copy">© 2025 Roshan  Yadav. Crafted with ♥ &amp; ☕ in Nepal.</div>
@@ -10617,7 +10693,8 @@ code, scalable backend architectures, and crisp frontend experiences.
       const galleryRelockButton = document.getElementById('galleryRelockBtn');
       const documentsLockButton = document.getElementById('documentsLockBtn');
       const storedRecords = { gallery: [], documents: [] };
-      const GALLERY_BUCKET = 'portfolio-gallery';
+      const GALLERY_BUCKETS = ['portfolio-gallery', 'portfolio-images'];
+      const GALLERY_BUCKET = GALLERY_BUCKETS[0];
       let galleryAdmin = false;
       let pendingGalleryLogin = false;
       let contactMessages = [];
@@ -10886,16 +10963,33 @@ code, scalable backend architectures, and crisp frontend experiences.
         return userId + (type === 'gallery' ? '/gallery/' : '/') + makeUuid() + '-' + safeName;
       }
 
+      function galleryStoragePath(value, bucket) {
+        const path = String(value || '');
+        const marker = '/' + bucket + '/';
+        if (path.includes(marker)) return path.slice(path.indexOf(marker) + marker.length);
+        return path.replace(new RegExp('^' + bucket + '/'), '');
+      }
+
+      async function signedGalleryUrl(path) {
+        const value = String(path || '');
+        const buckets = value.includes('/gallery/') ? GALLERY_BUCKETS : [GALLERY_BUCKETS[1], GALLERY_BUCKETS[0]];
+        for (const bucket of buckets) {
+          const signed = await supabaseClient.storage.from(bucket).createSignedUrl(galleryStoragePath(path, bucket), 300);
+          if (!signed.error) return signed.data.signedUrl;
+        }
+        return '';
+      }
+
       async function renderGallery(records) {
         clearElement(galleryGrid);
         for (const record of records) {
-          const signed = await supabaseClient.storage.from(GALLERY_BUCKET).createSignedUrl(record.file_path, 300);
-          if (signed.error) continue;
+          const signedUrl = await signedGalleryUrl(record.file_path);
+          if (!signedUrl) continue;
           const figure = document.createElement('figure');
           figure.className = 'gallery-item';
           figure.dataset.supabaseId = record.id;
           const image = document.createElement('img');
-          image.src = signed.data.signedUrl;
+          image.src = signedUrl;
           image.alt = record.title || 'Portfolio gallery image';
           image.loading = 'lazy';
           const caption = document.createElement('figcaption');
@@ -11307,6 +11401,14 @@ code, scalable backend architectures, and crisp frontend experiences.
       syncAdminNavigation();
       handleAdminRoute();
     });
+  </script>
+  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" title="Back to top"></button>
+  <script>
+    const backToTop = document.getElementById('backToTop');
+    const updateBackToTop = () => backToTop?.classList.toggle('is-visible', window.scrollY > 520);
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    updateBackToTop();
   </script>
 </body>
 
