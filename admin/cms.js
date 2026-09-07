@@ -5,6 +5,7 @@
   const app = document.getElementById('app');
   const state = { user: null, rows: {} };
   const modules = {
+    faqs: [['question','Question','text',true],['answer','Answer','textarea',true],['sort_order','Sort order','number'],['is_published','Visible','checkbox']],
     testimonials: [['name','Name','text',true],['position','Position','text'],['message','Message','textarea',true],['rating','Rating (1-5)','number'],['sort_order','Sort order','number'],['is_published','Visible','checkbox']],
     certificates: [['title','Certificate name','text',true],['issuer','Issuer','text'],['issue_date','Issue date','date'],['credential_id','Credential ID','text'],['credential_url','Credential URL','url'],['sort_order','Sort order','number'],['is_published','Visible','checkbox']]
   };
@@ -151,5 +152,5 @@
     if (detail) { event.preventDefault(); openActivityDetails(detail.dataset.activityDetail); return; }
     if (event.target.closest('[data-activity-close]')) closeDialog();
   });
-  (async () => { state.user = await isAdmin(); if (!state.user || !app) return; addNav('certificates', 'Certificates'); addNav('visibility', 'Homepage'); addNav('activity', 'Activity Logs'); addNav('system', 'System Status'); client.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_OUT' || !session) location.replace('../index.html#admin-login'); }); })();
+  (async () => { state.user = await isAdmin(); if (!state.user || !app) return; addNav('faqs', 'FAQs'); addNav('certificates', 'Certificates'); addNav('visibility', 'Homepage'); addNav('activity', 'Activity Logs'); addNav('system', 'System Status'); client.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_OUT' || !session) location.replace('../index.html#admin-login'); }); })();
 })();

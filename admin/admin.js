@@ -194,6 +194,7 @@ document.head.appendChild(adminFavicon);
   const app = document.getElementById('app');
   const state = { user: null, rows: {} };
   const modules = {
+    faqs: [['question','Question','text',true],['answer','Answer','textarea',true],['sort_order','Sort order','number'],['is_published','Published','checkbox']],
     projects: [['title','Title','text',true],['slug','Slug','text',true],['short_description','Short description','text',true],['full_description','Full description','textarea',true],['category','Category','text'],['technologies','Technologies','text'],['live_url','Live demo URL','url'],['github_url','GitHub URL','url'],['is_published','Visibility','checkbox']],
     skills: [['name','Skill name','text',true],['category','Category','text',true],['icon','Icon','text'],['level','Level','number'],['sort_order','Sort order','number'],['is_published','Published','checkbox']],
     services: [['title','Title','text',true],['description','Description','textarea',true],['icon','Icon','text'],['features','Features','textarea'],['sort_order','Sort order','number'],['is_published','Published','checkbox']],
