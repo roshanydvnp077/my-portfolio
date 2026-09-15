@@ -897,6 +897,46 @@
       return [...new Set([...explicitIds, ...inferredIds])];
     }
 
+    function getTreeDepths(rootMember, members) {
+      const memberMap = new Map(members.map(member => [member.id, member]));
+      const depths = new Map([[rootMember.id, 0]]);
+      const queue = [rootMember.id];
+      while (queue.length) {
+        const currentId = queue.shift();
+        const current = memberMap.get(currentId);
+        if (!current) continue;
+        const currentDepth = depths.get(currentId) || 0;
+        const parentIds = currentId === rootMember.id
+          ? getParentIds(rootMember, members)
+          : [current.father_id, current.mother_id].filter(Boolean);
+        const childIds = members
+          .filter(member => member.father_id === currentId || member.mother_id === currentId)
+          .map(member => member.id);
+        const spouseIds = current.spouse_id ? [current.spouse_id] : [];
+        const siblingIds = members
+          .filter(member => member.id !== currentId && (
+            (current.father_id && member.father_id === current.father_id) ||
+            (current.mother_id && member.mother_id === current.mother_id)
+          ))
+          .map(member => member.id);
+        const neighbors = [
+          ...parentIds.map(id => [id, currentDepth - 1]),
+          ...childIds.map(id => [id, currentDepth + 1]),
+          ...spouseIds.map(id => [id, currentDepth]),
+          ...siblingIds.map(id => [id, currentDepth])
+        ];
+        neighbors.forEach(([neighborId, neighborDepth]) => {
+          if (!memberMap.has(neighborId)) return;
+          const previousDepth = depths.get(neighborId);
+          if (previousDepth === undefined || Math.abs(neighborDepth) < Math.abs(previousDepth)) {
+            depths.set(neighborId, neighborDepth);
+            queue.push(neighborId);
+          }
+        });
+      }
+      return depths;
+    }
+
     try {
       const { data: members, error } = await client
         .from('family_members')
@@ -1011,10 +1051,10 @@
         const parentCards = parentIds.map(id => grid.querySelector(`[data-member-id="${id}"]`)).filter(Boolean);
         const parentPoints = parentCards.map(card => cardPoint(card));
         const rowCards = rowNumber => Array.from(grid.querySelectorAll(`[data-tree-row="${rowNumber}"] [data-member-id]`));
-        const middleCards = rowCards(1);
+        const middleCards = rowCards(0);
         const middleChildCards = middleCards.filter(card => card.dataset.memberId !== root.spouse_id);
         const middlePoints = middleChildCards.map(card => cardPoint(card));
-        const childPoints = rowCards(2).map(card => cardPoint(card));
+        const childPoints = rowCards(1).map(card => cardPoint(card));
 
         if (parentPoints.length >= 2) {
           const first = parentPoints[0];
@@ -1044,7 +1084,7 @@
           addPath(`M ${firstChildX} ${railY} L ${lastChildX} ${railY}`, '#34d399');
           middlePoints.forEach(point => addPath(`M ${point.centerX} ${railY} L ${point.centerX} ${point.top}`, '#34d399'));
           if (childPoints.length) {
-            const currentCard = grid.querySelector(`[data-tree-row="1"] [data-member-id="${root.id}"]`);
+            const currentCard = grid.querySelector(`[data-tree-row="0"] [data-member-id="${root.id}"]`);
             if (currentCard) {
               const rootPoint = cardPoint(currentCard);
               const childTop = Math.min(...childPoints.map(point => point.top));
@@ -1056,6 +1096,24 @@
               childPoints.forEach(point => addPath(`M ${point.centerX} ${childRailY} L ${point.centerX} ${point.top}`, '#34d399'));
             }
           }
+          const parentIdSet = new Set(parentIds);
+          const middleChildIdSet = new Set(middleChildCards.map(card => card.dataset.memberId));
+          const childIdSet = new Set(rowCards(1).map(card => card.dataset.memberId));
+          edges.forEach(([fromId, toId, relationType]) => {
+            const isRootSpouse = relationType === 'spouse' && (fromId === root.id || toId === root.id);
+            const isParentBranch = relationType === 'parent' && (
+              (parentIdSet.has(toId) && middleChildIdSet.has(fromId)) ||
+              (fromId === root.id && childIdSet.has(toId))
+            );
+            if (isRootSpouse || isParentBranch) return;
+            const fromCard = grid.querySelector(`[data-member-id="${fromId}"]`);
+            const toCard = grid.querySelector(`[data-member-id="${toId}"]`);
+            if (!fromCard || !toCard) return;
+            const from = cardPoint(fromCard);
+            const to = cardPoint(toCard);
+            const midY = (from.centerY + to.centerY) / 2;
+            addPath(`M ${from.centerX} ${from.bottom} L ${from.centerX} ${midY} L ${to.centerX} ${midY} L ${to.centerX} ${to.top}`, relationType === 'spouse' ? '#60a5fa' : '#34d399', relationType === 'spouse' ? 3.5 : 3);
+          });
         } else {
           edges.forEach(([fromId, toId, relationType]) => {
             const fromCard = grid.querySelector(`[data-member-id="${fromId}"]`);
@@ -1084,52 +1142,20 @@
         const root = rootMember || visibleMembers[0] || null;
         const activeRows = root && visibleMembers.length
           ? (() => {
-              const parentIds = getParentIds(root, visibleMembers);
-              const parents = visibleMembers
-                .filter(member => parentIds.includes(member.id))
-                .sort((first, second) => {
-                  const rank = member => {
-                    if (member.id === root.father_id) return 0;
-                    if (member.id === root.mother_id) return 1;
-                    const label = getRelationshipLabel(member, root).trim().toLowerCase();
-                    return label === 'father' ? 0 : label === 'mother' ? 1 : 2;
-                  };
-                  return rank(first) - rank(second);
-                });
-              const spouseMembers = visibleMembers.filter(member => member.id === root.spouse_id);
-              const childMembers = visibleMembers.filter(member => {
-                if (parentIds.includes(member.id) || member.id === root.id) return false;
-                const relationship = String(member.relationship || '').trim().toLowerCase();
-                return member.father_id === root.id || member.mother_id === root.id || ['son', 'daughter', 'child'].includes(relationship);
+              const depths = getTreeDepths(root, visibleMembers);
+              const rowsByDepth = new Map();
+              visibleMembers.forEach(member => {
+                const depth = depths.get(member.id) ?? 0;
+                if (!rowsByDepth.has(depth)) rowsByDepth.set(depth, []);
+                rowsByDepth.get(depth).push(member);
               });
-              const siblingMembers = visibleMembers.filter(member => {
-                if (member.id === root.id || parentIds.includes(member.id) || childMembers.some(child => child.id === member.id) || spouseMembers.some(spouse => spouse.id === member.id)) return false;
-                const sharesFather = root.father_id && member.father_id === root.father_id;
-                const sharesMother = root.mother_id && member.mother_id === root.mother_id;
-                const relationship = String(member.relationship || '').trim().toLowerCase();
-                return sharesFather || sharesMother || ['brother', 'sister', 'sibling'].includes(relationship);
-              });
-              const grandparentIds = parents.flatMap(parent => [parent.father_id, parent.mother_id]).filter(Boolean);
-              const grandparentMembers = visibleMembers.filter(member => grandparentIds.includes(member.id));
-              const grandchildIds = childMembers.flatMap(child => visibleMembers.filter(member => member.father_id === child.id || member.mother_id === child.id).map(member => member.id));
-              const grandchildMembers = visibleMembers.filter(member => grandchildIds.includes(member.id));
-              const middleMembers = visibleMembers
-                .filter(member => member.id === root.id || siblingMembers.some(sibling => sibling.id === member.id) || spouseMembers.some(spouse => spouse.id === member.id))
-                .sort((first, second) => (first.id === root.id ? -1 : second.id === root.id ? 1 : (first.full_name || '').localeCompare(second.full_name || '')));
-              const placedIds = new Set([...grandparentMembers, ...parents, ...middleMembers, ...childMembers, ...grandchildMembers].map(member => member.id));
-              const otherMembers = visibleMembers.filter(member => !placedIds.has(member.id));
-              const nextRows = [];
-              if (grandparentMembers.length) nextRows.push({ generation: -1, members: grandparentMembers });
-              if (parents.length) nextRows.push({ generation: 0, members: parents });
-              if (middleMembers.length) nextRows.push({ generation: 1, members: middleMembers });
-              if (childMembers.length) nextRows.push({ generation: 2, members: childMembers });
-              if (grandchildMembers.length) nextRows.push({ generation: 3, members: grandchildMembers });
-              if (otherMembers.length) nextRows.push({ generation: 4, members: otherMembers });
-              return nextRows.map(row => ({
-                ...row,
-                members: row.generation === 1
-                  ? row.members
-                  : row.members.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
+              return [...rowsByDepth.entries()].sort(([first], [second]) => first - second).map(([generation, members]) => ({
+                generation,
+                members: members.sort((first, second) => (
+                  generation === 0 && first.id === root.id ? -1 :
+                  generation === 0 && second.id === root.id ? 1 :
+                  (first.full_name || '').localeCompare(second.full_name || '')
+                ))
               }));
             })()
           : rows;
