@@ -1219,7 +1219,12 @@
           });
         });
 
-        requestAnimationFrame(drawConnections);
+        const redrawConnections = () => requestAnimationFrame(() => requestAnimationFrame(drawConnections));
+        grid.querySelectorAll('img').forEach(image => {
+          image.addEventListener('load', redrawConnections, { once: true });
+          image.addEventListener('error', redrawConnections, { once: true });
+        });
+        redrawConnections();
       }
 
       renderTree(searchInput.value);
@@ -1228,6 +1233,7 @@
       if (window.ResizeObserver) {
         const resizeObserver = new ResizeObserver(() => renderTree(searchInput.value));
         resizeObserver.observe(board);
+        resizeObserver.observe(grid);
       } else {
         window.addEventListener('resize', () => renderTree(searchInput.value));
       }
