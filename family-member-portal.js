@@ -711,15 +711,16 @@
       detailBox.style.display = 'block';
       detailBox.innerHTML = `
         <div style="position: fixed; inset: 0; background: rgba(2, 6, 23, 0.72); backdrop-filter: blur(6px); z-index: 2000; display:flex; align-items:center; justify-content:center; padding: 24px;">
-          <div class="family-member-detail-modal" style="position: relative; width: min(1100px, 96vw); max-height: 92vh; overflow:auto; background: #f8fbf7; border:1px solid rgba(20,45,47,0.16); border-radius: 26px; box-shadow:0 30px 80px rgba(15,23,42,0.55); padding: 32px; color: #173337;">
+          <div class="family-member-detail-modal" style="position: relative; width: min(820px, 94vw); max-height: 92vh; overflow:auto; background: linear-gradient(145deg, #f8fbf7, #eef5f1); border:1px solid rgba(20,45,47,0.16); border-top: 5px solid #ef6f4e; border-radius: 22px; box-shadow:0 30px 80px rgba(15,23,42,0.55); padding: 26px; color: #173337;">
             <button type="button" id="closeFamilyDetail" style="position: absolute; top: 18px; right: 18px; border:none; background: rgba(239,68,68,0.12); color:#fca5a5; padding:10px 16px; border-radius: 12px; cursor:pointer; font-weight:700;">Close</button>
 
-            <div style="display:flex; gap:28px; align-items:center; flex-wrap:wrap; margin-bottom: 26px;">
-              <div style="width: 140px; height: 140px; border-radius: 28px; overflow:hidden; background:linear-gradient(135deg,#16a34a,#22c55e); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:2.4rem; border: 2px solid rgba(255,255,255,0.18);">
+            <div style="display:flex; gap:22px; align-items:center; flex-wrap:wrap; margin-bottom: 24px; padding-bottom: 22px; border-bottom: 1px dashed rgba(20,45,47,0.2);">
+              <div style="width: 112px; height: 112px; border-radius: 20px; overflow:hidden; background:linear-gradient(135deg,#16a34a,#22c55e); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:2.4rem; border: 2px solid rgba(255,255,255,0.7); box-shadow: 0 10px 24px rgba(20,45,47,0.16);">
                 ${photoUrl ? `<img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(member.full_name || 'Member')}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.parentNode.textContent='${escapeHtml((member.full_name || 'M').charAt(0).toUpperCase())}'">` : escapeHtml((member.full_name || 'M').charAt(0).toUpperCase())}
               </div>
 
               <div style="flex:1; min-width:220px;">
+                <div style="font-size: 11px; color: #637b7d; letter-spacing: 0.14em; font-weight: 800; margin-bottom: 8px;">FAMILY ID CARD</div>
                 <div style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height:1.1; margin-bottom: 8px; color: var(--text);">${escapeHtml(member.full_name || 'Family Member')}</div>
                 <div style="font-size: 1.15rem; color: var(--muted); margin-bottom: 10px;">${escapeHtml(member.relationship || 'Family Member')}</div>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
