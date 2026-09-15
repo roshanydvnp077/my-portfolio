@@ -64,6 +64,9 @@
 
       state.member = linked.data;
 
+      localStorage.setItem('theme', 'light');
+      document.documentElement.setAttribute('data-theme', 'light');
+
       // Check account status
       if (state.member.account_status === 'disabled') {
         await client.auth.signOut();
