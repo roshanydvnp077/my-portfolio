@@ -1063,7 +1063,7 @@
               const parents = visibleMembers
                 .filter(member => parentIds.includes(member.id))
                 .sort((first, second) => {
-                  const rank = member => String(member.relationship || '').trim().toLowerCase() === 'father' ? 0 : 1;
+                  const rank = member => member.id === root.father_id ? 0 : member.id === root.mother_id ? 1 : String(member.relationship || '').trim().toLowerCase() === 'father' ? 0 : 1;
                   return rank(first) - rank(second);
                 });
               const lowerMembers = visibleMembers.filter(member => !parentIds.includes(member.id));
