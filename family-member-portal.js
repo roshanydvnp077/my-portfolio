@@ -805,6 +805,15 @@
         if (!currentMember) continue;
 
         const spouseId = currentMember.spouse_id;
+
+      const rootBranch = String(memberMap.get(rootId)?.branch || '').trim().toLowerCase();
+      if (rootBranch) {
+        allMembers.forEach(member => {
+          if (member.id !== rootId && String(member.branch || '').trim().toLowerCase() === rootBranch) {
+            relatedIds.add(member.id);
+          }
+        });
+      }
         const directParentIds = [currentMember.father_id, currentMember.mother_id].filter(Boolean);
         const childIds = allMembers
           .filter(member => member.father_id === currentId || member.mother_id === currentId)
