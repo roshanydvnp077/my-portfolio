@@ -1060,21 +1060,16 @@
         const activeRows = root && visibleMembers.length
           ? (() => {
               const parentIds = getParentIds(root, visibleMembers);
-              const parents = visibleMembers.filter(member => parentIds.includes(member.id));
-              const siblingIds = new Set(visibleMembers.filter(member => {
-                if (member.id === root.id) return true;
-                const sameFather = root.father_id && member.father_id === root.father_id;
-                const sameMother = root.mother_id && member.mother_id === root.mother_id;
-                const isChild = member.father_id === root.id || member.mother_id === root.id;
-                return sameFather || sameMother || isChild;
-              }).map(member => member.id));
-              const lowerMembers = visibleMembers.filter(member => siblingIds.has(member.id));
-              const placedIds = new Set([...parents, ...lowerMembers].map(member => member.id));
-              const remaining = visibleMembers.filter(member => !placedIds.has(member.id));
+              const parents = visibleMembers
+                .filter(member => parentIds.includes(member.id))
+                .sort((first, second) => {
+                  const rank = member => String(member.relationship || '').trim().toLowerCase() === 'father' ? 0 : 1;
+                  return rank(first) - rank(second);
+                });
+              const lowerMembers = visibleMembers.filter(member => !parentIds.includes(member.id));
               const nextRows = [];
               if (parents.length) nextRows.push({ generation: 0, members: parents });
               if (lowerMembers.length) nextRows.push({ generation: 1, members: lowerMembers });
-              if (remaining.length) nextRows.push({ generation: 2, members: remaining });
               return nextRows.map(row => ({
                 ...row,
                 members: row.members.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
