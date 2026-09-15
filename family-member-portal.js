@@ -1077,7 +1077,12 @@
               const parents = visibleMembers
                 .filter(member => parentIds.includes(member.id))
                 .sort((first, second) => {
-                  const rank = member => member.id === root.father_id ? 0 : member.id === root.mother_id ? 1 : String(member.relationship || '').trim().toLowerCase() === 'father' ? 0 : 1;
+                  const rank = member => {
+                    if (member.id === root.father_id) return 0;
+                    if (member.id === root.mother_id) return 1;
+                    const label = getRelationshipLabel(member, root).trim().toLowerCase();
+                    return label === 'father' ? 0 : label === 'mother' ? 1 : 2;
+                  };
                   return rank(first) - rank(second);
                 });
               const childMembers = visibleMembers.filter(member => {
