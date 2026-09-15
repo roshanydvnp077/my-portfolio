@@ -899,6 +899,7 @@
 
     function getParentIds(rootMember, members) {
       const explicitIds = [rootMember?.father_id, rootMember?.mother_id].filter(Boolean);
+      if (explicitIds.length) return [...new Set(explicitIds)];
       const inferredIds = members
         .filter(member => member.id !== rootMember?.id)
         .filter(member => ['father', 'mother', 'parent'].includes(String(member.relationship || '').trim().toLowerCase()))
