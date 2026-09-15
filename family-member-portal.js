@@ -917,21 +917,30 @@
 
       if (error) throw error;
 
-      const allMembers = (members || []).map(member => {
-        const isCurrentMember = member.id === state.member.id || (state.user?.id && member.auth_user_id === state.user.id);
-        if (!isCurrentMember) return member;
-        return {
+      const currentMemberId = state.member.id;
+      const currentName = String(state.member.full_name || state.member.name || '').trim().toLowerCase();
+      const memberById = new Map();
+      (members || []).forEach(member => {
+        if (!member?.id) return;
+        const memberName = String(member.full_name || member.name || '').trim().toLowerCase();
+        const isCurrentMember = member.id === currentMemberId || (state.user?.id && member.auth_user_id === state.user.id);
+        const isDuplicateCurrent = member.id !== currentMemberId && memberName && memberName === currentName && !member.auth_user_id;
+        if (isDuplicateCurrent) return;
+        const normalizedMember = isCurrentMember ? {
           ...member,
+          id: currentMemberId,
           profile_photo_path: member.profile_photo_path || state.member.profile_photo_path,
           profile_image_url: member.profile_image_url || state.member.profile_image_url,
           profile_photo: member.profile_photo || state.member.profile_photo,
           photo_url: member.photo_url || state.member.photo_url,
           photo: member.photo || state.member.photo
-        };
+        } : member;
+        memberById.set(normalizedMember.id, normalizedMember);
       });
-      if (!allMembers.some(member => member.id === state.member.id)) {
-        allMembers.push({ ...state.member, is_visible: true });
+      if (!memberById.has(currentMemberId)) {
+        memberById.set(currentMemberId, { ...state.member, is_visible: true });
       }
+      const allMembers = [...memberById.values()];
       const familyMap = new Map(allMembers.map(member => [member.id, member]));
       const relevantIds = new Set(collectRelatedMemberIds(state.member.id, allMembers));
       const searchValue = (searchInput.value || '').trim().toLowerCase();
@@ -1099,7 +1108,9 @@
               if (childMembers.length) nextRows.push({ generation: 2, members: childMembers });
               return nextRows.map(row => ({
                 ...row,
-                members: row.members.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
+                members: row.generation === 1
+                  ? row.members
+                  : row.members.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
               }));
             })()
           : rows;
