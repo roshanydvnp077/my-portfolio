@@ -1020,15 +1020,26 @@
         const root = rootMember || visibleMembers[0] || null;
         const activeRows = root && visibleMembers.length
           ? (() => {
-              const generationMapForActive = computeGenerationMap(root.id, allMembers);
-              const activeMax = Math.max(...visibleMembers.map(member => generationMapForActive.get(member.id) ?? 0), 0);
+              const parentIds = [root.father_id, root.mother_id].filter(Boolean);
+              const parents = visibleMembers.filter(member => parentIds.includes(member.id));
+              const siblingIds = new Set(visibleMembers.filter(member => {
+                if (member.id === root.id) return true;
+                const sameFather = root.father_id && member.father_id === root.father_id;
+                const sameMother = root.mother_id && member.mother_id === root.mother_id;
+                const isChild = member.father_id === root.id || member.mother_id === root.id;
+                return sameFather || sameMother || isChild;
+              }).map(member => member.id));
+              const lowerMembers = visibleMembers.filter(member => siblingIds.has(member.id));
+              const placedIds = new Set([...parents, ...lowerMembers].map(member => member.id));
+              const remaining = visibleMembers.filter(member => !placedIds.has(member.id));
               const nextRows = [];
-              for (let generation = 0; generation <= activeMax; generation += 1) {
-                const group = visibleMembers.filter(member => (generationMapForActive.get(member.id) ?? 0) === generation)
-                  .sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''));
-                if (group.length) nextRows.push({ generation, members: group });
-              }
-              return nextRows;
+              if (parents.length) nextRows.push({ generation: 0, members: parents });
+              if (lowerMembers.length) nextRows.push({ generation: 1, members: lowerMembers });
+              if (remaining.length) nextRows.push({ generation: 2, members: remaining });
+              return nextRows.map(row => ({
+                ...row,
+                members: row.members.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
+              }));
             })()
           : rows;
 
@@ -1064,7 +1075,6 @@
                 `;
               }).join('')}
             </div>
-            <div style="width: 3px; height: 28px; background: rgba(45,212,191,0.8); border-radius: 999px;"></div>
           </div>
         `).join('') || `<div style="padding: 28px; border:1px dashed rgba(148,163,184,0.5); border-radius:16px; color: var(--muted); text-align:center; width:100%;">No family members match your search.</div>`;
 
