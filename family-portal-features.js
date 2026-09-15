@@ -2129,28 +2129,96 @@
         });
       });
 
-      // Process relationships
-      relationships.forEach(rel => {
-        const from = memberMap.get(rel.from_member_id);
-        const to = memberMap.get(rel.to_member_id);
-        if (!from || !to) return;
+      // FIRST: Process direct relationships from family_members table columns
+      members.forEach(member => {
+        const currentMember = memberMap.get(member.id);
+        if (!currentMember) return;
 
-        const type = rel.relationship_type.toLowerCase();
-        
-        if (type === 'parent' || type === 'father' || type === 'mother') {
-          if (!to.parents.find(p => p.id === from.id)) to.parents.push(from);
-          if (!from.children.find(c => c.id === to.id)) from.children.push(to);
-        } else if (type === 'child' || type === 'son' || type === 'daughter') {
-          if (!from.parents.find(p => p.id === to.id)) from.parents.push(to);
-          if (!to.children.find(c => c.id === from.id)) to.children.push(from);
-        } else if (type === 'spouse' || type === 'husband' || type === 'wife' || type === 'partner') {
-          from.spouse = to;
-          to.spouse = from;
-        } else if (type === 'sibling' || type === 'brother' || type === 'sister') {
-          if (!from.siblings.find(s => s.id === to.id)) from.siblings.push(to);
-          if (!to.siblings.find(s => s.id === from.id)) to.siblings.push(from);
+        // Process father relationship
+        if (member.father_id) {
+          const father = memberMap.get(member.father_id);
+          if (father) {
+            // Add father to current member's parents
+            if (!currentMember.parents.find(p => p.id === father.id)) {
+              currentMember.parents.push(father);
+            }
+            // Add current member to father's children
+            if (!father.children.find(c => c.id === member.id)) {
+              father.children.push(currentMember);
+            }
+          }
+        }
+
+        // Process mother relationship
+        if (member.mother_id) {
+          const mother = memberMap.get(member.mother_id);
+          if (mother) {
+            // Add mother to current member's parents
+            if (!currentMember.parents.find(p => p.id === mother.id)) {
+              currentMember.parents.push(mother);
+            }
+            // Add current member to mother's children
+            if (!mother.children.find(c => c.id === member.id)) {
+              mother.children.push(currentMember);
+            }
+          }
+        }
+
+        // Process spouse relationship
+        if (member.spouse_id) {
+          const spouse = memberMap.get(member.spouse_id);
+          if (spouse) {
+            currentMember.spouse = spouse;
+            // Make it bidirectional
+            if (!spouse.spouse || spouse.spouse.id !== member.id) {
+              spouse.spouse = currentMember;
+            }
+          }
         }
       });
+
+      // SECOND: Build sibling relationships automatically from shared parents
+      members.forEach(member => {
+        const currentMember = memberMap.get(member.id);
+        if (!currentMember || currentMember.parents.length === 0) return;
+
+        // Find siblings through shared parents
+        currentMember.parents.forEach(parent => {
+          parent.children.forEach(sibling => {
+            if (sibling.id !== member.id) {
+              // Add as sibling if not already present
+              if (!currentMember.siblings.find(s => s.id === sibling.id)) {
+                currentMember.siblings.push(sibling);
+              }
+            }
+          });
+        });
+      });
+
+      // THIRD: Process explicit relationships from family_relationships table (if exists)
+      if (relationships && relationships.length > 0) {
+        relationships.forEach(rel => {
+          const from = memberMap.get(rel.from_member_id);
+          const to = memberMap.get(rel.to_member_id);
+          if (!from || !to) return;
+
+          const type = rel.relationship_type.toLowerCase();
+          
+          if (type === 'parent' || type === 'father' || type === 'mother') {
+            if (!to.parents.find(p => p.id === from.id)) to.parents.push(from);
+            if (!from.children.find(c => c.id === to.id)) from.children.push(to);
+          } else if (type === 'child' || type === 'son' || type === 'daughter') {
+            if (!from.parents.find(p => p.id === to.id)) from.parents.push(to);
+            if (!to.children.find(c => c.id === from.id)) to.children.push(from);
+          } else if (type === 'spouse' || type === 'husband' || type === 'wife' || type === 'partner') {
+            from.spouse = to;
+            to.spouse = from;
+          } else if (type === 'sibling' || type === 'brother' || type === 'sister') {
+            if (!from.siblings.find(s => s.id === to.id)) from.siblings.push(to);
+            if (!to.siblings.find(s => s.id === from.id)) to.siblings.push(from);
+          }
+        });
+      }
 
       return memberMap;
     },
@@ -2665,7 +2733,7 @@
             <div class="family-section">
               <div class="family-section-label">👨‍👩 Parents</div>
               <div class="tree-row" style="position: relative;">
-                ${connection.parents.length > 1 ? `
+                ${connection.parents.length >= 2 ? `
                   <div class="tree-connector-horizontal" style="left: 25%; right: 25%; width: 50%;"></div>
                 ` : ''}
                 ${connection.parents.map(p => this.renderMemberCard(p, this.getParentLabel(p))).join('')}
@@ -2686,11 +2754,12 @@
           </div>
 
           ${connection.siblings.length > 0 ? `
-            <div class="family-section" style="margin-top: 24px;">
+            <div class="tree-connector-vertical" style="margin-top: 20px;"></div>
+            <div class="family-section">
               <div class="family-section-label">👫 Siblings</div>
               <div class="tree-row" style="position: relative;">
-                ${connection.siblings.length > 1 ? `
-                  <div class="tree-connector-horizontal" style="left: 20%; right: 20%; width: 60%;"></div>
+                ${connection.siblings.length >= 1 ? `
+                  <div class="tree-connector-horizontal" style="left: 15%; right: 15%; width: 70%;"></div>
                 ` : ''}
                 ${connection.siblings.map(s => this.renderMemberCard(s, this.getSiblingLabel(s))).join('')}
               </div>
