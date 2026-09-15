@@ -976,33 +976,63 @@
         const cards = Array.from(grid.querySelectorAll('[data-member-id]'));
         if (cards.length < 2) return;
 
-        edges.forEach(([fromId, toId, relationType]) => {
-          const fromCard = grid.querySelector(`[data-member-id="${fromId}"]`);
-          const toCard = grid.querySelector(`[data-member-id="${toId}"]`);
-          if (!fromCard || !toCard) return;
-
-          const fromRect = fromCard.getBoundingClientRect();
-          const toRect = toCard.getBoundingClientRect();
-          const x1 = fromRect.left - boardRect.left + fromRect.width / 2;
-          const y1 = fromRect.top - boardRect.top + fromRect.height / 2;
-          const x2 = toRect.left - boardRect.left + toRect.width / 2;
-          const y2 = toRect.top - boardRect.top + toRect.height / 2;
-
+        const cardPoint = (card, edge) => {
+          const rect = card.getBoundingClientRect();
+          return {
+            left: rect.left - boardRect.left,
+            right: rect.right - boardRect.left,
+            top: rect.top - boardRect.top,
+            bottom: rect.bottom - boardRect.top,
+            centerX: rect.left - boardRect.left + rect.width / 2,
+            centerY: rect.top - boardRect.top + rect.height / 2
+          };
+        };
+        const addPath = (d, color, width = 3) => {
           const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          const midY = (y1 + y2) / 2;
-          const startY = relationType === 'spouse' ? y1 : y1 + 8;
-          const endY = relationType === 'spouse' ? y2 : y2 - 8;
-          const d = `M ${x1} ${startY} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${endY}`;
-
           path.setAttribute('d', d);
           path.setAttribute('fill', 'none');
-          path.setAttribute('stroke', relationType === 'spouse' ? '#60a5fa' : '#34d399');
-          path.setAttribute('stroke-width', relationType === 'spouse' ? '3.5' : '3');
+          path.setAttribute('stroke', color);
+          path.setAttribute('stroke-width', width);
           path.setAttribute('stroke-linecap', 'round');
           path.setAttribute('stroke-linejoin', 'round');
-          path.setAttribute('opacity', '0.85');
+          path.setAttribute('opacity', '0.88');
           svg.appendChild(path);
-        });
+        };
+
+        const parentIds = [root.father_id, root.mother_id].filter(Boolean);
+        const parentCards = parentIds.map(id => grid.querySelector(`[data-member-id="${id}"]`)).filter(Boolean);
+        const parentPoints = parentCards.map(card => cardPoint(card));
+        const lowerCards = cards.filter(card => !parentIds.includes(card.dataset.memberId));
+        const lowerPoints = lowerCards.map(card => cardPoint(card));
+
+        if (parentPoints.length >= 2) {
+          const first = parentPoints[0];
+          const last = parentPoints[parentPoints.length - 1];
+          const spouseY = (first.centerY + last.centerY) / 2;
+          addPath(`M ${first.right} ${spouseY} L ${last.left} ${spouseY}`, '#60a5fa', 3.5);
+        }
+
+        if (parentPoints.length && lowerPoints.length) {
+          const parentBottom = Math.max(...parentPoints.map(point => point.bottom));
+          const childTop = Math.min(...lowerPoints.map(point => point.top));
+          const railY = parentBottom + Math.max(18, (childTop - parentBottom) / 2);
+          const parentCenterX = parentPoints.reduce((sum, point) => sum + point.centerX, 0) / parentPoints.length;
+          const firstChildX = Math.min(...lowerPoints.map(point => point.centerX));
+          const lastChildX = Math.max(...lowerPoints.map(point => point.centerX));
+          addPath(`M ${parentCenterX} ${parentBottom} L ${parentCenterX} ${railY}`, '#34d399');
+          addPath(`M ${firstChildX} ${railY} L ${lastChildX} ${railY}`, '#34d399');
+          lowerPoints.forEach(point => addPath(`M ${point.centerX} ${railY} L ${point.centerX} ${point.top}`, '#34d399'));
+        } else {
+          edges.forEach(([fromId, toId, relationType]) => {
+            const fromCard = grid.querySelector(`[data-member-id="${fromId}"]`);
+            const toCard = grid.querySelector(`[data-member-id="${toId}"]`);
+            if (!fromCard || !toCard) return;
+            const from = cardPoint(fromCard);
+            const to = cardPoint(toCard);
+            const midY = (from.centerY + to.centerY) / 2;
+            addPath(`M ${from.centerX} ${from.centerY} L ${from.centerX} ${midY} L ${to.centerX} ${midY} L ${to.centerX} ${to.centerY}`, relationType === 'spouse' ? '#60a5fa' : '#34d399', relationType === 'spouse' ? 3.5 : 3);
+          });
+        }
       }
 
       async function renderTree(filter = '') {
