@@ -1171,9 +1171,12 @@
         @media (max-width: 768px) {
             .stats-grid,
             .content-grid { grid-template-columns: 1fr; }
-            .hero-section { padding: 30px 24px; }
-            .hero-identity { align-items: flex-start; gap: 16px; }
+            .hero-section { padding: 30px 24px; text-align: center; }
+            .hero-content { display: grid; justify-items: center; }
+            .hero-identity { flex-direction: column; align-items: center; gap: 16px; }
             .hero-avatar { width: 68px; height: 68px; flex-basis: 68px; }
+            .hero-description { margin-right: auto; margin-left: auto; }
+            .hero-actions { justify-content: center; }
         }
     </style>
 </head>
