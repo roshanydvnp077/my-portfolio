@@ -899,6 +899,15 @@
       return 'Family Member';
     }
 
+    function getParentIds(rootMember, members) {
+      const explicitIds = [rootMember?.father_id, rootMember?.mother_id].filter(Boolean);
+      const inferredIds = members
+        .filter(member => member.id !== rootMember?.id)
+        .filter(member => ['father', 'mother', 'parent'].includes(String(member.relationship || '').trim().toLowerCase()))
+        .map(member => member.id);
+      return [...new Set([...explicitIds, ...inferredIds])];
+    }
+
     try {
       const { data: members, error } = await client
         .from('family_members')
@@ -999,7 +1008,7 @@
           svg.appendChild(path);
         };
 
-        const parentIds = [root.father_id, root.mother_id].filter(Boolean);
+        const parentIds = getParentIds(root, familyMembers);
         const parentCards = parentIds.map(id => grid.querySelector(`[data-member-id="${id}"]`)).filter(Boolean);
         const parentPoints = parentCards.map(card => cardPoint(card));
         const lowerCards = cards.filter(card => !parentIds.includes(card.dataset.memberId));
@@ -1050,7 +1059,7 @@
         const root = rootMember || visibleMembers[0] || null;
         const activeRows = root && visibleMembers.length
           ? (() => {
-              const parentIds = [root.father_id, root.mother_id].filter(Boolean);
+              const parentIds = getParentIds(root, visibleMembers);
               const parents = visibleMembers.filter(member => parentIds.includes(member.id));
               const siblingIds = new Set(visibleMembers.filter(member => {
                 if (member.id === root.id) return true;
