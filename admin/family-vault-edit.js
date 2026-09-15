@@ -33,8 +33,8 @@
     const session = await client.auth.getSession();
     const user = session.data.session?.user;
     if (!user) return null;
-    const result = await client.rpc('is_admin');
-    return result.error || result.data !== true ? null : user;
+    const result = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    return result.error || !result.data ? null : user;
   }
 
   function injectButtons() {

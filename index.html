@@ -9004,6 +9004,7 @@
     <a href="#faq" class="mob-link">FAQ / Questions</a>
     <a href="#contact" class="mob-link">Contact</a>
     <div class="mobile-menu-actions">
+      <a href="family-member-login.html" class="mob-link mobile-action" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); color: white; border: none;">👨‍👩‍👧‍👦 Family space</a>
       <a href="mailto:roshanydvnp077@gmail.com" class="mob-link mob-cta mobile-action">Hire Me</a>
       <a href="#admin-login" class="mob-link mobile-action secondary" id="publicMobileLoginBtn">Login</a>
     </div>
@@ -10659,7 +10660,7 @@ code, scalable backend architectures, and crisp frontend experiences.
 
     document.addEventListener('DOMContentLoaded', function () {
       const supabaseClient = window.supabaseClient;
-      const configured = typeof supabaseClient !== 'undefined' && Boolean(supabaseClient) && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_PUBLISHABLE_KEY !== 'undefined';
+      const configured = typeof supabaseClient !== 'undefined' && Boolean(supabaseClient) && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined';
       const galleryGrid = document.getElementById('galleryGrid');
       const galleryStatus = document.getElementById('galleryStatus');
       const documentsSection = document.getElementById('documents');
@@ -10923,7 +10924,7 @@ code, scalable backend architectures, and crisp frontend experiences.
           await supabaseClient.auth.signOut({ scope: 'local' });
           return false;
         }
-        const adminResult = await supabaseClient.from('admin_users').select('user_id,role').eq('user_id', userResult.data.user.id).eq('role', 'admin').maybeSingle();
+        const adminResult = await supabaseClient.from('admin_users').select('user_id').eq('user_id', userResult.data.user.id).maybeSingle();
         return !adminResult.error && Boolean(adminResult.data);
       }
 

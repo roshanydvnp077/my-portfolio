@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Family Member - Quick Setup</title>
+  <script src="admin/vendor/supabase.js"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #1e293b;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #64748b;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .section {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn.secondary {
+      background: #64748b;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 2px solid #34d399;
+    }
+
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid #f87171;
+    }
+
+    .status.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 2px solid #60a5fa;
+    }
+
+    .user-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .user-item {
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .user-item:hover {
+      border-color: #667eea;
+      transform: translateX(4px);
+    }
+
+    .user-item.selected {
+      background: #ede9fe;
+      border-color: #667eea;
+    }
+
+    .user-email {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .user-id {
+      font-size: 12px;
+      color: #64748b;
+      font-family: monospace;
+    }
+
+    .help-text {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 6px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .quick-link {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .quick-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .quick-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 Link Family Member</h1>
+    <p class="subtitle">Quick setup tool to link existing auth users to family member profiles</p>
+
+    <!-- Step 1: List Auth Users -->
+    <div class="section">
+      <div class="section-title">
+        <span class="step-number">1</span>
+        Select Auth User
+      </div>
+      <button class="btn" id="loadUsersBtn" onclick="loadAuthUsers()">Load Auth Users</button>
+      <div class="user-list" id="userList"></div>
+    </div>
+
+    <!-- Step 2: Member Info -->
+    <div class="section">
+      <div class="section-title">
+        <span class="step-number">2</span>
+        Member Information
+      </div>
+      <form id="linkForm">
+        <input type="hidden" id="authUserId" required>
+        
+        <div class="form-group">
+          <label for="authEmail">Email (from auth user)</label>
+          <input type="email" id="authEmail" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input type="text" id="fullName" required placeholder="Enter full name">
+        </div>
+
+        <div class="form-group">
+          <label for="relation">Relationship</label>
+          <select id="relation">
+            <option value="Family">Family</option>
+            <option value="Father">Father</option>
+            <option value="Mother">Mother</option>
+            <option value="Brother">Brother</option>
+            <option value="Sister">Sister</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Child">Child</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn" id="linkBtn">Link Family Member</button>
+      </form>
+    </div>
+
+    <div class="status" id="statusMessage"></div>
+
+    <div class="quick-link">
+      <a href="family-member-login.html">Go to Family Login →</a>
+    </div>
+  </div>
+
+  <script>
+    const client = window.supabaseClient;
+    let selectedUser = null;
+
+    function setStatus(message, type) {
+      const statusEl = document.getElementById('statusMessage');
+      statusEl.textContent = message;
+      statusEl.className = 'status ' + type + ' show';
+    }
+
+    async function loadAuthUsers() {
+      const btn = document.getElementById('loadUsersBtn');
+      const userList = document.getElementById('userList');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Loading...';
+      userList.innerHTML = '';
+
+      try {
+        // Get current session to check if admin
+        const { data: session } = await client.auth.getSession();
+        if (!session?.session) {
+          setStatus('Please login first (open in incognito and use admin credentials)', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Load Auth Users';
+          return;
+        }
+
+        // Fetch auth users via RPC or direct query
+        const { data: users, error } = await client.auth.admin.listUsers();
+        
+        if (error) {
+          throw error;
+        }
+
+        if (!users || users.users.length === 0) {
+          userList.innerHTML = '<p class="help-text">No auth users found. Create one in Supabase Dashboard → Authentication → Users</p>';
+          btn.disabled = false;
+          btn.textContent = 'Load Auth Users';
+          return;
+        }
+
+        // Check which users are already linked
+        const { data: linkedMembers } = await client
+          .from('family_members')
+          .select('auth_user_id, full_name');
+
+        const linkedIds = new Set((linkedMembers || []).map(m => m.auth_user_id));
+
+        userList.innerHTML = users.users.map(user => {
+          const isLinked = linkedIds.has(user.id);
+          const linkedMember = (linkedMembers || []).find(m => m.auth_user_id === user.id);
+          return `
+            <div class="user-item" onclick="selectUser('${user.id}', '${user.email}')" data-user-id="${user.id}">
+              <div class="user-email">${user.email} ${isLinked ? '✅ Linked' : '⚠️ Not Linked'}</div>
+              ${isLinked ? `<div class="help-text">Linked to: ${linkedMember?.full_name}</div>` : ''}
+              <div class="user-id">${user.id}</div>
+            </div>
+          `;
+        }).join('');
+
+        setStatus(`Found ${users.users.length} auth user(s)`, 'info');
+        btn.textContent = 'Refresh';
+      } catch (error) {
+        console.error('Error loading users:', error);
+        setStatus('Error loading users. Make sure you have admin access.', 'error');
+        btn.textContent = 'Retry';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function selectUser(userId, email) {
+      selectedUser = { id: userId, email: email };
+      document.getElementById('authUserId').value = userId;
+      document.getElementById('authEmail').value = email;
+
+      // Update UI
+      document.querySelectorAll('.user-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      document.querySelector(`[data-user-id="${userId}"]`).classList.add('selected');
+
+      setStatus(`Selected: ${email}`, 'info');
+    }
+
+    document.getElementById('linkForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('linkBtn');
+      const authUserId = document.getElementById('authUserId').value;
+      const authEmail = document.getElementById('authEmail').value;
+      const fullName = document.getElementById('fullName').value.trim();
+      const relation = document.getElementById('relation').value;
+
+      if (!authUserId || !fullName) {
+        setStatus('Please select a user and enter full name', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Linking...';
+
+      try {
+        // Check if member already exists
+        const { data: existingMember } = await client
+          .from('family_members')
+          .select('*')
+          .eq('email', authEmail)
+          .single();
+
+        if (existingMember) {
+          // Update existing member
+          const { error: updateError } = await client
+            .from('family_members')
+            .update({
+              auth_user_id: authUserId,
+              account_status: 'active',
+              full_name: fullName
+            })
+            .eq('id', existingMember.id);
+
+          if (updateError) throw updateError;
+          setStatus(`✅ Updated existing member: ${fullName}`, 'success');
+        } else {
+          // Create new member
+          const { error: insertError } = await client
+            .from('family_members')
+            .insert({
+              auth_user_id: authUserId,
+              email: authEmail,
+              full_name: fullName,
+              relation: relation,
+              account_status: 'active'
+            });
+
+          if (insertError) throw insertError;
+          setStatus(`✅ Created new member: ${fullName}`, 'success');
+        }
+
+        // Clear form
+        document.getElementById('linkForm').reset();
+        document.getElementById('authUserId').value = '';
+        document.getElementById('authEmail').value = '';
+        
+        // Reload users
+        setTimeout(() => loadAuthUsers(), 1000);
+
+      } catch (error) {
+        console.error('Link error:', error);
+        setStatus(`Error: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Link Family Member';
+      }
+    });
+
+    // Check Supabase config on load
+    window.addEventListener('DOMContentLoaded', function() {
+      if (!client) {
+        setStatus('Supabase is not configured. Check supabase-config.js', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

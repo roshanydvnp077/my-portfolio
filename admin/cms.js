@@ -25,7 +25,7 @@
     const session = await client.auth.getSession();
     const user = session.data.session?.user;
     if (!user) return null;
-    const result = await client.from('admin_users').select('user_id,role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+    const result = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
     return result.data ? user : null;
   }
   async function log(action, module, details = {}) { await client.from('activity_logs').insert({ admin_id: state.user.id, action, module, details }); }

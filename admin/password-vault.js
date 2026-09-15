@@ -20,8 +20,8 @@
     const result = await client.auth.getUser();
     const user = result.data?.user;
     if (result.error || !user) return null;
-    const admin = await client.rpc('is_admin');
-    return admin.error || admin.data !== true ? null : user;
+    const admin = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    return admin.error || !admin.data ? null : user;
   }
 
   function addNavigation() {

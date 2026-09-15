@@ -42,8 +42,8 @@
     const session = await client.auth.getSession();
     const user = session.data.session?.user;
     if (!user) return null;
-    const rpc = await client.rpc('is_admin');
-    return rpc.error || rpc.data !== true ? null : user;
+    const check = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    return check.error || !check.data ? null : user;
   }
 
   function addNavigation() {
@@ -112,7 +112,8 @@
   function formMarkup(row) {
     const relationOptions = ['<option value="">Select relation</option>'].concat(RELATIONS.map(item => '<option value="' + item + '"' + (row?.relation === item ? ' selected' : '') + '>' + item + '</option>')).join('');
     const photo = row?.signedPhoto ? '<img class="family-photo-preview" data-family-photo-preview src="' + escape(row.signedPhoto) + '" alt="Current family photo">' : '<div class="family-photo-preview family-photo-empty" data-family-photo-preview>No photo selected</div>';
-    return '<form class="form family-form" data-family-form><div class="family-form-grid">' + field('name', 'Name', row?.name, 'text', true) + '<label class="family-field">Relation *<select class="field" name="relation" required>' + relationOptions + '</select></label>' + field('date_of_birth', 'Date of Birth', row?.date_of_birth, 'date') + field('phone', 'Phone', row?.phone, 'tel') + field('email', 'Email', row?.email, 'email') + field('occupation', 'Occupation', row?.occupation) + area('address', 'Address', row?.address) + area('notes', 'Notes', row?.notes) + '<label class="family-field family-wide">Photo<input class="field" name="photo" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small class="muted">Private image, up to 5 MB.</small></label><div class="family-photo-wrap family-wide">' + photo + (row?.photo_url ? '<button type="button" class="button" data-family-remove-photo>Remove Photo</button>' : '') + '</div></div><p data-family-form-message></p><div class="family-form-actions"><button type="button" class="button" data-family-cancel>Cancel</button><button type="submit" class="button primary" data-family-save>Save Family Member</button></div></form>';
+    const authSection = !row ? '<div class="family-auth-section family-wide"><h4 style="margin: 20px 0 12px; color: #60a5fa; font-size: 1.1rem;">🔐 Portal Login Access (Optional)</h4><p class="muted" style="margin-bottom: 16px; font-size: 0.9rem;">Create login credentials for this family member to access their personal portal page.</p>' + field('auth_email', 'Login Email', '', 'email', false) + field('auth_password', 'Login Password', '', 'password', false) + '<small class="muted">Leave blank to skip portal access. Password must be at least 6 characters.</small></div>' : '';
+    return '<form class="form family-form" data-family-form><div class="family-form-grid">' + field('name', 'Name', row?.name, 'text', true) + '<label class="family-field">Relation *<select class="field" name="relation" required>' + relationOptions + '</select></label>' + field('date_of_birth', 'Date of Birth', row?.date_of_birth, 'date') + field('phone', 'Phone', row?.phone, 'tel') + field('email', 'Email', row?.email, 'email') + field('occupation', 'Occupation', row?.occupation) + area('address', 'Address', row?.address) + area('notes', 'Notes', row?.notes) + authSection + '<label class="family-field family-wide">Photo<input class="field" name="photo" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small class="muted">Private image, up to 5 MB.</small></label><div class="family-photo-wrap family-wide">' + photo + (row?.photo_url ? '<button type="button" class="button" data-family-remove-photo>Remove Photo</button>' : '') + '</div></div><p data-family-form-message></p><div class="family-form-actions"><button type="button" class="button" data-family-cancel>Cancel</button><button type="submit" class="button primary" data-family-save>Save Family Member</button></div></form>';
   }
 
   function openForm(row) {
@@ -141,11 +142,18 @@
     const data = new FormData(form);
     const name = String(data.get('name') || '').trim();
     const relation = String(data.get('relation') || '').trim();
+    const authEmail = String(data.get('auth_email') || '').trim().toLowerCase();
+    const authPassword = String(data.get('auth_password') || '').trim();
     if (!name || !relation) { status.innerHTML = message('Name and relation are required.', 'error'); return; }
     if (data.get('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.get('email')))) { status.innerHTML = message('Enter a valid email address.', 'error'); return; }
+    if (authEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(authEmail)) { status.innerHTML = message('Enter a valid login email address.', 'error'); return; }
+    if ((authEmail && !authPassword) || (!authEmail && authPassword)) { status.innerHTML = message('Both login email and password are required to create portal access.', 'error'); return; }
+    if (authPassword && authPassword.length < 6) { status.innerHTML = message('Login password must be at least 6 characters.', 'error'); return; }
     button.disabled = true; button.textContent = 'Saving...';
     let photoPath = row?.photo_url || null;
     let uploadedPath = '';
+    let createdAuthUserId = null;
+    let createdMemberId = null;
     try {
       const user = await authorizedUser();
       if (!user) throw new Error('Admin authorization required.');
@@ -153,11 +161,66 @@
       if (file?.name) { uploadedPath = user.id + '/' + makeUuid() + '-' + file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); const upload = await client.storage.from(FAMILY_BUCKET).upload(uploadedPath, file, { contentType: file.type, upsert: false }); if (upload.error) throw upload.error; photoPath = uploadedPath; }
       if (form.dataset.removePhoto === 'true') photoPath = null;
       const payload = { name, relation, date_of_birth: data.get('date_of_birth') || null, phone: String(data.get('phone') || '').trim() || null, email: String(data.get('email') || '').trim() || null, address: String(data.get('address') || '').trim() || null, occupation: String(data.get('occupation') || '').trim() || null, notes: String(data.get('notes') || '').trim() || null, photo_url: photoPath };
+      
+      // Create Auth user if login credentials provided (NEW members only)
+      if (!row && authEmail && authPassword) {
+        status.innerHTML = message('Creating portal login access...', '');
+        const session = await client.auth.getSession();
+        const token = session.data.session?.access_token;
+        if (!token) throw new Error('No valid admin session token.');
+        
+        const edgeFunctionUrl = client.supabaseUrl + '/functions/v1/create-family-member-auth';
+        const authResponse = await fetch(edgeFunctionUrl, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: authEmail, password: authPassword, memberData: { name, relation } })
+        });
+        
+        const authResult = await authResponse.json();
+        if (!authResponse.ok) {
+          throw new Error(authResult.error || 'Failed to create portal login access.');
+        }
+        
+        createdAuthUserId = authResult.auth_user_id;
+        status.innerHTML = message('Portal access created. Saving member details...', '');
+        
+        // Also insert into family_members table with auth_user_id
+        const memberPayload = { 
+          full_name: name, 
+          name: name, 
+          relation, 
+          date_of_birth: data.get('date_of_birth') || null, 
+          phone: String(data.get('phone') || '').trim() || null, 
+          email: authEmail, 
+          address: String(data.get('address') || '').trim() || null, 
+          occupation: String(data.get('occupation') || '').trim() || null, 
+          notes: String(data.get('notes') || '').trim() || null, 
+          profile_photo: photoPath,
+          profile_photo_path: photoPath,
+          auth_user_id: createdAuthUserId,
+          created_by: user.id,
+          is_active: true,
+          is_visible: true
+        };
+        
+        const memberResult = await client.from('family_members').insert(memberPayload).select().single();
+        if (memberResult.error) throw new Error('Failed to link member: ' + memberResult.error.message);
+        createdMemberId = memberResult.data.id;
+      }
+      
       const result = row ? await client.from('family_details').update(payload).eq('id', row.id) : await client.from('family_details').insert({ ...payload, created_by: user.id });
       if (result.error) throw result.error;
       if (row?.photo_url && photoPath !== row.photo_url) await client.storage.from(FAMILY_BUCKET).remove([row.photo_url]);
-      closeDialog(); await fetchRows(); toast(row ? 'Family member updated.' : 'Family member added.');
-    } catch (error) { if (uploadedPath) await client.storage.from(FAMILY_BUCKET).remove([uploadedPath]); status.innerHTML = message('Could not save Family Details.', 'error'); console.error(error); button.disabled = false; button.textContent = 'Save Family Member'; }
+      closeDialog(); await fetchRows(); toast(row ? 'Family member updated.' : (authEmail ? 'Family member added with portal access!' : 'Family member added.'));
+    } catch (error) { 
+      if (uploadedPath) await client.storage.from(FAMILY_BUCKET).remove([uploadedPath]); 
+      if (createdMemberId && !row) await client.from('family_members').delete().eq('id', createdMemberId).then(() => console.log('Rolled back family_members entry'));
+      if (createdAuthUserId && !row) console.warn('Auth user created but member creation failed. Auth UUID:', createdAuthUserId, '- Manual cleanup may be needed.');
+      status.innerHTML = message(error.message || 'Could not save Family Details.', 'error'); 
+      console.error(error); 
+      button.disabled = false; 
+      button.textContent = 'Save Family Member'; 
+    }
   }
 
   function showDetails(row) {

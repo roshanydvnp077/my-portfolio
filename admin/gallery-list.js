@@ -11,11 +11,28 @@
   if (!client || !main) return;
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[c]));
   const date = value => value ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Date unavailable';
-  const currentAdmin = async () => { const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) return null; const result = await client.rpc('is_admin'); return result.error || result.data !== true ? null : user; };
+  const currentAdmin = async () => { const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) return null; const result = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle(); return result.error || !result.data ? null : user; };
   const close = () => { if (overlay) overlay.hidden = true; };
   const storagePath = (value, bucket) => { const path = String(value || ''); const marker = '/' + bucket + '/'; if (path.includes(marker)) return path.slice(path.indexOf(marker) + marker.length); return path.replace(new RegExp('^' + bucket + '/'), ''); };
-  const signedUrl = async row => { if (!row?.file_path) return { error: new Error('Missing gallery file path') }; for (const bucket of buckets) { const result = await client.storage.from(bucket).createSignedUrl(storagePath(row.file_path, bucket), 300); if (!result.error) return { data: result.data, bucket }; } return { error: new Error('Gallery image is unavailable in configured storage buckets.') }; };
-  function activate() { document.querySelectorAll('.view').forEach(view => { view.hidden = view !== state.view; }); document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === 'gallery')); document.getElementById('title').textContent = 'Gallery'; document.getElementById('side')?.classList.remove('open'); }
+  const signedUrl = async row => {
+    if (!row?.file_path) return { error: new Error('Missing gallery file path') };
+    const rawPath = String(row.file_path).replace(/^\/+/, '');
+    const fileName = rawPath.split('/').pop();
+    const directories = [rawPath.split('/').slice(0, -1).join('/'), ''].filter((value, index, list) => list.indexOf(value) === index);
+    for (const candidateBucket of buckets) {
+      for (const directory of directories) {
+        const listing = await client.storage.from(candidateBucket).list(directory, { limit: 100, search: fileName });
+        if (listing.error) continue;
+        const match = (listing.data || []).find(item => item.name === fileName);
+        if (!match) continue;
+        const actualPath = directory ? directory + '/' + match.name : match.name;
+        const result = await client.storage.from(candidateBucket).createSignedUrl(actualPath, 300);
+        if (!result.error) return { data: result.data, bucket: candidateBucket };
+      }
+    }
+    return { error: new Error('Gallery image is unavailable in configured storage buckets.') };
+  };
+  function activate() { document.querySelectorAll('.view').forEach(view => { view.hidden = view !== state.view; }); document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === 'gallery')); document.getElementById('title').textContent = 'Gallery'; document.getElementById('side')?.classList.remove('open'); document.getElementById('adminMenuBackdrop')?.classList.remove('open'); document.body.classList.remove('admin-menu-open'); }
   function card(row) { const image = row.signedUrl ? '<img class="gallery-admin-thumb" src="' + escape(row.signedUrl) + '" alt="' + escape(row.title || 'Gallery image') + '" loading="lazy">' : '<div class="gallery-admin-thumb gallery-thumb-fallback">Image unavailable</div>'; return '<article class="gallery-admin-card"><div class="gallery-admin-media">' + image + '</div><div class="gallery-admin-copy"><div class="gallery-admin-title-row"><div><h3>' + escape(row.title || 'Untitled image') + '</h3><span class="gallery-category-badge">' + escape(row.category || 'Uncategorized') + '</span></div></div>' + (row.description ? '<p class="gallery-admin-description">' + escape(row.description) + '</p>' : '') + '<p class="gallery-admin-meta">Uploaded ' + escape(date(row.created_at)) + '</p><div class="gallery-admin-actions"><button class="button" data-gallery-preview="' + row.id + '">Preview</button><button class="button" data-gallery-edit="' + row.id + '">Edit</button><button class="button danger" data-gallery-delete="' + row.id + '">Delete</button></div></div></article>'; }
   async function load() { if (!state.view) return; state.view.querySelector('[data-gallery-list]').innerHTML = '<div class="gallery-list-loading">Loading gallery...</div>'; const result = await client.from('gallery').select('id,title,description,category,file_path,file_name,file_type,file_size,created_at,updated_at').order('created_at', { ascending: false }); if (result.error) { console.error('Gallery load failed:', result.error); state.view.querySelector('[data-gallery-list]').innerHTML = '<div class="gallery-list-empty">Unable to load gallery. Please try again.</div>'; return; } state.rows = result.data || []; await Promise.all(state.rows.map(async row => { const link = await signedUrl(row); row.signedUrl = link.error ? '' : link.data.signedUrl; row.storageBucket = link.bucket || buckets[0]; if (link.error) console.error('Gallery image URL failed:', link.error, row.file_path); })); paint(); }
   function paint() { const list = state.view.querySelector('[data-gallery-list]'); list.innerHTML = state.rows.length ? state.rows.map(card).join('') : '<div class="gallery-list-empty"><span>▧</span><h3>No gallery images yet</h3><p>Upload your first gallery image to get started.</p></div>'; }

@@ -1,2 +1,88 @@
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Supabase
 supabase/.temp/
+supabase/.branches/
+.temp
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.output/
+.vitepress/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache
+.cache/
+.npm/
+.eslintcache
+.parcel-cache/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Private data (DO NOT COMMIT)
+credentials.json
+service-account.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Personal email/notes
 roshanydvnp077@gmail.com
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Temporary SQL files with real data
+*_TEST_DATA.sql
+SEED_REAL_FAMILY_DATA.sql
+
+# Database migrations should be committed, but these are dev/test files
+ADD_AS_ADMIN_NOW.sql
+ADD_ME_AS_ADMIN.sql
+QUICK_ADD_ME_TO_FAMILY.sql
+LINK_MY_ACCOUNT_TO_FAMILY.sql
+
+# Development scripts
+START_SERVER.bat
+check-current-key.ps1
+deploy-edge-function.ps1
+deploy-edge-function-simple.ps1

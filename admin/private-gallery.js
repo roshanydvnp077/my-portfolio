@@ -32,8 +32,8 @@
     const session = await client.auth.getSession();
     const user = session.data.session?.user;
     if (!user) return null;
-    const check = await client.rpc('is_admin');
-    return check.error || check.data !== true ? null : user;
+    const check = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    return check.error || !check.data ? null : user;
   }
 
   async function migrateLegacyRows(user) {

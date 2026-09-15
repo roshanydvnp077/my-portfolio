@@ -17,7 +17,7 @@
   const initials = name => String(name || '?').trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
   const imageUrl = value => value ? (/^https?:\/\//i.test(value) ? value : client.storage.from(bucket).getPublicUrl(value).data.publicUrl) : '';
   const normalized = row => ({ ...row, full_name: row.full_name || row.name || '', profile_image: row.profile_image || row.photo || '', role: row.role || row.position || '', review: row.review || row.message || '', display_order: Number(row.display_order ?? row.sort_order ?? 0), is_featured: Boolean(row.is_featured), is_published: Boolean(row.is_published) });
-  const currentAdmin = async () => { const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) return null; const result = await client.rpc('is_admin'); return result.error || result.data !== true ? null : user; };
+  const currentAdmin = async () => { const session = await client.auth.getSession(); const user = session.data.session?.user; if (!user) return null; const result = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle(); return result.error || !result.data ? null : user; };
   const close = () => { if (overlay) overlay.hidden = true; };
   const schemaError = error => error?.code === 'PGRST204' || error?.code === '42703' || /column .* does not exist|schema cache/i.test(error?.message || '');
 

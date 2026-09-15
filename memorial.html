@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Memorial — Yadav Family Portal</title>
+    <link rel="stylesheet" href="family-member-settings.css">
+    <style>
+      .memorial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+      }
+
+      .memorial-card {
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        text-align: center;
+        opacity: 0.9;
+      }
+
+      .memorial-avatar {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 12px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid var(--muted);
+        opacity: 0.85;
+        background: linear-gradient(135deg, var(--panel-strong), var(--panel));
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+
+      .memorial-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .memorial-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .memorial-dates {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .memorial-bio {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-style: italic;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-brand">
+        <button type="button" class="icon-btn hamburger-btn" id="hamburgerBtn" aria-label="Toggle Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="topbar-logo-icon">🕊️</div>
+        <div class="topbar-title">
+          <h1>Yadav Family</h1>
+          <span>In Loving Memory</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" class="icon-btn" id="themeToggle" title="Toggle Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebarNav">
+        <div class="sidebar-header">
+          <span>PORTAL NAVIGATION</span>
+          <button type="button" class="icon-btn drawer-close-btn" id="drawerCloseBtn" aria-label="Close Menu">✕</button>
+        </div>
+        <div class="sidebar-menu">
+          <a href="index.html" class="menu-item"><span>🏠</span> Home</a>
+          <a href="index.html#about" class="menu-item"><span>ℹ️</span> About Family</a>
+          <a href="family-tree.html" class="menu-item"><span>🌳</span> Family Tree</a>
+          <a href="family-member.html" class="menu-item"><span>👤</span> My Profile</a>
+          <a href="future-generation.html" class="menu-item"><span>✨</span> Future Generations</a>
+          <a href="gallery.html" class="menu-item"><span>🖼️</span> Gallery</a>
+          <a href="events.html" class="menu-item"><span>📅</span> Events</a>
+          <a href="achievements.html" class="menu-item"><span>🏆</span> Achievements</a>
+          <a href="birthdays.html" class="menu-item"><span>🎂</span> Birthdays</a>
+          <a href="anniversaries.html" class="menu-item"><span>💍</span> Anniversaries</a>
+          <a href="memorial.html" class="menu-item active"><span>🕊️</span> Memorial</a>
+          <a href="documents.html" class="menu-item"><span>📁</span> Documents</a>
+          <a href="contact.html" class="menu-item"><span>✉️</span> Contact</a>
+          <a href="admin/index.html" class="menu-item"><span>⚙️</span> Admin</a>
+          <button type="button" class="menu-item" id="logoutBtn" style="color:var(--red-accent);margin-top:12px;"><span>🚪</span> Logout</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <div class="panel-card">
+          <div class="card-header-row">
+            <h3 class="card-title"><span class="card-title-icon">🕊️</span> In Loving Memory</h3>
+            <a href="family-member.html" class="btn-outline">← Back to Profile</a>
+          </div>
+          <p style="color:var(--muted);margin-bottom:20px;">Honoring our departed family members</p>
+          
+          <div class="memorial-grid" id="memorialContainer">
+            <p style="text-align:center;padding:40px;color:var(--muted);grid-column:1/-1;">Loading memorial...</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="admin/vendor/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+      const themeToggle = document.getElementById('themeToggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+          const current = document.documentElement.getAttribute('data-theme');
+          const newTheme = current === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('family-portal-theme', newTheme);
+        });
+      }
+
+      const savedTheme = localStorage.getItem('family-portal-theme');
+      if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+      const sidebarNav = document.getElementById('sidebarNav');
+      const drawerOverlay = document.getElementById('drawerOverlay');
+
+      function openDrawer() {
+        if (sidebarNav) sidebarNav.classList.add('open');
+        if (drawerOverlay) drawerOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        if (sidebarNav) sidebarNav.classList.remove('open');
+        if (drawerOverlay) drawerOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      if (hamburgerBtn) hamburgerBtn.addEventListener('click', openDrawer);
+      if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeDrawer);
+      if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function () {
+          if (window.supabaseClient) await window.supabaseClient.auth.signOut();
+          window.location.href = 'family-member-login.html';
+        });
+      }
+
+      async function loadMemorial() {
+        const container = document.getElementById('memorialContainer');
+        const client = window.supabaseClient;
+        
+        if (!client) {
+          container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--red-accent);grid-column:1/-1;">Database not connected</p>';
+          return;
+        }
+
+        try {
+          const { data, error } = await client
+            .from('family_members')
+            .select('*')
+            .eq('is_active', false)
+            .order('updated_at', { ascending: false })
+            .limit(50);
+
+          if (error) throw error;
+
+          if (data && data.length > 0) {
+            container.innerHTML = data.map(m => {
+              const name = m.full_name || m.name || 'Beloved Member';
+              const initials = name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+              const dob = m.date_of_birth ? new Date(m.date_of_birth).toLocaleDateString('en-US', { year: 'numeric' }) : '';
+              const dop = m.date_of_passing ? new Date(m.date_of_passing).toLocaleDateString('en-US', { year: 'numeric' }) : '';
+              const dates = [dob, dop].filter(Boolean).join(' — ');
+              
+              return `
+                <div class="memorial-card">
+                  <div class="memorial-avatar">
+                    ${m.profile_photo_path || m.profile_image_url ? 
+                      `<img src="${m.profile_photo_path || m.profile_image_url}" alt="${name}">` : 
+                      initials
+                    }
+                  </div>
+                  <div class="memorial-name">${name}</div>
+                  ${dates ? `<div class="memorial-dates">${dates}</div>` : ''}
+                  ${m.biography ? `<p class="memorial-bio">"${m.biography.slice(0, 100)}${m.biography.length > 100 ? '...' : ''}"</p>` : ''}
+                </div>
+              `;
+            }).join('');
+          } else {
+            container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--muted);grid-column:1/-1;">🕊️ No memorials at this time.</p>';
+          }
+        } catch (error) {
+          console.error('Memorial load error:', error);
+          container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--red-accent);grid-column:1/-1;">Unable to load memorials</p>';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', loadMemorial);
+    </script>
+  </body>
+</html>
