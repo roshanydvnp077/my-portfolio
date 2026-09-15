@@ -1011,8 +1011,9 @@
         const parentIds = getParentIds(root, familyMembers);
         const parentCards = parentIds.map(id => grid.querySelector(`[data-member-id="${id}"]`)).filter(Boolean);
         const parentPoints = parentCards.map(card => cardPoint(card));
-        const lowerCards = cards.filter(card => !parentIds.includes(card.dataset.memberId));
-        const lowerPoints = lowerCards.map(card => cardPoint(card));
+        const rowCards = rowNumber => Array.from(grid.querySelectorAll(`[data-tree-row="${rowNumber}"] [data-member-id]`));
+        const middlePoints = rowCards(1).map(card => cardPoint(card));
+        const childPoints = rowCards(2).map(card => cardPoint(card));
 
         if (parentPoints.length >= 2) {
           const first = parentPoints[0];
@@ -1021,16 +1022,29 @@
           addPath(`M ${first.right} ${spouseY} L ${last.left} ${spouseY}`, '#60a5fa', 3.5);
         }
 
-        if (parentPoints.length && lowerPoints.length) {
+        if (parentPoints.length && middlePoints.length) {
           const parentBottom = Math.max(...parentPoints.map(point => point.bottom));
-          const childTop = Math.min(...lowerPoints.map(point => point.top));
-          const railY = parentBottom + Math.max(18, (childTop - parentBottom) / 2);
+          const middleTop = Math.min(...middlePoints.map(point => point.top));
+          const railY = parentBottom + Math.max(18, (middleTop - parentBottom) / 2);
           const parentCenterX = parentPoints.reduce((sum, point) => sum + point.centerX, 0) / parentPoints.length;
-          const firstChildX = Math.min(...lowerPoints.map(point => point.centerX));
-          const lastChildX = Math.max(...lowerPoints.map(point => point.centerX));
+          const firstChildX = Math.min(...middlePoints.map(point => point.centerX));
+          const lastChildX = Math.max(...middlePoints.map(point => point.centerX));
           addPath(`M ${parentCenterX} ${parentBottom} L ${parentCenterX} ${railY}`, '#34d399');
           addPath(`M ${firstChildX} ${railY} L ${lastChildX} ${railY}`, '#34d399');
-          lowerPoints.forEach(point => addPath(`M ${point.centerX} ${railY} L ${point.centerX} ${point.top}`, '#34d399'));
+          middlePoints.forEach(point => addPath(`M ${point.centerX} ${railY} L ${point.centerX} ${point.top}`, '#34d399'));
+          if (childPoints.length) {
+            const rootCard = grid.querySelector(`[data-tree-row="1"] [data-member-id="${root.id}"]`);
+            if (rootCard) {
+              const rootPoint = cardPoint(rootCard);
+              const childTop = Math.min(...childPoints.map(point => point.top));
+              const childRailY = rootPoint.bottom + Math.max(18, (childTop - rootPoint.bottom) / 2);
+              const firstChildX = Math.min(...childPoints.map(point => point.centerX));
+              const lastChildX = Math.max(...childPoints.map(point => point.centerX));
+              addPath(`M ${rootPoint.centerX} ${rootPoint.bottom} L ${rootPoint.centerX} ${childRailY}`, '#34d399');
+              addPath(`M ${firstChildX} ${childRailY} L ${lastChildX} ${childRailY}`, '#34d399');
+              childPoints.forEach(point => addPath(`M ${point.centerX} ${childRailY} L ${point.centerX} ${point.top}`, '#34d399'));
+            }
+          }
         } else {
           edges.forEach(([fromId, toId, relationType]) => {
             const fromCard = grid.querySelector(`[data-member-id="${fromId}"]`);
@@ -1066,10 +1080,18 @@
                   const rank = member => member.id === root.father_id ? 0 : member.id === root.mother_id ? 1 : String(member.relationship || '').trim().toLowerCase() === 'father' ? 0 : 1;
                   return rank(first) - rank(second);
                 });
-              const lowerMembers = visibleMembers.filter(member => !parentIds.includes(member.id));
+              const childMembers = visibleMembers.filter(member => {
+                if (parentIds.includes(member.id) || member.id === root.id) return false;
+                const relationship = String(member.relationship || '').trim().toLowerCase();
+                return member.father_id === root.id || member.mother_id === root.id || ['son', 'daughter', 'child'].includes(relationship);
+              });
+              const middleMembers = visibleMembers
+                .filter(member => !parentIds.includes(member.id) && !childMembers.some(child => child.id === member.id))
+                .sort((first, second) => (first.id === root.id ? -1 : second.id === root.id ? 1 : (first.full_name || '').localeCompare(second.full_name || '')));
               const nextRows = [];
               if (parents.length) nextRows.push({ generation: 0, members: parents });
-              if (lowerMembers.length) nextRows.push({ generation: 1, members: lowerMembers });
+              if (middleMembers.length) nextRows.push({ generation: 1, members: middleMembers });
+              if (childMembers.length) nextRows.push({ generation: 2, members: childMembers });
               return nextRows.map(row => ({
                 ...row,
                 members: row.members.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
@@ -1083,7 +1105,7 @@
         })));
 
         grid.innerHTML = activeRows.map(row => `
-          <div style="display:flex; flex-direction:column; align-items:center; gap:14px; width:100%;">
+          <div data-tree-row="${row.generation}" style="display:flex; flex-direction:column; align-items:center; gap:14px; width:100%;">
             <div style="display:flex; justify-content:center; align-items:center; gap: 18px; flex-wrap:wrap; width:100%; position:relative;">
               ${row.members.map(member => {
                 const initials = (member.full_name || 'F').split(' ').map(part => part[0]).slice(0, 2).join('').toUpperCase();
