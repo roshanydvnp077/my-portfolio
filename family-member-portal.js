@@ -940,7 +940,7 @@
     try {
       const { data: members, error } = await client
         .from('family_members')
-        .select('*')
+        .select('id, full_name, name, relationship, gender, living_status, branch, family_branch, father_id, mother_id, spouse_id, profile_photo_path, profile_image_url, profile_photo, photo_url, photo, auth_user_id')
         .eq('is_visible', true)
         .order('full_name', { ascending: true });
 
