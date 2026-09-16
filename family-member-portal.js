@@ -382,6 +382,42 @@
     }
   }
 
+  function collectRelatedMemberIds(rootId, allMembers) {
+    const memberMap = new Map(allMembers.map(member => [member.id, member]));
+    const relatedIds = new Set([rootId]);
+    const queue = [rootId];
+
+    while (queue.length) {
+      const currentId = queue.shift();
+      const currentMember = memberMap.get(currentId);
+      if (!currentMember) continue;
+
+      const directParentIds = [currentMember.father_id, currentMember.mother_id].filter(Boolean);
+      const spouseId = currentMember.spouse_id;
+      const childIds = allMembers
+        .filter(member => member.father_id === currentId || member.mother_id === currentId)
+        .map(member => member.id);
+
+      const siblingIds = allMembers
+        .filter(member => {
+          if (member.id === currentId) return false;
+          const sameFather = currentMember.father_id && member.father_id && member.father_id === currentMember.father_id;
+          const sameMother = currentMember.mother_id && member.mother_id && member.mother_id === currentMember.mother_id;
+          return sameFather || sameMother;
+        })
+        .map(member => member.id);
+
+      [...directParentIds, spouseId, ...childIds, ...siblingIds].filter(Boolean).forEach(nextId => {
+        if (!relatedIds.has(nextId)) {
+          relatedIds.add(nextId);
+          queue.push(nextId);
+        }
+      });
+    }
+
+    return [...relatedIds];
+  }
+
   // ============================================
   // DASHBOARD DATA LOADING
   // ============================================
@@ -405,11 +441,21 @@
 
   async function loadStatistics() {
     try {
-      // Load family members count
-      const { count: membersCount } = await client
+      const { data: familyMembers, error: familyError } = await client
         .from('family_members')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_visible', true);
+        .select('id, full_name, branch, father_id, mother_id, spouse_id, relationship, is_visible')
+        .eq('is_visible', true)
+        .order('full_name', { ascending: true });
+
+      if (familyError) throw familyError;
+
+      const connectedFamilyIds = new Set();
+      if (state.member?.id && Array.isArray(familyMembers) && familyMembers.length) {
+        const relatedIds = collectRelatedMemberIds(state.member.id, familyMembers);
+        relatedIds.forEach(id => connectedFamilyIds.add(id));
+      }
+
+      const membersCount = connectedFamilyIds.size;
 
       // Load photos count
       const { count: photosCount } = await client
@@ -792,51 +838,6 @@
       });
 
       return edges;
-    }
-
-    function collectRelatedMemberIds(rootId, allMembers) {
-      const memberMap = new Map(allMembers.map(member => [member.id, member]));
-      const relatedIds = new Set([rootId]);
-      const queue = [rootId];
-
-      while (queue.length) {
-        const currentId = queue.shift();
-        const currentMember = memberMap.get(currentId);
-        if (!currentMember) continue;
-
-        const spouseId = currentMember.spouse_id;
-
-      const rootBranch = String(memberMap.get(rootId)?.branch || '').trim().toLowerCase();
-      if (rootBranch) {
-        allMembers.forEach(member => {
-          if (member.id !== rootId && String(member.branch || '').trim().toLowerCase() === rootBranch) {
-            relatedIds.add(member.id);
-          }
-        });
-      }
-        const directParentIds = [currentMember.father_id, currentMember.mother_id].filter(Boolean);
-        const childIds = allMembers
-          .filter(member => member.father_id === currentId || member.mother_id === currentId)
-          .map(member => member.id);
-
-        const siblingIds = allMembers
-          .filter(member => {
-            if (member.id === currentId) return false;
-            const sameFather = currentMember.father_id && member.father_id && member.father_id === currentMember.father_id;
-            const sameMother = currentMember.mother_id && member.mother_id && member.mother_id === currentMember.mother_id;
-            return sameFather || sameMother;
-          })
-          .map(member => member.id);
-
-        [...directParentIds, spouseId, ...childIds, ...siblingIds].filter(Boolean).forEach(nextId => {
-          if (!relatedIds.has(nextId)) {
-            relatedIds.add(nextId);
-            queue.push(nextId);
-          }
-        });
-      }
-
-      return [...relatedIds];
     }
 
     function computeGenerationMap(rootId, allMembers) {
